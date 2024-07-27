@@ -11,6 +11,7 @@ module.exports = {
         singleQuote: true,
         trainlingComma: 'none',
         arrowParens: 'avoid',
+        singleAttributePerLine: true,
       },
     ],
   },
