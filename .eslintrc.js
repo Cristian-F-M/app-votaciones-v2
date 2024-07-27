@@ -10,6 +10,7 @@ module.exports = {
         semi: false,
         singleQuote: true,
         trainlingComma: 'none',
+        arrowParens: 'avoid',
       },
     ],
   },
