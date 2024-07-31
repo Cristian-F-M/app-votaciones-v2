@@ -81,11 +81,21 @@ export default function Login() {
 
   useEffect(() => {
     async function getConfigs() {
-      const url = `${process.env.EXPO_PUBLIC_API_URL}/config/?code=Color`
-      const res = await doFetch({ url, method: METHODS.GET })
-      const color = res.config.value
+      const colorStoraged = await getItemStorage({ name: 'color' })
 
-      setColor(color)
+      if (!colorStoraged || new Date() > colorStoraged.expires) {
+        const url = `${process.env.EXPO_PUBLIC_API_URL}/config/?code=Color`
+        const res = await doFetch({ url, method: METHODS.GET })
+        const color = res.config.value
+
+        await setItemStorage({
+          name: 'color',
+          value: color,
+          expires: new Date(Date.now() + 1000 * 60 * 60 * 4),
+        })
+        return setColor(color)
+      }
+      setColor(colorStoraged.value)
     }
 
     async function getTypesDocuments() {
