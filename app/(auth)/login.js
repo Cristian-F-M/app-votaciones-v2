@@ -68,6 +68,11 @@ export default function Login() {
       }
 
       setIsLoading(false)
+      setItemStorage({
+        name: 'token',
+        value: res.token,
+        expires: new Date(Date.now() + 1000 * 60 * 60 * 12),
+      })
       router.replace('apprentice/')
     }
 
