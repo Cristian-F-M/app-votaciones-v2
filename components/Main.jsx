@@ -35,7 +35,7 @@ export function Main() {
       const res = await doFetch({ url, method: METHODS.GET })
 
       if (res.ok) {
-        router.replace('/about')
+        router.replace('apprentice/')
         return
       }
 
