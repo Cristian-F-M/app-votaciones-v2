@@ -141,7 +141,7 @@ export default function Login() {
                     selectedValue={typeDocumentCode}
                     dropdownIconRippleColor={Color}
                     mode="modal"
-                    prompt="Select type of document"
+                    prompt="Seleccione tipo de documento"
                     onValueChange={(itemValue, itemIndex) =>
                       setTypeDocumentCode(itemValue)
                     }
