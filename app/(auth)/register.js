@@ -76,13 +76,6 @@ export default function Register() {
       <ScrollView className="p-5 flex-1">
         <View className="flex-1 justify-center">
           <View className="flex-col items-center gap-4 mb-10">
-            {/* <View>
-              <LogoSena
-                style={{ fill: Color }}
-                width={160}
-                height={158}
-              />
-            </View> */}
             <Text className="text-4xl text-center tracking-widest">
               Registro
             </Text>
@@ -128,7 +121,7 @@ export default function Register() {
                   selectedValue={typeDocumentCode}
                   dropdownIconRippleColor={Color}
                   mode="modal"
-                  prompt="Select type of document"
+                  prompt="Seleccione tipo de documento"
                   onValueChange={(itemValue, itemIndex) =>
                     setTypeDocumentCode(itemValue)
                   }
