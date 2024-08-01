@@ -215,7 +215,7 @@ export default function Login() {
                     color: `#000000${isLoading ? '80' : ''}`,
                   }}
                 >
-                  <Text className="text-lg">Login</Text>
+                  <Text className="text-lg">Iniciar Sesión</Text>
                   {isLoading && (
                     <ActivityIndicator
                       className="absolute right-0 mr-2"
