@@ -77,9 +77,12 @@ export default function Register() {
     if (localyErrors.name) return scrollSmooth(refs.name, refs.scrollView)
     if (localyErrors.phone) return scrollSmooth(refs.phone, refs.scrollView)
     if (localyErrors.email) return scrollSmooth(refs.email, refs.scrollView)
-    if (localyErrors.lastname) return scrollSmooth(refs.lastname, refs.scrollView)
-    if (localyErrors.document) return scrollSmooth(refs.document, refs.scrollView)
-    if (localyErrors.password) return scrollSmooth(refs.password, refs.scrollView)
+    if (localyErrors.lastname)
+      return scrollSmooth(refs.lastname, refs.scrollView)
+    if (localyErrors.document)
+      return scrollSmooth(refs.document, refs.scrollView)
+    if (localyErrors.password)
+      return scrollSmooth(refs.password, refs.scrollView)
 
     if (localyErrors.length > 0) return
 
