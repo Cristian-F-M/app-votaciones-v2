@@ -6,6 +6,7 @@ import {
   View,
   Pressable,
   Alert,
+  ScrollView,
 } from 'react-native'
 import { Screen } from '../../components/Screen'
 import { Picker } from '@react-native-picker/picker'
@@ -118,8 +119,8 @@ export default function Login() {
       />
 
       <AlertNotificationRoot>
-        <View className="p-5 flex-1">
-          <View className="flex-1 justify-center">
+        <ScrollView className="p-5 flex-1">
+          <View className="flex-1 justify-center pb-10">
             <View className="flex-col items-center gap-4 mb-10">
               <View>
                 <LogoSena
@@ -249,7 +250,7 @@ export default function Login() {
               </Link>
             </View>
           </View>
-        </View>
+        </ScrollView>
       </AlertNotificationRoot>
     </Screen>
   )
