@@ -409,14 +409,6 @@ export default function Register() {
               </View>
             </View>
             {/*  */}
-            <View>
-              <Pressable onPress={clearInputs}>
-                <Text className="text-center text-[15px] text-[#4f00ef] underline">
-                  Rest
-                </Text>
-              </Pressable>
-            </View>
-            {/*  */}
             <View className="mb-16">
               <Pressable
                 // onPress={!isLoading ? handleClickLogin : null}
