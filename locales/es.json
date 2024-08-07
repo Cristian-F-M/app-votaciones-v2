@@ -23,6 +23,9 @@
     "successResetPassword": "Restablecer contraseña exitoso",
     "titleRegister": "Registro",
     "titleResetPassword": "Restablecer contraseña",
-    "titleLogin": "Iniciar Sesión"
+    "titleLogin": "Iniciar Sesión",
+    "showPassword": "Mostrar contraseña",
+    "fieldRequired": "Campo requerido",
+    "passwordsDoNotMatch": "Las contraseñas no coinciden"
   }
 }

@@ -23,6 +23,9 @@
     "successResetPassword": "Reset password successful",
     "titleRegister": "Register",
     "titleResetPassword": "Reset password",
-    "titleLogin": "Login"
+    "titleLogin": "Login",
+    "showPassword": "Show password",
+    "fieldRequired": "Field required",
+    "passwordsDoNotMatch": "Passwords do not match"
   }
 }
