@@ -22,6 +22,8 @@ import {
   Toast,
 } from 'react-native-alert-notification'
 import { useRouter } from 'expo-router'
+import { useLocales } from 'expo-localization'
+import { getI18n } from '../../lib/lenguages'
 
 export default function Login() {
   const [Color, setColor] = useState()
@@ -32,6 +34,10 @@ export default function Login() {
   const [isLoading, setIsLoading] = useState(false)
   const [errors, setErrors] = useState({})
   const router = useRouter()
+  const locales = useLocales()
+  const { languageCode } = locales[0]
+  const i18n = getI18n(languageCode)
+  const [i18, setI18] = useState(i18n)
 
   function handleClickLogin() {
     async function Login() {
@@ -107,7 +113,7 @@ export default function Login() {
 
     getConfigs()
     getTypesDocuments()
-  }, [])
+  }, [languageCode])
 
   return (
     <Screen>
@@ -130,13 +136,13 @@ export default function Login() {
                 />
               </View>
               <Text className="text-4xl text-center tracking-widest">
-                Inicio de Sesión
+                {i18.t.titleLogin}
               </Text>
             </View>
 
             <View>
               <View style={styles.inputContainer}>
-                <Text style={styles.label}>Tipo de documento</Text>
+                <Text style={styles.label}>{i18.t.labelTypeDocument}</Text>
                 <View style={styles.input}>
                   <Picker
                     selectedValue={typeDocumentCode}
@@ -169,7 +175,7 @@ export default function Login() {
 
               <View style={styles.inputContainer}>
                 <Text style={styles.label}>
-                  Documento
+                  {i18.t.labelDocument}
                   <Text className="text-red-500"> *</Text>
                 </Text>
                 <TextInput
@@ -188,7 +194,7 @@ export default function Login() {
               </View>
               <View style={styles.inputContainer}>
                 <Text style={styles.label}>
-                  Contraseña
+                  {i18.t.labelPassword}
                   <Text className="text-red-500"> *</Text>
                 </Text>
                 <TextInput
@@ -216,7 +222,7 @@ export default function Login() {
                     color: `#000000${isLoading ? '80' : ''}`,
                   }}
                 >
-                  <Text className="text-lg">Iniciar Sesión</Text>
+                  <Text className="text-lg">{i18.t.butonLogin}</Text>
                   {isLoading && (
                     <ActivityIndicator
                       className="absolute right-0 mr-2"
@@ -234,7 +240,7 @@ export default function Login() {
               >
                 <Pressable>
                   <Text className="text-center text-[15px] text-[#4f00ef] underline">
-                    Registro
+                    {i18.t.butonRegister}
                   </Text>
                 </Pressable>
               </Link>
@@ -244,7 +250,7 @@ export default function Login() {
               >
                 <Pressable>
                   <Text className="text-center text-[15px] text-[#4f00ef] underline">
-                    Restablecer contraseña
+                    {i18.t.butonResetPassword}
                   </Text>
                 </Pressable>
               </Link>
@@ -277,5 +283,11 @@ const styles = StyleSheet.create({
   },
   errorMessage: {
     color: 'red',
+  },
+  eyeIcon: {
+    color: 'black',
+    position: 'absolute',
+    top: 0,
+    right: 0,
   },
 })
