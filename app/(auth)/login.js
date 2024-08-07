@@ -113,7 +113,6 @@ export default function Login() {
       setTypesDocuments(res.typesDocuments)
     }
 
-    setI18(getI18n(LANGUAGES.ENGLISH))
     getConfigs()
     getTypesDocuments()
   }, [languageCode])

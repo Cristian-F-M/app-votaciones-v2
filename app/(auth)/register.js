@@ -188,7 +188,6 @@ export default function Register() {
       setTypesDocuments(res.typesDocuments)
     }
 
-    setI18(getI18n(LANGUAGES.ENGLISH))
     getConfigs()
     getTypesDocuments()
   }, [])
