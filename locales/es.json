@@ -1,0 +1,28 @@
+{
+  "location": "es",
+  "t": {
+    "butonLogin": "Iniciar sesión",
+    "butonRegister": "Registro",
+    "butonResetPassword": "Restablecer contraseña",
+    "labelName": "Nombre",
+    "labelLastname": "Apellido",
+    "labelTypeDocument": "Tipo de documento",
+    "labelDocument": "Documento",
+    "labelPhone": "Telefono",
+    "labelEmail": "Correo electronico",
+    "labelPassword": "Contraseña",
+    "labelConfirmPassword": "Confirmar contraseña",
+    "errorName": "Campo requerido",
+    "errorLastname": "Campo requerido",
+    "errorDocument": "Campo requerido",
+    "errorPhone": "Campo requerido",
+    "errorEmail": "Campo requerido",
+    "errorPassword": "Campo requerido",
+    "errorConfirmPassword": "Las contraseñas no coinciden",
+    "successRegister": "Registro exitoso",
+    "successResetPassword": "Restablecer contraseña exitoso",
+    "titleRegister": "Registro",
+    "titleResetPassword": "Restablecer contraseña",
+    "titleLogin": "Iniciar Sesión"
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "location": "en",
+  "t": {
+    "butonLogin": "Login",
+    "butonRegister": "Register",
+    "butonResetPassword": "Reset password",
+    "labelName": "Name",
+    "labelLastname": "Lastname",
+    "labelTypeDocument": "Type of document",
+    "labelDocument": "Document",
+    "labelPhone": "Phone",
+    "labelEmail": "Email",
+    "labelPassword": "Password",
+    "labelConfirmPassword": "Confirm password",
+    "errorName": "Field required",
+    "errorLastname": "Field required",
+    "errorDocument": "Field required",
+    "errorPhone": "Field required",
+    "errorEmail": "Field required",
+    "errorPassword": "Field required",
+    "errorConfirmPassword": "Passwords do not match",
+    "successRegister": "Registration successful",
+    "successResetPassword": "Reset password successful",
+    "titleRegister": "Register",
+    "titleResetPassword": "Reset password",
+    "titleLogin": "Login"
+  }
+}
