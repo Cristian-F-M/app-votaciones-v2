@@ -23,7 +23,7 @@ import {
 } from 'react-native-alert-notification'
 import { useRouter } from 'expo-router'
 import { useLocales } from 'expo-localization'
-import { getI18n } from '../../lib/lenguages'
+import { getI18n, LANGUAGES } from '../../lib/lenguages'
 import BouncyCheckbox from 'react-native-bouncy-checkbox'
 
 export default function Login() {
@@ -44,9 +44,9 @@ export default function Login() {
   function handleClickLogin() {
     async function Login() {
       if (document.trim() === '')
-        return setErrors({ ...errors, document: 'Campo requerido' })
+        return setErrors({ ...errors, document: i18.t.fieldRequired })
       if (password.trim() === '')
-        return setErrors({ ...errors, password: 'Campo requerido' })
+        return setErrors({ ...errors, password: i18.t.fieldRequired })
 
       setIsLoading(true)
 
@@ -113,6 +113,7 @@ export default function Login() {
       setTypesDocuments(res.typesDocuments)
     }
 
+    setI18(getI18n(LANGUAGES.ENGLISH))
     getConfigs()
     getTypesDocuments()
   }, [languageCode])
@@ -233,7 +234,7 @@ export default function Login() {
                     setIsVisible(!isVisible)
                   }}
                 >
-                  Mostrar contraseña
+                  {i18.t.showPassword}
                 </Text>
               </View>
               <View>
