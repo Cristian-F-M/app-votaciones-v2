@@ -24,6 +24,7 @@ import {
 import { useRouter } from 'expo-router'
 import { useLocales } from 'expo-localization'
 import { getI18n } from '../../lib/lenguages'
+import BouncyCheckbox from 'react-native-bouncy-checkbox'
 
 export default function Login() {
   const [Color, setColor] = useState()
@@ -38,6 +39,7 @@ export default function Login() {
   const { languageCode } = locales[0]
   const i18n = getI18n(languageCode)
   const [i18, setI18] = useState(i18n)
+  const [isVisible, setIsVisible] = useState(false)
 
   function handleClickLogin() {
     async function Login() {
@@ -199,7 +201,7 @@ export default function Login() {
                 </Text>
                 <TextInput
                   style={[styles.input, styles.inputText]}
-                  secureTextEntry
+                  secureTextEntry={!isVisible}
                   value={password}
                   onChangeText={t => {
                     setPassword(t)
@@ -212,6 +214,28 @@ export default function Login() {
                 )}
               </View>
 
+              <View className="flex-row items-center gap-x-2 -mt-2">
+                <BouncyCheckbox
+                  size={24}
+                  fillColor={Color}
+                  unFillColor="#FFFFFF"
+                  iconStyle={{ borderColor: Color }}
+                  innerIconStyle={{ borderWidth: 2 }}
+                  disableText
+                  isChecked={isVisible}
+                  onPress={isChecked => {
+                    setIsVisible(isChecked)
+                  }}
+                />
+                <Text
+                  className="text-sm"
+                  onPress={() => {
+                    setIsVisible(!isVisible)
+                  }}
+                >
+                  Mostrar contraseña
+                </Text>
+              </View>
               <View>
                 <Pressable
                   onPress={!isLoading ? handleClickLogin : null}

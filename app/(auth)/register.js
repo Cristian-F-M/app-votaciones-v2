@@ -19,12 +19,14 @@ import {
   Toast,
   AlertNotificationRoot,
 } from 'react-native-alert-notification'
+import BouncyCheckbox from 'react-native-bouncy-checkbox'
 
 export default function Register() {
   const [Color, setColor] = useState('')
   const [errors, setErrors] = useState({})
   const [typeDocumentCode, setTypeDocumentCode] = useState('CedulaCiudadania')
   const [isLoading, setIsLoading] = useState(false)
+  const [isVisible, setIsVisible] = useState(false)
   const router = useRouter()
 
   const refs = {
@@ -374,7 +376,7 @@ export default function Register() {
                 <TextInput
                   style={[styles.input, styles.inputText]}
                   value={password}
-                  secureTextEntry
+                  secureTextEntry={!isVisible}
                   onChangeText={t => {
                     setPassword(t)
                     setErrors({ ...errors, password: null })
@@ -397,7 +399,7 @@ export default function Register() {
                 <TextInput
                   style={[styles.input, styles.inputText]}
                   value={passwordConfirm}
-                  secureTextEntry
+                  secureTextEntry={!isVisible}
                   onChangeText={t => {
                     setPasswordConfirm(t)
                     setErrors({ ...errors, passwordConfirm: null })
@@ -409,6 +411,28 @@ export default function Register() {
                     {errors.passwordConfirm}
                   </Text>
                 )}
+              </View>
+              <View className="flex-row items-center gap-x-2 -mt-2">
+                <BouncyCheckbox
+                  size={24}
+                  fillColor={Color}
+                  unFillColor="#FFFFFF"
+                  iconStyle={{ borderColor: Color }}
+                  innerIconStyle={{ borderWidth: 2 }}
+                  disableText
+                  isChecked={isVisible}
+                  onPress={isChecked => {
+                    setIsVisible(isChecked)
+                  }}
+                />
+                <Text
+                  className="text-sm"
+                  onPress={() => {
+                    setIsVisible(!isVisible)
+                  }}
+                >
+                  Mostrar contraseña
+                </Text>
               </View>
             </View>
             {/*  */}
