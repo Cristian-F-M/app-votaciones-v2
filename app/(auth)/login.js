@@ -7,11 +7,12 @@ import {
   Pressable,
   Alert,
   ScrollView,
+  RefreshControl,
 } from 'react-native'
 import { Screen } from '../../components/Screen'
 import { Picker } from '@react-native-picker/picker'
 import LogoSena from '../../icons/Logo'
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { doFetch, getItemStorage, METHODS, setItemStorage } from '../../lib/api'
 import { useDebounce } from '../../lib/useDebounce'
 import { Link, Stack } from 'expo-router'
@@ -40,6 +41,16 @@ export default function Login() {
   const i18n = getI18n(languageCode)
   const [i18, setI18] = useState(i18n)
   const [isVisible, setIsVisible] = useState(false)
+  const [refreshing, setRefreshing] = useState(false)
+
+  const onRefresh = useCallback(() => {
+    setRefreshing(true)
+    // eslint-disable-next-line no-undef
+    setTimeout(() => {
+      router.replace('login')
+      setRefreshing(false)
+    }, 600)
+  }, [])
 
   function handleClickLogin() {
     async function Login() {
@@ -127,7 +138,15 @@ export default function Login() {
       />
 
       <AlertNotificationRoot>
-        <ScrollView className="p-5 flex-1">
+        <ScrollView
+          className="p-5 flex-1"
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={onRefresh}
+            />
+          }
+        >
           <View className="flex-1 justify-center pb-10">
             <View className="flex-col items-center gap-4 mb-10">
               <View>

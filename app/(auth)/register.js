@@ -1,6 +1,7 @@
 import {
   ActivityIndicator,
   Pressable,
+  RefreshControl,
   ScrollView,
   StyleSheet,
   Text,
@@ -9,7 +10,7 @@ import {
 } from 'react-native'
 import { Screen } from '../../components/Screen'
 import LogoSena from '../../icons/Logo'
-import { useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { doFetch, getItemStorage, METHODS, setItemStorage } from '../../lib/api'
 import { Picker } from '@react-native-picker/picker'
 import { Stack, useRouter } from 'expo-router'
@@ -29,6 +30,7 @@ export default function Register() {
   const [typeDocumentCode, setTypeDocumentCode] = useState('CedulaCiudadania')
   const [isLoading, setIsLoading] = useState(false)
   const [isVisible, setIsVisible] = useState(false)
+  const [refreshing, setRefreshing] = useState(false)
   const locales = useLocales()
   const { languageCode } = locales[0]
   const i18n = getI18n(languageCode)
@@ -192,6 +194,15 @@ export default function Register() {
     getTypesDocuments()
   }, [])
 
+  const onRefresh = useCallback(() => {
+    setRefreshing(true)
+    // eslint-disable-next-line no-undef
+    setTimeout(() => {
+      router.replace('register')
+      setRefreshing(false)
+    }, 600)
+  }, [])
+
   return (
     <Screen>
       <AlertNotificationRoot>
@@ -211,6 +222,12 @@ export default function Register() {
         <ScrollView
           className="p-5 flex-1"
           ref={refs.scrollView}
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={onRefresh}
+            />
+          }
         >
           <View className="flex-1 justify-center">
             <View
