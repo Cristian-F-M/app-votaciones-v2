@@ -59,14 +59,14 @@ export default function ApprenticeLayout() {
           headerRight: () =>
             menuIsVisible ? (
               <OpenedMenu
-                width={45}
-                height={45}
+                width={35}
+                height={35}
                 style={{ color: '#000' }}
               />
             ) : (
               <ClosedMenu
-                width={45}
-                height={45}
+                width={35}
+                height={35}
                 style={{ color: '#000' }}
                 onPress={() => setMenuIsVisible(true)}
               />
