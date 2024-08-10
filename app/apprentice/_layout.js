@@ -42,7 +42,7 @@ export default function ApprenticeLayout() {
     <SideMenu
       isOpen={menuIsVisible}
       menuPosition="right"
-      SideMenu={ApprenticeMenu}
+      menu={<ApprenticeMenu />}
       onChange={isOpen => setMenuIsVisible(isOpen)}
     >
       <Stack
