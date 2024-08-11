@@ -6,25 +6,20 @@ import { setItemStorage } from '../lib/api.js'
 import { Stack, useRouter } from 'expo-router'
 import { Screen } from './Screen.jsx'
 import { StatusBar } from 'expo-status-bar'
+import { useConfig } from '../context/config.js'
+import { findConfig } from '../lib/config'
 
 export function Main() {
   const [Color, setColor] = useState('#ff6719')
   const router = useRouter()
+  const { i18n, config } = useConfig()
 
   useEffect(() => {
     async function getConfigs() {
       const colorStoraged = await getItemStorage({ name: 'color' })
-      if (!colorStoraged || new Date() > colorStoraged.expires) {
-        const url = `${process.env.EXPO_PUBLIC_API_URL}/config/?code=Color`
-        const res = await doFetch({ url, method: METHODS.GET })
-        const color = res.config.value
 
-        await setItemStorage({
-          name: 'color',
-          value: color,
-          expires: new Date(Date.now() + 1000 * 60 * 60 * 4),
-        })
-        return setColor(color)
+      if (!colorStoraged || new Date() > colorStoraged.expires) {
+        return setColor(findConfig({ configs: config, code: 'Color' }).value)
       }
       setColor(colorStoraged.value)
     }
@@ -50,7 +45,7 @@ export function Main() {
     }
 
     init()
-  }, [router])
+  }, [router, config])
 
   return (
     <>
@@ -66,7 +61,7 @@ export function Main() {
             height={188}
             style={{ fill: Color }}
           />
-          <Text className={`text-5xl mt-5`}>Votaciones</Text>
+          <Text className={`text-5xl mt-5`}>{i18n?.t.appName}</Text>
           <Text
             className="text-4xl"
             style={{ color: Color }}
