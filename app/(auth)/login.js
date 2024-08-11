@@ -131,170 +131,168 @@ export default function Login() {
         }}
       />
 
-      <AlertNotificationRoot>
-        <ScrollView
-          className="p-5 flex-1"
-          refreshControl={
-            <RefreshControl
-              refreshing={refreshing}
-              onRefresh={onRefresh}
-            />
-          }
-        >
-          <View className="flex-1 justify-center pb-10">
-            <View className="flex-col items-center gap-4 mb-10">
-              <View>
-                <LogoSena
-                  style={{ fill: Color }}
-                  width={170}
-                  height={168}
-                />
+      <ScrollView
+        className="p-5 flex-1"
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+          />
+        }
+      >
+        <View className="flex-1 justify-center pb-10">
+          <View className="flex-col items-center gap-4 mb-10">
+            <View>
+              <LogoSena
+                style={{ fill: Color }}
+                width={170}
+                height={168}
+              />
+            </View>
+            <Text className="text-4xl text-center tracking-widest">
+              {i18n.t.titleLogin}
+            </Text>
+          </View>
+
+          <View>
+            <View style={styles.inputContainer}>
+              <Text style={styles.label}>{i18n.t.labelTypeDocument}</Text>
+              <View style={styles.input}>
+                <Picker
+                  selectedValue={typeDocumentCode}
+                  dropdownIconRippleColor={Color}
+                  mode="modal"
+                  prompt="Seleccione tipo de documento"
+                  onValueChange={(itemValue, itemIndex) =>
+                    setTypeDocumentCode(itemValue)
+                  }
+                >
+                  {!typesDocuments ? (
+                    <Picker.Item
+                      label={'Loading...'}
+                      value={0}
+                    />
+                  ) : (
+                    typesDocuments.map(typeDocument => {
+                      return (
+                        <Picker.Item
+                          key={typeDocument.id}
+                          label={typeDocument.name}
+                          value={typeDocument.code}
+                        />
+                      )
+                    })
+                  )}
+                </Picker>
               </View>
-              <Text className="text-4xl text-center tracking-widest">
-                {i18n.t.titleLogin}
+            </View>
+
+            <View style={styles.inputContainer}>
+              <Text style={styles.label}>
+                {i18n.t.labelDocument}
+                <Text className="text-red-500"> *</Text>
+              </Text>
+              <TextInput
+                style={[styles.input, styles.inputText]}
+                inputMode="numeric"
+                value={document}
+                onChangeText={t => {
+                  setDocument(t)
+                  setErrors({ ...errors, document: null })
+                }}
+                placeholder="123456789"
+              />
+              {!!errors.document && (
+                <Text style={styles.errorMessage}>{errors.document}</Text>
+              )}
+            </View>
+            <View style={styles.inputContainer}>
+              <Text style={styles.label}>
+                {i18n.t.labelPassword}
+                <Text className="text-red-500"> *</Text>
+              </Text>
+              <TextInput
+                style={[styles.input, styles.inputText]}
+                secureTextEntry={!isVisible}
+                value={password}
+                onChangeText={t => {
+                  setPassword(t)
+                  setErrors({ ...errors, password: null })
+                }}
+                placeholder="*********"
+              />
+              {!!errors.password && (
+                <Text style={styles.errorMessage}>{errors.password}</Text>
+              )}
+            </View>
+
+            <View className="flex-row items-center gap-x-2 -mt-2">
+              <BouncyCheckbox
+                size={24}
+                fillColor={Color}
+                unFillColor="#FFFFFF"
+                iconStyle={{ borderColor: Color }}
+                innerIconStyle={{ borderWidth: 2 }}
+                disableText
+                isChecked={isVisible}
+                onPress={isChecked => {
+                  setIsVisible(isChecked)
+                }}
+              />
+              <Text
+                className="text-sm"
+                onPress={() => {
+                  setIsVisible(!isVisible)
+                }}
+              >
+                {i18n.t.showPassword}
               </Text>
             </View>
-
             <View>
-              <View style={styles.inputContainer}>
-                <Text style={styles.label}>{i18n.t.labelTypeDocument}</Text>
-                <View style={styles.input}>
-                  <Picker
-                    selectedValue={typeDocumentCode}
-                    dropdownIconRippleColor={Color}
-                    mode="modal"
-                    prompt="Seleccione tipo de documento"
-                    onValueChange={(itemValue, itemIndex) =>
-                      setTypeDocumentCode(itemValue)
-                    }
-                  >
-                    {!typesDocuments ? (
-                      <Picker.Item
-                        label={'Loading...'}
-                        value={0}
-                      />
-                    ) : (
-                      typesDocuments.map(typeDocument => {
-                        return (
-                          <Picker.Item
-                            key={typeDocument.id}
-                            label={typeDocument.name}
-                            value={typeDocument.code}
-                          />
-                        )
-                      })
-                    )}
-                  </Picker>
-                </View>
-              </View>
-
-              <View style={styles.inputContainer}>
-                <Text style={styles.label}>
-                  {i18n.t.labelDocument}
-                  <Text className="text-red-500"> *</Text>
-                </Text>
-                <TextInput
-                  style={[styles.input, styles.inputText]}
-                  inputMode="numeric"
-                  value={document}
-                  onChangeText={t => {
-                    setDocument(t)
-                    setErrors({ ...errors, document: null })
-                  }}
-                  placeholder="123456789"
-                />
-                {!!errors.document && (
-                  <Text style={styles.errorMessage}>{errors.document}</Text>
-                )}
-              </View>
-              <View style={styles.inputContainer}>
-                <Text style={styles.label}>
-                  {i18n.t.labelPassword}
-                  <Text className="text-red-500"> *</Text>
-                </Text>
-                <TextInput
-                  style={[styles.input, styles.inputText]}
-                  secureTextEntry={!isVisible}
-                  value={password}
-                  onChangeText={t => {
-                    setPassword(t)
-                    setErrors({ ...errors, password: null })
-                  }}
-                  placeholder="*********"
-                />
-                {!!errors.password && (
-                  <Text style={styles.errorMessage}>{errors.password}</Text>
-                )}
-              </View>
-
-              <View className="flex-row items-center gap-x-2 -mt-2">
-                <BouncyCheckbox
-                  size={24}
-                  fillColor={Color}
-                  unFillColor="#FFFFFF"
-                  iconStyle={{ borderColor: Color }}
-                  innerIconStyle={{ borderWidth: 2 }}
-                  disableText
-                  isChecked={isVisible}
-                  onPress={isChecked => {
-                    setIsVisible(isChecked)
-                  }}
-                />
-                <Text
-                  className="text-sm"
-                  onPress={() => {
-                    setIsVisible(!isVisible)
-                  }}
-                >
-                  {i18n.t.showPassword}
-                </Text>
-              </View>
-              <View>
-                <Pressable
-                  onPress={!isLoading ? handleClickLogin : null}
-                  className={`rounded-lg px-4 py-2 mt-6 flex-row justify-center gap-x-3 relative items-center active:opacity-60`}
-                  disabled={isLoading}
-                  style={{
-                    backgroundColor: `${Color}${isLoading ? '80' : ''}`,
-                    color: `#000000${isLoading ? '80' : ''}`,
-                  }}
-                >
-                  <Text className="text-lg">{i18n.t.butonLogin}</Text>
-                  {isLoading && (
-                    <ActivityIndicator
-                      className="absolute right-0 mr-2"
-                      size={30}
-                      color="white"
-                    />
-                  )}
-                </Pressable>
-              </View>
-            </View>
-            <View className="flex-row items-center justify-between pt-1">
-              <Link
-                href="register"
-                asChild
+              <Pressable
+                onPress={!isLoading ? handleClickLogin : null}
+                className={`rounded-lg px-4 py-2 mt-6 flex-row justify-center gap-x-3 relative items-center active:opacity-60`}
+                disabled={isLoading}
+                style={{
+                  backgroundColor: `${Color}${isLoading ? '80' : ''}`,
+                  color: `#000000${isLoading ? '80' : ''}`,
+                }}
               >
-                <Pressable>
-                  <Text className="text-center text-[15px] text-[#4f00ef] underline">
-                    {i18n.t.butonRegister}
-                  </Text>
-                </Pressable>
-              </Link>
-              <Link
-                href="resetPassword"
-                asChild
-              >
-                <Pressable>
-                  <Text className="text-center text-[15px] text-[#4f00ef] underline">
-                    {i18n.t.butonResetPassword}
-                  </Text>
-                </Pressable>
-              </Link>
+                <Text className="text-lg">{i18n.t.butonLogin}</Text>
+                {isLoading && (
+                  <ActivityIndicator
+                    className="absolute right-0 mr-2"
+                    size={30}
+                    color="white"
+                  />
+                )}
+              </Pressable>
             </View>
           </View>
-        </ScrollView>
-      </AlertNotificationRoot>
+          <View className="flex-row items-center justify-between pt-1">
+            <Link
+              href="register"
+              asChild
+            >
+              <Pressable>
+                <Text className="text-center text-[15px] text-[#4f00ef] underline">
+                  {i18n.t.butonRegister}
+                </Text>
+              </Pressable>
+            </Link>
+            <Link
+              href="resetPassword"
+              asChild
+            >
+              <Pressable>
+                <Text className="text-center text-[15px] text-[#4f00ef] underline">
+                  {i18n.t.butonResetPassword}
+                </Text>
+              </Pressable>
+            </Link>
+          </View>
+        </View>
+      </ScrollView>
     </Screen>
   )
 }
