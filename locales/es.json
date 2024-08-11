@@ -26,6 +26,8 @@
     "titleLogin": "Iniciar Sesión",
     "showPassword": "Mostrar contraseña",
     "fieldRequired": "Campo requerido",
-    "passwordsDoNotMatch": "Las contraseñas no coinciden"
+    "passwordsDoNotMatch": "Las contraseñas no coinciden",
+    "labelRole": "Rol",
+    "User": "Usuario"
   }
 }
