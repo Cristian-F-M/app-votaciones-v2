@@ -13,7 +13,13 @@ import { Screen } from '../../components/Screen'
 import { Picker } from '@react-native-picker/picker'
 import LogoSena from '../../icons/Logo'
 import { useCallback, useEffect, useState } from 'react'
-import { doFetch, getItemStorage, METHODS, setItemStorage } from '../../lib/api'
+import {
+  doFetch,
+  getItemStorage,
+  METHODS,
+  removeItemStorage,
+  setItemStorage,
+} from '../../lib/api'
 import { useDebounce } from '../../lib/useDebounce'
 import { Link, Stack } from 'expo-router'
 import { StatusBar } from 'expo-status-bar'
@@ -23,9 +29,9 @@ import {
   Toast,
 } from 'react-native-alert-notification'
 import { useRouter } from 'expo-router'
-import { useLocales } from 'expo-localization'
-import { getI18n, LANGUAGES } from '../../lib/lenguages'
 import BouncyCheckbox from 'react-native-bouncy-checkbox'
+import { useConfig } from '../../context/config'
+import { findConfig } from '../../lib/config'
 
 export default function Login() {
   const [Color, setColor] = useState()
@@ -36,12 +42,9 @@ export default function Login() {
   const [isLoading, setIsLoading] = useState(false)
   const [errors, setErrors] = useState({})
   const router = useRouter()
-  const locales = useLocales()
-  const { languageCode } = locales[0]
-  const i18n = getI18n(languageCode)
-  const [i18, setI18] = useState(i18n)
   const [isVisible, setIsVisible] = useState(false)
   const [refreshing, setRefreshing] = useState(false)
+  const { i18n, config } = useConfig()
 
   const onRefresh = useCallback(() => {
     setRefreshing(true)
@@ -50,14 +53,14 @@ export default function Login() {
       router.replace('login')
       setRefreshing(false)
     }, 600)
-  }, [])
+  }, [router])
 
   function handleClickLogin() {
     async function Login() {
       if (document.trim() === '')
-        return setErrors({ ...errors, document: i18.t.fieldRequired })
+        return setErrors({ ...errors, document: i18n.t.fieldRequired })
       if (password.trim() === '')
-        return setErrors({ ...errors, password: i18.t.fieldRequired })
+        return setErrors({ ...errors, password: i18n.t.fieldRequired })
 
       setIsLoading(true)
 
@@ -104,16 +107,7 @@ export default function Login() {
       const colorStoraged = await getItemStorage({ name: 'color' })
 
       if (!colorStoraged || new Date() > colorStoraged.expires) {
-        const url = `${process.env.EXPO_PUBLIC_API_URL}/config/?code=Color`
-        const res = await doFetch({ url, method: METHODS.GET })
-        const color = res.config.value
-
-        await setItemStorage({
-          name: 'color',
-          value: color,
-          expires: new Date(Date.now() + 1000 * 60 * 60 * 4),
-        })
-        return setColor(color)
+        return setColor(findConfig({ configs: config, code: 'Color' }).value)
       }
       setColor(colorStoraged.value)
     }
@@ -126,7 +120,7 @@ export default function Login() {
 
     getConfigs()
     getTypesDocuments()
-  }, [languageCode])
+  }, [config])
 
   return (
     <Screen>
@@ -157,13 +151,13 @@ export default function Login() {
                 />
               </View>
               <Text className="text-4xl text-center tracking-widest">
-                {i18.t.titleLogin}
+                {i18n.t.titleLogin}
               </Text>
             </View>
 
             <View>
               <View style={styles.inputContainer}>
-                <Text style={styles.label}>{i18.t.labelTypeDocument}</Text>
+                <Text style={styles.label}>{i18n.t.labelTypeDocument}</Text>
                 <View style={styles.input}>
                   <Picker
                     selectedValue={typeDocumentCode}
@@ -196,7 +190,7 @@ export default function Login() {
 
               <View style={styles.inputContainer}>
                 <Text style={styles.label}>
-                  {i18.t.labelDocument}
+                  {i18n.t.labelDocument}
                   <Text className="text-red-500"> *</Text>
                 </Text>
                 <TextInput
@@ -215,7 +209,7 @@ export default function Login() {
               </View>
               <View style={styles.inputContainer}>
                 <Text style={styles.label}>
-                  {i18.t.labelPassword}
+                  {i18n.t.labelPassword}
                   <Text className="text-red-500"> *</Text>
                 </Text>
                 <TextInput
@@ -252,7 +246,7 @@ export default function Login() {
                     setIsVisible(!isVisible)
                   }}
                 >
-                  {i18.t.showPassword}
+                  {i18n.t.showPassword}
                 </Text>
               </View>
               <View>
@@ -265,7 +259,7 @@ export default function Login() {
                     color: `#000000${isLoading ? '80' : ''}`,
                   }}
                 >
-                  <Text className="text-lg">{i18.t.butonLogin}</Text>
+                  <Text className="text-lg">{i18n.t.butonLogin}</Text>
                   {isLoading && (
                     <ActivityIndicator
                       className="absolute right-0 mr-2"
@@ -283,7 +277,7 @@ export default function Login() {
               >
                 <Pressable>
                   <Text className="text-center text-[15px] text-[#4f00ef] underline">
-                    {i18.t.butonRegister}
+                    {i18n.t.butonRegister}
                   </Text>
                 </Pressable>
               </Link>
@@ -293,7 +287,7 @@ export default function Login() {
               >
                 <Pressable>
                   <Text className="text-center text-[15px] text-[#4f00ef] underline">
-                    {i18.t.butonResetPassword}
+                    {i18n.t.butonResetPassword}
                   </Text>
                 </Pressable>
               </Link>
