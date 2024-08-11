@@ -4,9 +4,9 @@ import { UserBaseLogo } from '../icons/UserBaseLogo.jsx'
 import { doFetch, METHODS } from '../lib/api.js'
 import { useUser } from '../context/user.js'
 import { useLocales } from 'expo-localization'
-import { getI18n, LANGUAGES } from '../lib/lenguages'
+import { getI18n, LANGUAGES } from '../lib/lenguages.js'
 
-export function Perfil() {
+export function Profile() {
   const { user } = useUser()
   const locales = useLocales()
   const { languageCode } = locales[0]
