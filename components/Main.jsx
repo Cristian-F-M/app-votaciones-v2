@@ -45,7 +45,7 @@ export function Main() {
     }
 
     init()
-  }, [router, config])
+  }, [])
 
   return (
     <>
