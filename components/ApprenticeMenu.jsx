@@ -1,7 +1,7 @@
 import { Pressable, ScrollView, Text, View } from 'react-native'
 import { Screen } from './Screen.jsx'
 import { StatusBar } from 'expo-status-bar'
-import { Perfil } from './Perfil.jsx'
+import { Profile } from './Profile.jsx'
 
 export function ApprenticeMenu() {
   return (
@@ -11,7 +11,7 @@ export function ApprenticeMenu() {
         backgroundColor="#fff"
       />
       <ScrollView className="flex-1 bg-gray-[#e0e2e4]">
-        <Perfil />
+        <Profile />
       </ScrollView>
     </Screen>
   )
