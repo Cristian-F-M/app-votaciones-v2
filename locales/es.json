@@ -28,6 +28,7 @@
     "fieldRequired": "Campo requerido",
     "passwordsDoNotMatch": "Las contraseñas no coinciden",
     "labelRole": "Rol",
-    "User": "Usuario"
+    "User": "Usuario",
+    "appName": "Votaciones"
   }
 }

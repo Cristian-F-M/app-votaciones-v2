@@ -28,6 +28,7 @@
     "fieldRequired": "Field required",
     "passwordsDoNotMatch": "Passwords do not match",
     "labelRole": "Role",
-    "User": "User"
+    "User": "User",
+    "appName": "Votes"
   }
 }
