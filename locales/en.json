@@ -29,6 +29,8 @@
     "passwordsDoNotMatch": "Passwords do not match",
     "labelRole": "Role",
     "User": "User",
-    "appName": "Votes"
+    "appName": "Votes",
+    "messageEditProfile": "To view or edit your profile you must do it from the votings website. \n You can use the same credentials you used to access this application.",
+    "labelButtonEditProfile": "Go to website"
   }
 }

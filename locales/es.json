@@ -29,6 +29,8 @@
     "passwordsDoNotMatch": "Las contraseñas no coinciden",
     "labelRole": "Rol",
     "User": "Usuario",
-    "appName": "Votaciones"
+    "appName": "Votaciones",
+    "messageEditProfile": "Para ver o editar los datos de tu perfil debes hacerlo desde el sitio web de votaciones. \n Puedes usar las mismas credenciales que usaste para acceder a esta aplicación.",
+    "labelButtonEditProfile": "Ir al sitio web"
   }
 }
