@@ -2,7 +2,6 @@ import { ActivityIndicator, Text, View } from 'react-native'
 import LogoSena from '../icons/Logo'
 import { useEffect, useState } from 'react'
 import { getItemStorage, doFetch, METHODS } from '../lib/api.js'
-import { setItemStorage } from '../lib/api.js'
 import { Stack, useRouter } from 'expo-router'
 import { Screen } from './Screen.jsx'
 import { StatusBar } from 'expo-status-bar'
@@ -12,7 +11,7 @@ import { findConfig } from '../lib/config'
 export function Main() {
   const [Color, setColor] = useState('#ff6719')
   const router = useRouter()
-  const { i18n, config } = useConfig()
+  const { config } = useConfig()
 
   useEffect(() => {
     async function getConfigs() {
@@ -61,7 +60,7 @@ export function Main() {
             height={188}
             style={{ fill: Color }}
           />
-          <Text className={`text-5xl mt-5`}>{i18n?.t.appName}</Text>
+          <Text className={`text-5xl mt-5`}>Votaciones</Text>
           <Text
             className="text-4xl"
             style={{ color: Color }}

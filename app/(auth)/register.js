@@ -21,8 +21,6 @@ import {
   AlertNotificationRoot,
 } from 'react-native-alert-notification'
 import BouncyCheckbox from 'react-native-bouncy-checkbox'
-import { getI18n, LANGUAGES } from '../../lib/lenguages'
-import { useLocales } from 'expo-localization'
 
 export default function Register() {
   const [Color, setColor] = useState('')
@@ -31,10 +29,6 @@ export default function Register() {
   const [isLoading, setIsLoading] = useState(false)
   const [isVisible, setIsVisible] = useState(false)
   const [refreshing, setRefreshing] = useState(false)
-  const locales = useLocales()
-  const { languageCode } = locales[0]
-  const i18n = getI18n(languageCode)
-  const [i18, setI18] = useState(i18n)
   const router = useRouter()
 
   const refs = {
@@ -63,24 +57,24 @@ export default function Register() {
     let localyErrors = {}
 
     if (name.trim() === '')
-      localyErrors = { ...localyErrors, name: i18.t.fieldRequired }
+      localyErrors = { ...localyErrors, name: 'Campo requerido' }
     if (lastname.trim() === '')
-      localyErrors = { ...localyErrors, lastname: i18.t.fieldRequired }
+      localyErrors = { ...localyErrors, lastname: 'Campo requerido' }
     if (document.trim() === '')
-      localyErrors = { ...localyErrors, document: i18.t.fieldRequired }
+      localyErrors = { ...localyErrors, document: 'Campo requerido' }
     if (phone.trim() === '')
-      localyErrors = { ...localyErrors, phone: i18.t.fieldRequired }
+      localyErrors = { ...localyErrors, phone: 'Campo requerido' }
     if (email.trim() === '')
-      localyErrors = { ...localyErrors, email: i18.t.fieldRequired }
+      localyErrors = { ...localyErrors, email: 'Campo requerido' }
 
     if (password.trim() === '')
-      localyErrors = { ...localyErrors, password: i18.t.fieldRequired }
+      localyErrors = { ...localyErrors, password: 'Campo requerido' }
     if (passwordConfirm.trim() === '')
-      localyErrors = { ...localyErrors, passwordConfirm: i18.t.fieldRequired }
+      localyErrors = { ...localyErrors, passwordConfirm: 'Campo requerido' }
     if (password !== passwordConfirm)
       localyErrors = {
         ...localyErrors,
-        passwordConfirm: i18.t.passwordsDoNotMatch,
+        passwordConfirm: 'Las contraseñas no coinciden',
       }
     setErrors(localyErrors)
 
@@ -234,7 +228,7 @@ export default function Register() {
             ref={refs.title}
           >
             <Text className="text-4xl text-center tracking-widest">
-              {i18.t.titleRegister}
+              Registro
             </Text>
           </View>
 
@@ -244,7 +238,7 @@ export default function Register() {
               ref={refs.name}
             >
               <Text style={styles.label}>
-                {i18.t.labelName}
+                Nombre
                 <Text className="text-red-500"> *</Text>
               </Text>
               <TextInput
@@ -266,7 +260,7 @@ export default function Register() {
               ref={refs.lastname}
             >
               <Text style={styles.label}>
-                {i18.t.labelLastname}
+                Apellido
                 <Text className="text-red-500"> *</Text>
               </Text>
               <TextInput
@@ -287,7 +281,7 @@ export default function Register() {
               style={styles.inputContainer}
               ref={refs.typeDocument}
             >
-              <Text style={styles.label}>{i18.t.labelTypeDocument}</Text>
+              <Text style={styles.label}>Tipo de documento</Text>
               <View style={styles.input}>
                 <Picker
                   selectedValue={typeDocumentCode}
@@ -323,7 +317,7 @@ export default function Register() {
               ref={refs.document}
             >
               <Text style={styles.label}>
-                {i18.t.labelDocument}
+                Documento
                 <Text className="text-red-500"> *</Text>
               </Text>
               <TextInput
@@ -346,7 +340,7 @@ export default function Register() {
               ref={refs.phone}
             >
               <Text style={styles.label}>
-                {i18.t.labelPhone}
+                Telefono
                 <Text className="text-red-500"> *</Text>
               </Text>
               <TextInput
@@ -369,7 +363,7 @@ export default function Register() {
               ref={refs.email}
             >
               <Text style={styles.label}>
-                {i18.t.labelEmail}
+                Correo electronico
                 <Text className="text-red-500"> *</Text>
               </Text>
               <TextInput
@@ -392,7 +386,7 @@ export default function Register() {
               ref={refs.password}
             >
               <Text style={styles.label}>
-                {i18.t.labelPassword}
+                Contraseña
                 <Text className="text-red-500"> *</Text>
               </Text>
               <TextInput
@@ -415,7 +409,7 @@ export default function Register() {
               ref={refs.passwordConfirm}
             >
               <Text style={styles.label}>
-                {i18.t.labelConfirmPassword}
+                Confirmar contraseña
                 <Text className="text-red-500"> *</Text>
               </Text>
               <TextInput
@@ -453,7 +447,7 @@ export default function Register() {
                   setIsVisible(!isVisible)
                 }}
               >
-                {i18.t.showPassword}
+                Mostrar contraseña
               </Text>
             </View>
           </View>
@@ -469,7 +463,7 @@ export default function Register() {
               }}
               onPress={!isLoading ? handleClickRegister : null}
             >
-              <Text className="text-lg">{i18.t.butonRegister}</Text>
+              <Text className="text-lg">Registro</Text>
               {isLoading && (
                 <ActivityIndicator
                   className="absolute right-0 mr-2"

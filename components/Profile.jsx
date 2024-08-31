@@ -1,48 +1,66 @@
 import { useEffect, useState } from 'react'
-import { Image, StyleSheet, Text, View } from 'react-native'
+import { Image, Linking, Pressable, StyleSheet, Text, View } from 'react-native'
 import { UserBaseLogo } from '../icons/UserBaseLogo.jsx'
 import { doFetch, METHODS } from '../lib/api.js'
 import { useUser } from '../context/user.js'
-import { useLocales } from 'expo-localization'
-import { getI18n, LANGUAGES } from '../lib/lenguages.js'
+import { ALERT_TYPE, Dialog } from 'react-native-alert-notification'
+import { useConfig } from '../context/config.js'
+import { Shadow } from 'react-native-shadow-2'
+import { findConfig } from '../lib/config'
 
 export function Profile() {
   const { user } = useUser()
-  const locales = useLocales()
-  const { languageCode } = locales[0]
-  const i18n = getI18n(languageCode)
-  const [i18, setI18] = useState(i18n)
+  const { config } = useConfig()
+  const color = findConfig({ configs: config, code: 'Color' }).value
 
-  const codeRole = i18n.t[user?.roleUser.code]
   const userLetter = user?.name.split(' ')[0].charAt(0)
 
+  useEffect(() => {})
+
+  function handleClickEditProfile() {
+    Dialog.show({
+      type: ALERT_TYPE.INFO,
+      textBody:
+        'Para ver o editar los datos de tu perfil debes hacerlo desde el sitio web de votaciones. \n Puedes usar las mismas credenciales que usaste para acceder a esta aplicación.',
+      button: 'Ir al sitio web',
+      onPressButton: () => {
+        Linking.openURL(process.env.EXPO_PUBLIC_APP_WEB)
+      },
+    })
+  }
+
   return (
-    <View className="bg-gray-300/60 p-3 flex-row gap-4 items-center">
-      <View
-        className={`rounded-full overflow-hidden bg-gray-400 w-12 h-12 items-center justify-center`}
-      >
-        <UserBaseLogo letter={userLetter} />
-      </View>
-      {/*  */}
-      <View className="">
-        <View style={styles.containerLabelText}>
-          <Text style={styles.labelTextInformation}>
-            {user?.name} {user?.lastname}
-          </Text>
+    <Shadow>
+      <Pressable onPress={handleClickEditProfile}>
+        <View
+          className="bg-gray-300/40 px-3 py-6 flex-row gap-4 items-center"
+          style={{ backgroundColor: `${color}cc` }}
+        >
+          <View className="rounded-full overflow-hidden w-12 h-12 items-center justify-center bg-[#ffe6d9] bg-opacity-80">
+            <UserBaseLogo letter={userLetter} />
+          </View>
+          {/*  */}
+          <View className="">
+            <View style={styles.containerLabelText}>
+              <Text style={styles.labelTextInformation}>
+                {user?.name} {user?.lastname}
+              </Text>
+            </View>
+            <View style={styles.containerLabelText}>
+              <Text style={styles.labelTextInformation}>{user?.document}</Text>
+            </View>
+            <View style={styles.containerLabelText}>
+              <Text style={styles.labelTextInformation}>{user?.email}</Text>
+            </View>
+            <View style={styles.containerLabelText}>
+              <Text style={styles.labelTextInformation}>
+                Rol : {user?.roleUser.code}
+              </Text>
+            </View>
+          </View>
         </View>
-        <View style={styles.containerLabelText}>
-          <Text style={styles.labelTextInformation}>{user?.document}</Text>
-        </View>
-        <View style={styles.containerLabelText}>
-          <Text style={styles.labelTextInformation}>{user?.email}</Text>
-        </View>
-        <View style={styles.containerLabelText}>
-          <Text style={styles.labelTextInformation}>
-            {i18.t.labelRole}: {codeRole}
-          </Text>
-        </View>
-      </View>
-    </View>
+      </Pressable>
+    </Shadow>
   )
 }
 

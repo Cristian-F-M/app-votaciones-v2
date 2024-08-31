@@ -44,7 +44,7 @@ export default function Login() {
   const router = useRouter()
   const [isVisible, setIsVisible] = useState(false)
   const [refreshing, setRefreshing] = useState(false)
-  const { i18n, config } = useConfig()
+  const { config } = useConfig()
 
   const onRefresh = useCallback(() => {
     setRefreshing(true)
@@ -58,9 +58,9 @@ export default function Login() {
   function handleClickLogin() {
     async function Login() {
       if (document.trim() === '')
-        return setErrors({ ...errors, document: i18n.t.fieldRequired })
+        return setErrors({ ...errors, document: 'Campo requerido' })
       if (password.trim() === '')
-        return setErrors({ ...errors, password: i18n.t.fieldRequired })
+        return setErrors({ ...errors, password: 'Campo requerido' })
 
       setIsLoading(true)
 
@@ -150,13 +150,13 @@ export default function Login() {
               />
             </View>
             <Text className="text-4xl text-center tracking-widest">
-              {i18n.t.titleLogin}
+              Inicio de sesión
             </Text>
           </View>
 
           <View>
             <View style={styles.inputContainer}>
-              <Text style={styles.label}>{i18n.t.labelTypeDocument}</Text>
+              <Text style={styles.label}>Tipo de documento</Text>
               <View style={styles.input}>
                 <Picker
                   selectedValue={typeDocumentCode}
@@ -189,7 +189,7 @@ export default function Login() {
 
             <View style={styles.inputContainer}>
               <Text style={styles.label}>
-                {i18n.t.labelDocument}
+                Documento
                 <Text className="text-red-500"> *</Text>
               </Text>
               <TextInput
@@ -208,7 +208,7 @@ export default function Login() {
             </View>
             <View style={styles.inputContainer}>
               <Text style={styles.label}>
-                {i18n.t.labelPassword}
+                Contraseña
                 <Text className="text-red-500"> *</Text>
               </Text>
               <TextInput
@@ -245,7 +245,7 @@ export default function Login() {
                   setIsVisible(!isVisible)
                 }}
               >
-                {i18n.t.showPassword}
+                Mostrar contraseña
               </Text>
             </View>
             <View>
@@ -258,7 +258,7 @@ export default function Login() {
                   color: `#000000${isLoading ? '80' : ''}`,
                 }}
               >
-                <Text className="text-lg">{i18n.t.butonLogin}</Text>
+                <Text className="text-lg">Iniciar sesión</Text>
                 {isLoading && (
                   <ActivityIndicator
                     className="absolute right-0 mr-2"
@@ -276,7 +276,7 @@ export default function Login() {
             >
               <Pressable>
                 <Text className="text-center text-[15px] text-[#4f00ef] underline">
-                  {i18n.t.butonRegister}
+                  Registro
                 </Text>
               </Pressable>
             </Link>
@@ -286,7 +286,7 @@ export default function Login() {
             >
               <Pressable>
                 <Text className="text-center text-[15px] text-[#4f00ef] underline">
-                  {i18n.t.butonResetPassword}
+                  Restablecer contraseña
                 </Text>
               </Pressable>
             </Link>
