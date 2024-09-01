@@ -33,6 +33,15 @@ import BouncyCheckbox from 'react-native-bouncy-checkbox'
 import { useConfig } from '../../context/config'
 import { findConfig } from '../../lib/config'
 import { scrollSmooth } from '../../lib/scrollSmooth'
+import {
+  DROPDOWN_ALERT_TYPES,
+  DROPDOWN_ALERT_COLORS,
+} from '../../lib/dropDownAlertTypes'
+import DropdownAlert, {
+  DropdownAlertData,
+  DropdownAlertType,
+} from 'react-native-dropdownalert'
+import { DropDownAlert, showAlert } from '../../components/DropDownAlert'
 
 export default function Login() {
   const [Color, setColor] = useState()
@@ -91,23 +100,21 @@ export default function Login() {
       await new Promise(resolve => setTimeout(resolve, 500))
 
       if (res.error) {
-        setIsLoading(false)
-        Toast.show({
-          type: ALERT_TYPE.DANGER,
+        showAlert({
+          message: res.error,
+          type: DropdownAlertType.Error,
           title: 'Error',
-          textBody: `${res.error}, please try again`,
         })
       }
 
       if (!res.ok) {
-        setIsLoading(false)
-        return Toast.show({
-          type: ALERT_TYPE.WARNING,
-          textBody: res.message,
-        })
+        showAlert({ message: res.message, type: DropdownAlertType.Warn })
       }
 
       setIsLoading(false)
+
+      if (!res.ok || res.error) return
+
       setItemStorage({
         name: 'token',
         value: res.token,
@@ -139,7 +146,11 @@ export default function Login() {
 
   return (
     <Screen>
-      <StatusBar style="auto" />
+      <DropDownAlert />
+      <StatusBar
+        style="dark"
+        backgroundColor="#f2f2f2"
+      />
       <Stack.Screen
         options={{
           headerShown: false,

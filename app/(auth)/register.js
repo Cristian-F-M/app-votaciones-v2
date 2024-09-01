@@ -15,12 +15,9 @@ import { doFetch, getItemStorage, METHODS, setItemStorage } from '../../lib/api'
 import { Picker } from '@react-native-picker/picker'
 import { Stack, useRouter } from 'expo-router'
 import { scrollSmooth } from '../../lib/scrollSmooth'
-import {
-  ALERT_TYPE,
-  Toast,
-  AlertNotificationRoot,
-} from 'react-native-alert-notification'
 import BouncyCheckbox from 'react-native-bouncy-checkbox'
+import { DropDownAlert, showAlert } from '../../components/DropDownAlert'
+import { DropdownAlertType } from 'react-native-dropdownalert'
 
 export default function Register() {
   const [Color, setColor] = useState('')
@@ -114,10 +111,10 @@ export default function Register() {
 
       setIsLoading(false)
       if (res.error) {
-        return Toast.show({
-          type: ALERT_TYPE.DANGER,
+        return showAlert({
+          message: res.error,
+          type: DropdownAlertType.Error,
           title: 'Error',
-          textBody: `${res.error}, please try again`,
         })
       }
 
@@ -136,10 +133,10 @@ export default function Register() {
       // eslint-disable-next-line no-undef
       await new Promise(resolve => setTimeout(resolve, 500))
 
-      Toast.show({
-        type: ALERT_TYPE.SUCCESS,
-        title: 'Success',
-        textBody: 'Registro exitoso',
+      showAlert({
+        message: 'Registro exitoso',
+        type: DropdownAlertType.Success,
+        title: 'Exitoso',
       })
 
       // eslint-disable-next-line no-undef
@@ -199,6 +196,7 @@ export default function Register() {
 
   return (
     <Screen>
+      <DropDownAlert />
       <Stack.Screen
         options={{
           headerShown: true,
