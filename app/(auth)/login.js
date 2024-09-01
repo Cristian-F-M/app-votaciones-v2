@@ -12,7 +12,7 @@ import {
 import { Screen } from '../../components/Screen'
 import { Picker } from '@react-native-picker/picker'
 import LogoSena from '../../icons/Logo'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import {
   doFetch,
   getItemStorage,
@@ -32,6 +32,7 @@ import { useRouter } from 'expo-router'
 import BouncyCheckbox from 'react-native-bouncy-checkbox'
 import { useConfig } from '../../context/config'
 import { findConfig } from '../../lib/config'
+import { scrollSmooth } from '../../lib/scrollSmooth'
 
 export default function Login() {
   const [Color, setColor] = useState()
@@ -45,6 +46,13 @@ export default function Login() {
   const [isVisible, setIsVisible] = useState(false)
   const [refreshing, setRefreshing] = useState(false)
   const { config } = useConfig()
+  const refPrueba = useRef()
+
+  const refs = {
+    document: useRef(null),
+    password: useRef(null),
+    scrollView: useRef(null),
+  }
 
   const onRefresh = useCallback(() => {
     setRefreshing(true)
@@ -56,12 +64,21 @@ export default function Login() {
   }, [router])
 
   function handleClickLogin() {
-    async function Login() {
-      if (document.trim() === '')
-        return setErrors({ ...errors, document: 'Campo requerido' })
-      if (password.trim() === '')
-        return setErrors({ ...errors, password: 'Campo requerido' })
+    const localyErrors = {}
 
+    if (document.trim() === '') localyErrors.document = 'Campo requerido'
+    if (password.trim() === '') localyErrors.password = 'Campo requerido'
+
+    setErrors(localyErrors)
+
+    if (localyErrors.document) return scrollSmooth(refPrueba, refs.scrollView)
+    if (localyErrors.password)
+      return scrollSmooth(refs.password, refs.scrollView)
+
+    if (localyErrors.length > 0) return
+    Login()
+
+    async function Login() {
       setIsLoading(true)
 
       const res = await doFetch({
@@ -98,8 +115,6 @@ export default function Login() {
       })
       router.replace('apprentice/')
     }
-
-    Login()
   }
 
   useEffect(() => {
@@ -132,6 +147,7 @@ export default function Login() {
       />
 
       <ScrollView
+        ref={refs.scrollView}
         className="p-5 flex-1"
         refreshControl={
           <RefreshControl
@@ -187,7 +203,10 @@ export default function Login() {
               </View>
             </View>
 
-            <View style={styles.inputContainer}>
+            <View
+              style={styles.inputContainer}
+              ref={refPrueba}
+            >
               <Text style={styles.label}>
                 Documento
                 <Text className="text-red-500"> *</Text>
@@ -206,7 +225,10 @@ export default function Login() {
                 <Text style={styles.errorMessage}>{errors.document}</Text>
               )}
             </View>
-            <View style={styles.inputContainer}>
+            <View
+              style={styles.inputContainer}
+              ref={refs.password}
+            >
               <Text style={styles.label}>
                 Contraseña
                 <Text className="text-red-500"> *</Text>
