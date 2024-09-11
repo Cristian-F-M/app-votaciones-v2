@@ -13,12 +13,12 @@ export async function showAlert({
   })
 }
 
-export function DropDownAlert() {
+export function DropDownAlert({ dismissInterval = 1000 }) {
   return (
     <DropdownAlert
       alert={func => (alert = func)}
       translucent={true}
-      dismissInterval={1000}
+      dismissInterval={dismissInterval}
       inactiveStatusBarBackgroundColor="#f2f2f2"
       inactiveStatusBarStyle="dark-content"
     />
