@@ -1,4 +1,4 @@
-import { ActivityIndicator, Text, View } from 'react-native'
+import { ActivityIndicator, BackHandler, Text, View } from 'react-native'
 import LogoSena from '../icons/Logo'
 import { useEffect, useState } from 'react'
 import { getItemStorage, doFetch, METHODS } from '../lib/api.js'
@@ -7,13 +7,33 @@ import { Screen } from './Screen.jsx'
 import { StatusBar } from 'expo-status-bar'
 import { useConfig } from '../context/config.js'
 import { findConfig } from '../lib/config'
+import { ALERT_TYPE, Dialog } from 'react-native-alert-notification'
+import { useNetInfo } from '@react-native-community/netinfo'
 
 export function Main() {
   const [Color, setColor] = useState('#ff6719')
   const router = useRouter()
   const { config } = useConfig()
+  const netInfo = useNetInfo()
+
+  function closeApp() {
+    BackHandler.exitApp()
+  }
 
   useEffect(() => {
+    const { isConnected } = netInfo
+    if (isConnected !== null && !isConnected) {
+      return Dialog.show({
+        type: ALERT_TYPE.DANGER,
+        title: 'Error de conexión',
+        textBody:
+          'Necesitas estar conectado a intenet para acceder a la apliacción',
+        button: 'Aceptar',
+        onPressButton: () => closeApp(),
+        closeOnOverlayTap: false,
+      })
+    }
+
     async function getConfigs() {
       const colorStoraged = await getItemStorage({ name: 'color' })
 
@@ -61,8 +81,8 @@ export function Main() {
     <>
       <Screen className="flex-1 items-center justify-center gap-y-24">
         <StatusBar
-          translucent={true}
-          backgroundColor={'transparent'}
+          style="dark"
+          backgroundColor="#f2f2f2"
         />
         <Stack.Screen options={{ headerShown: false }} />
         <View className="items-center">
