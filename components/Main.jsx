@@ -28,6 +28,17 @@ export function Main() {
 
       const res = await doFetch({ url, method: METHODS.GET })
 
+      if (res.error) {
+        return Dialog.show({
+          type: ALERT_TYPE.DANGER,
+          // title: 'Error de conexión',
+          textBody: 'Un error ha ocurrido, por favor intenta mas tarde',
+          button: 'Aceptar',
+          onPressButton: () => closeApp(),
+          closeOnOverlayTap: false,
+        })
+      }
+
       if (res.ok) {
         router.replace('apprentice/')
         return
