@@ -8,6 +8,7 @@ import {
   Alert,
   ScrollView,
   RefreshControl,
+  BackHandler,
 } from 'react-native'
 import { Screen } from '../../components/Screen'
 import { Picker } from '@react-native-picker/picker'
@@ -26,6 +27,7 @@ import { StatusBar } from 'expo-status-bar'
 import {
   ALERT_TYPE,
   AlertNotificationRoot,
+  Dialog,
   Toast,
 } from 'react-native-alert-notification'
 import { useRouter } from 'expo-router'
@@ -42,6 +44,7 @@ import DropdownAlert, {
   DropdownAlertType,
 } from 'react-native-dropdownalert'
 import { DropDownAlert, showAlert } from '../../components/DropDownAlert'
+import { useNetInfo } from '@react-native-community/netinfo'
 
 export default function Login() {
   const [Color, setColor] = useState()
@@ -56,6 +59,7 @@ export default function Login() {
   const [refreshing, setRefreshing] = useState(false)
   const { config } = useConfig()
   const refPrueba = useRef()
+  const netInfo = useNetInfo()
 
   const refs = {
     document: useRef(null),
@@ -142,11 +146,25 @@ export default function Login() {
 
     getConfigs()
     getTypesDocuments()
-  }, [config])
+  }, [config, netInfo])
+
+  useEffect(() => {
+    const { type } = netInfo
+
+    if (type !== 'wifi') {
+      // eslint-disable-next-line no-undef
+      setTimeout(() => {
+        showAlert({
+          message: 'Estás accediendo a la aplicación con datos móviles',
+          type: DropdownAlertType.Info,
+        })
+      }, 200)
+    }
+  }, [netInfo])
 
   return (
     <Screen>
-      <DropDownAlert />
+      <DropDownAlert dismissInterval={2000} />
       <StatusBar
         style="dark"
         backgroundColor="#f2f2f2"
@@ -156,7 +174,6 @@ export default function Login() {
           headerShown: false,
         }}
       />
-
       <ScrollView
         ref={refs.scrollView}
         className="p-5 flex-1"
