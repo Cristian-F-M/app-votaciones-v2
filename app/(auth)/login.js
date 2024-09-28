@@ -45,6 +45,12 @@ import DropdownAlert, {
 } from 'react-native-dropdownalert'
 import { DropDownAlert, showAlert } from '../../components/DropDownAlert'
 import { useNetInfo } from '@react-native-community/netinfo'
+import {
+  hasHardwareAsync,
+  isEnrolledAsync,
+  authenticateAsync,
+} from 'expo-local-authentication'
+import Finger from '../../icons/Finger'
 
 export default function Login() {
   const [Color, setColor] = useState()
@@ -57,9 +63,22 @@ export default function Login() {
   const router = useRouter()
   const [isVisible, setIsVisible] = useState(false)
   const [refreshing, setRefreshing] = useState(false)
+  const [isBiometricsAvailable, setIsBiometricsAvailable] = useState(false)
   const { config } = useConfig()
   const refPrueba = useRef()
   const netInfo = useNetInfo()
+  const [isBiometricsActive, setIsBiometricsActive] = useState(false)
+
+  useEffect(() => {
+    async function getIsBiometricsActive() {
+      const isBiometricsActive = await getItemStorage({
+        name: 'isBiometricsActive',
+      })
+      setIsBiometricsActive(isBiometricsActive || false)
+    }
+
+    getIsBiometricsActive()
+  }, [])
 
   const refs = {
     document: useRef(null),
@@ -128,6 +147,60 @@ export default function Login() {
     }
   }
 
+  async function handleClickLoginBiometrics() {
+    const isBiometricsActive = await getItemStorage({
+      name: 'isBiometricsActive',
+    })
+
+    if (!isBiometricsActive) {
+      return showAlert({
+        message:
+          'Debes activar la autenticación de huella dactilar desde la aplicación.',
+        type: DropdownAlertType.Info,
+      })
+    }
+
+    const biometricResult = await authenticateAsync({
+      promptMessage: 'Inicia sesión usando huella dactilar',
+      fallbackLabel: 'Inicia sesión con contraseña',
+    })
+    const tokenBiometrics = await getItemStorage({ name: 'tokenBiometrics' })
+
+    const { success } = biometricResult
+    if (success) {
+      const res = await doFetch({
+        url: `${process.env.EXPO_PUBLIC_API_URL}/LoginBiometrics/`,
+        method: METHODS.POST,
+        body: { tokenBiometrics },
+      })
+
+      if (res.error) {
+        showAlert({
+          message: res.error,
+          type: DropdownAlertType.Error,
+          title: 'Error',
+        })
+        return
+      }
+
+      if (!res.ok) {
+        showAlert({ message: res.message, type: DropdownAlertType.Warn })
+        return
+      }
+
+      router.replace('apprentice/')
+    }
+  }
+
+  useEffect(() => {
+    async function handleBiometrics() {
+      const biometricRecords = await isEnrolledAsync()
+      setIsBiometricsAvailable(biometricRecords)
+    }
+
+    handleBiometrics()
+  }, [])
+
   useEffect(() => {
     async function getConfigs() {
       const colorStoraged = await getItemStorage({ name: 'color' })
@@ -151,7 +224,7 @@ export default function Login() {
   useEffect(() => {
     const { type } = netInfo
 
-    if (type !== 'wifi') {
+    if (type !== 'wifi' && type == null) {
       // eslint-disable-next-line no-undef
       setTimeout(() => {
         showAlert({
@@ -276,29 +349,52 @@ export default function Login() {
               )}
             </View>
 
-            <View className="flex-row items-center gap-x-2 -mt-2">
-              <BouncyCheckbox
-                size={24}
-                fillColor={Color}
-                unFillColor="#FFFFFF"
-                iconStyle={{ borderColor: Color }}
-                innerIconStyle={{ borderWidth: 2 }}
-                disableText
-                isChecked={isVisible}
-                onPress={isChecked => {
-                  setIsVisible(isChecked)
-                }}
-              />
-              <Text
-                className="text-sm"
-                onPress={() => {
-                  setIsVisible(!isVisible)
-                }}
-              >
-                Mostrar contraseña
-              </Text>
+            <View className="flex flex-row justify-between items-center w-full">
+              <View className="flex flex-row items-center justify-center gap-x-2 -mt-2">
+                <BouncyCheckbox
+                  size={24}
+                  fillColor={Color}
+                  unFillColor="#FFFFFF"
+                  iconStyle={{ borderColor: Color }}
+                  innerIconStyle={{ borderWidth: 2 }}
+                  disableText
+                  isChecked={isVisible}
+                  onPress={isChecked => {
+                    setIsVisible(isChecked)
+                  }}
+                />
+                <Text
+                  className="text-sm"
+                  onPress={() => {
+                    setIsVisible(!isVisible)
+                  }}
+                >
+                  Mostrar contraseña
+                </Text>
+              </View>
+              <View>
+                {isBiometricsAvailable && (
+                  <Pressable onPress={handleClickLoginBiometrics}>
+                    <View
+                      className="flex p-1 w-[42px] h-[42px] items-center justify-center rounded-full bg-white"
+                      style={{
+                        backgroundColor: isBiometricsActive
+                          ? Color
+                          : `${Color}80`,
+                      }}
+                    >
+                      <Finger
+                        style={{ color: '#fff' }}
+                        width={32}
+                        height={32}
+                      />
+                    </View>
+                  </Pressable>
+                )}
+              </View>
             </View>
-            <View>
+
+            <View clasName="flex flex-row justify-between items-center w-full">
               <Pressable
                 onPress={!isLoading ? handleClickLogin : null}
                 className={`rounded-lg px-4 py-2 mt-6 flex-row justify-center gap-x-3 relative items-center active:opacity-60`}
