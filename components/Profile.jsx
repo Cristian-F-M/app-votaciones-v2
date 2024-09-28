@@ -30,7 +30,7 @@ export function Profile() {
   }
 
   return (
-    <Shadow>
+    <Shadow className="flex-1 w-full">
       <Pressable onPress={handleClickEditProfile}>
         <View
           className="bg-gray-300/40 px-3 py-6 flex-row gap-4 items-center"
