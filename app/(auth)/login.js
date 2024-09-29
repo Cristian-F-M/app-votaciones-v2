@@ -164,7 +164,9 @@ export default function Login() {
       promptMessage: 'Inicia sesión usando huella dactilar',
       fallbackLabel: 'Inicia sesión con contraseña',
     })
-    const tokenBiometrics = await getItemStorage({ name: 'tokenBiometrics' })
+    const { value: tokenBiometrics } = await getItemStorage({
+      name: 'tokenBiometrics',
+    })
 
     const { success } = biometricResult
     if (success) {
@@ -187,6 +189,12 @@ export default function Login() {
         showAlert({ message: res.message, type: DropdownAlertType.Warn })
         return
       }
+
+      setItemStorage({
+        name: 'token',
+        value: res.token,
+        expires: new Date(Date.now() + 1000 * 60 * 60 * 12),
+      })
 
       router.replace('apprentice/')
     }
