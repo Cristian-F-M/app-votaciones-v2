@@ -11,14 +11,24 @@ export const ConfigProvider = ({ children }) => {
   }, [])
 
   async function getConfigs() {
-    const url = `${process.env.EXPO_PUBLIC_API_URL}/config/`
-    const res = await doFetch({ url, method: METHODS.GET })
+    const configs = await getItemStorage({ name: 'configs' })
 
-    if (res.error) return
+    if (!configs || new Date() > configs.expires) {
+      const url = `${process.env.EXPO_PUBLIC_API_URL}/config/`
+      const res = await doFetch({ url, method: METHODS.GET })
 
-    const { config: configs } = res
+      const { config, error } = res
+      if (error) return setConfig(configs.value)
 
-    setConfig(configs)
+      setConfig(config)
+      setItemStorage({
+        name: 'configs',
+        value: config,
+        expires: new Date(Date.now() + 1000 * 60 * 60 * 4),
+      })
+      return
+    }
+    setConfig(configs.value)
   }
 
   return (
