@@ -13,12 +13,19 @@ import {
 import OpenedMenu from '../../icons/OpenedMenu.jsx'
 import { Dimensions } from 'react-native'
 import { UserProvider } from '../../context/user.js'
+import { Link, router, usePathname } from 'expo-router'
 
 export default function ApprenticeLayout() {
   const [menuIsVisible, setMenuIsVisible] = useState(false)
   const [Color, setColor] = useState()
   const windowWidth = Dimensions.get('window').width
   const sideMenuPorcentage = (windowWidth * 80) / 100
+  const path = usePathname()
+
+  function handleClickHome() {
+    if (path === '/apprentice') return
+    router.replace('apprentice/')
+  }
 
   useEffect(() => {
     async function getConfigs() {
@@ -47,7 +54,7 @@ export default function ApprenticeLayout() {
       <SideMenu
         isOpen={menuIsVisible}
         menuPosition="right"
-        menu={<ApprenticeMenu />}
+        menu={<ApprenticeMenu setMenuIsVisible={setMenuIsVisible} />}
         onChange={isOpen => setMenuIsVisible(isOpen)}
         openMenuOffset={sideMenuPorcentage}
       >
@@ -57,6 +64,7 @@ export default function ApprenticeLayout() {
             headerTitle: '',
             headerLeft: () => (
               <LogoSena
+                onPress={handleClickHome}
                 width={45}
                 height={45}
                 style={{ fill: Color }}
