@@ -13,7 +13,10 @@ export async function showAlert({
   })
 }
 
-export function DropDownAlert({ dismissInterval = 1000 }) {
+export function DropDownAlert({
+  dismissInterval = 1000,
+  alertPosition = 'top',
+}) {
   return (
     <DropdownAlert
       alert={func => (alert = func)}
@@ -21,6 +24,8 @@ export function DropDownAlert({ dismissInterval = 1000 }) {
       dismissInterval={dismissInterval}
       inactiveStatusBarBackgroundColor="#f2f2f2"
       inactiveStatusBarStyle="dark-content"
+      alertPosition={alertPosition}
+      successImageSrc={require('../assets/success.png')}
     />
   )
 }
