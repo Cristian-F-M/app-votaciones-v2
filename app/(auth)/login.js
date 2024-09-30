@@ -211,12 +211,8 @@ export default function Login() {
 
   useEffect(() => {
     async function getConfigs() {
-      const colorStoraged = await getItemStorage({ name: 'color' })
-
-      if (!colorStoraged || new Date() > colorStoraged.expires) {
-        return setColor(findConfig({ configs: config, code: 'Color' }).value)
-      }
-      setColor(colorStoraged.value)
+      const { value: color } = findConfig({ configs: config, code: 'Color' })
+      setColor(color)
     }
 
     async function getTypesDocuments() {
