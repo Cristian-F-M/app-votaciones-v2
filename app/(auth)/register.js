@@ -106,9 +106,6 @@ export default function Register() {
         },
       })
 
-      // eslint-disable-next-line no-undef
-      await new Promise(resolve => setTimeout(resolve, 2000))
-
       setIsLoading(false)
       if (res.error) {
         return showAlert({
@@ -142,7 +139,7 @@ export default function Register() {
       // eslint-disable-next-line no-undef
       setTimeout(() => {
         router.replace('login')
-      }, 8000)
+      }, 2000)
     }
   }
 
