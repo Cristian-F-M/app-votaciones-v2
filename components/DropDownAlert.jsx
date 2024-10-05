@@ -26,6 +26,10 @@ export function DropDownAlert({
       inactiveStatusBarStyle="dark-content"
       alertPosition={alertPosition}
       successImageSrc={require('../assets/success.png')}
+      successColor={'#32a54a'}
+      dangerColor={'#cc3232'}
+      warningColor={'#cd853f'}
+      infoColor={'#2b73b6'}
     />
   )
 }
