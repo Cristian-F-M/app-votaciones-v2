@@ -143,6 +143,13 @@ export default function Login() {
         value: res.token,
         expires: new Date(Date.now() + 1000 * 60 * 60 * 12),
       })
+
+      if (isBiometricsActive) {
+        setItemStorage({
+          name: 'tokenBiometrics',
+          value: res.token,
+        })
+      }
       router.replace('apprentice/')
     }
   }
