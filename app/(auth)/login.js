@@ -5,51 +5,25 @@ import {
   TextInput,
   View,
   Pressable,
-  Alert,
   ScrollView,
   RefreshControl,
-  BackHandler,
 } from 'react-native'
 import { Screen } from '../../components/Screen'
 import { Picker } from '@react-native-picker/picker'
 import LogoSena from '../../icons/Logo'
 import { useCallback, useEffect, useRef, useState } from 'react'
-import {
-  doFetch,
-  getItemStorage,
-  METHODS,
-  removeItemStorage,
-  setItemStorage,
-} from '../../lib/api'
-import { useDebounce } from '../../lib/useDebounce'
+import { doFetch, getItemStorage, METHODS, setItemStorage } from '../../lib/api'
 import { Link, Stack } from 'expo-router'
 import { StatusBar } from 'expo-status-bar'
-import {
-  ALERT_TYPE,
-  AlertNotificationRoot,
-  Dialog,
-  Toast,
-} from 'react-native-alert-notification'
 import { useRouter } from 'expo-router'
 import BouncyCheckbox from 'react-native-bouncy-checkbox'
 import { useConfig } from '../../context/config'
 import { findConfig } from '../../lib/config'
 import { scrollSmooth } from '../../lib/scrollSmooth'
-import {
-  DROPDOWN_ALERT_TYPES,
-  DROPDOWN_ALERT_COLORS,
-} from '../../lib/dropDownAlertTypes'
-import DropdownAlert, {
-  DropdownAlertData,
-  DropdownAlertType,
-} from 'react-native-dropdownalert'
+import { DropdownAlertType } from 'react-native-dropdownalert'
 import { DropDownAlert, showAlert } from '../../components/DropDownAlert'
 import { useNetInfo } from '@react-native-community/netinfo'
-import {
-  hasHardwareAsync,
-  isEnrolledAsync,
-  authenticateAsync,
-} from 'expo-local-authentication'
+import { isEnrolledAsync, authenticateAsync } from 'expo-local-authentication'
 import Finger from '../../icons/Finger'
 
 export default function Login() {
