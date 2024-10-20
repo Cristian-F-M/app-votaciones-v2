@@ -21,6 +21,7 @@ import {
 import { DropDownAlert, showAlert } from '../../../components/DropDownAlert'
 import { DropdownAlertType } from 'react-native-dropdownalert'
 import { ALERT_TYPE, Toast } from 'react-native-alert-notification'
+import { RowConfig } from '../../../components/RowConfig'
 
 export default function Config() {
   const { config } = useConfig()
@@ -123,22 +124,24 @@ export default function Config() {
         <ScrollView className="mt-3 flex-1">
           <CardConfig title="Inicio de sesión">
             {isBiometricsAvailable && (
-              <View className="flex flex-row justify-between items-center w-full">
-                <View>
-                  <Text>Activar inicio con huella</Text>
-                </View>
-                <View>
-                  <Switch
-                    trackColor={{ false: '#767577', true: value }}
-                    thumbColor="white"
-                    onValueChange={() => {
-                      setIsBiometricsActive(!isBiometricsActive)
-                    }}
-                    onChange={activateBiometrics}
-                    value={isBiometricsActive}
-                  />
-                </View>
-              </View>
+              <>
+                <RowConfig>
+                  <View>
+                    <Text>Activar inicio con huella</Text>
+                  </View>
+                  <View>
+                    <Switch
+                      trackColor={{ false: '#767577', true: value }}
+                      thumbColor="white"
+                      onValueChange={() => {
+                        setIsBiometricsActive(!isBiometricsActive)
+                      }}
+                      onChange={activateBiometrics}
+                      value={isBiometricsActive}
+                    />
+                  </View>
+                </RowConfig>
+              </>
             )}
           </CardConfig>
         </ScrollView>
