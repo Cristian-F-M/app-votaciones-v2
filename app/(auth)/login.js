@@ -7,6 +7,7 @@ import {
   Pressable,
   ScrollView,
   RefreshControl,
+  BackHandler,
 } from 'react-native'
 import { Screen } from '../../components/Screen'
 import { Picker } from '@react-native-picker/picker'
@@ -25,6 +26,7 @@ import { DropDownAlert, showAlert } from '../../components/DropDownAlert'
 import { useNetInfo } from '@react-native-community/netinfo'
 import { isEnrolledAsync, authenticateAsync } from 'expo-local-authentication'
 import Finger from '../../icons/Finger'
+import { ALERT_TYPE, Dialog } from 'react-native-alert-notification'
 
 export default function Login() {
   const [Color, setColor] = useState()
@@ -128,6 +130,10 @@ export default function Login() {
     }
   }
 
+  function closeApp() {
+    BackHandler.exitApp()
+  }
+
   async function handleClickLoginBiometrics() {
     const isBiometricsActive = await getItemStorage({
       name: 'isBiometricsActive',
@@ -199,6 +205,17 @@ export default function Login() {
     async function getTypesDocuments() {
       const url = `${process.env.EXPO_PUBLIC_API_URL}/typeDocument/`
       const res = await doFetch({ url, method: METHODS.GET })
+
+      if (res.error) {
+        return Dialog.show({
+          type: ALERT_TYPE.DANGER,
+          // title: 'Error de conexión',
+          textBody: 'Un error ha ocurrido, por favor intenta mas tarde',
+          button: 'Aceptar',
+          onPressButton: () => closeApp(),
+          closeOnOverlayTap: false,
+        })
+      }
       setTypesDocuments(res.typesDocuments)
     }
 
