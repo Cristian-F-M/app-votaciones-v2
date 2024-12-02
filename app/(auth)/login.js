@@ -13,7 +13,13 @@ import { Screen } from '../../components/Screen'
 import { Picker } from '@react-native-picker/picker'
 import LogoSena from '../../icons/Logo'
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { doFetch, getItemStorage, METHODS, setItemStorage } from '../../lib/api'
+import {
+  doFetch,
+  getConfigs,
+  getItemStorage,
+  METHODS,
+  setItemStorage,
+} from '../../lib/api'
 import { Link, Stack } from 'expo-router'
 import { StatusBar } from 'expo-status-bar'
 import { useRouter } from 'expo-router'
@@ -47,9 +53,8 @@ export default function Login() {
 
   useEffect(() => {
     async function getIsBiometricsActive() {
-      const isBiometricsActive = await getItemStorage({
-        name: 'isBiometricsActive',
-      })
+      const { isBiometricsActive } = await getConfigs()
+      console.log(isBiometricsActive)
       setIsBiometricsActive(isBiometricsActive || false)
     }
 
@@ -135,9 +140,7 @@ export default function Login() {
   }
 
   async function handleClickLoginBiometrics() {
-    const isBiometricsActive = await getItemStorage({
-      name: 'isBiometricsActive',
-    })
+    const { isBiometricsActive } = await getConfigs()
 
     if (!isBiometricsActive) {
       return showAlert({
