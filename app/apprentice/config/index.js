@@ -5,7 +5,7 @@ import { Stack } from 'expo-router'
 import { View } from 'react-native'
 import ArrowLeft from '../../../icons/ArrowLeft'
 import { CardConfig } from '../../../components/CardConfig'
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { useConfig } from '../../../context/config'
 import { findConfig } from '../../../lib/config'
 import {
@@ -14,8 +14,11 @@ import {
   authenticateAsync,
 } from 'expo-local-authentication'
 import {
+  getConfigs,
   getItemStorage,
+  removeConfig,
   removeItemStorage,
+  saveConfig,
   setItemStorage,
 } from '../../../lib/api'
 import { DropDownAlert, showAlert } from '../../../components/DropDownAlert'
@@ -28,6 +31,12 @@ export default function Config() {
   const { value } = findConfig({ configs: config, code: 'Color' })
   const [isBiometricsActive, setIsBiometricsActive] = useState(false)
   const [isBiometricsAvailable, setIsBiometricsAvailable] = useState(false)
+  const [configs, setConfigs] = useState({})
+
+  const getStoragedConfigs = useCallback(async () => {
+    const configs = await getConfigs()
+    setConfigs(configs)
+  }, [])
 
   useEffect(() => {
     async function getIsBiometricsAvailable() {
@@ -44,9 +53,11 @@ export default function Config() {
       setIsBiometricsActive(value || false)
     }
 
+    getStoragedConfigs()
+
     getIsBiometricsAvailable()
     getIsBiometricsActive()
-  }, [])
+  }, [getStoragedConfigs])
 
   function handleCliclHome() {
     router.navigate('/apprentice/')
@@ -54,14 +65,9 @@ export default function Config() {
 
   async function activateBiometrics() {
     if (isBiometricsActive) {
-      console.log('desactivar')
-      removeItemStorage({
-        name: 'isBiometricsActive',
-      })
+      removeConfig('isBiometricsActive')
+      removeConfig('tokenBiometrics')
 
-      removeItemStorage({
-        name: 'tokenBiometrics',
-      })
       showAlert({
         message: 'Se desactivo la autenticación de huella dactilar',
         type: DropdownAlertType.Success,
@@ -77,22 +83,13 @@ export default function Config() {
 
     const { success } = biometricResult
 
-    // eslint-disable-next-line no-undef
-    if (!success) {
-      setIsBiometricsActive(false)
-    }
+    if (!success) setIsBiometricsActive(false)
 
     const { value: token } = await getItemStorage({ name: 'token' })
 
-    setItemStorage({
-      name: 'isBiometricsActive',
-      value: true,
-    })
+    saveConfig('isBiometricsActive', true)
+    saveConfig('tokenBiometrics', token)
 
-    setItemStorage({
-      name: 'tokenBiometrics',
-      value: token,
-    })
     showAlert({
       message: 'Activaste correctamente la autenticación de huella dactilar',
       type: DropdownAlertType.Success,
@@ -123,7 +120,7 @@ export default function Config() {
         />
         <ScrollView className="mt-3 flex-1">
           <CardConfig title="Inicio de sesión">
-            {isBiometricsAvailable && (
+            {configs.isBiometricsAvailable && (
               <>
                 <RowConfig>
                   <View>
@@ -137,7 +134,7 @@ export default function Config() {
                         setIsBiometricsActive(!isBiometricsActive)
                       }}
                       onChange={activateBiometrics}
-                      value={isBiometricsActive}
+                      value={configs.isBiometricsActive || isBiometricsActive}
                     />
                   </View>
                 </RowConfig>
