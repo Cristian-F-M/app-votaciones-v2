@@ -47,7 +47,6 @@ export default function Login() {
   const [refreshing, setRefreshing] = useState(false)
   const [isBiometricsAvailable, setIsBiometricsAvailable] = useState(false)
   const { config } = useConfig()
-  const refPrueba = useRef()
   const netInfo = useNetInfo()
   const [isBiometricsActive, setIsBiometricsActive] = useState(false)
 
@@ -84,7 +83,8 @@ export default function Login() {
 
     setErrors(localyErrors)
 
-    if (localyErrors.document) return scrollSmooth(refPrueba, refs.scrollView)
+    if (localyErrors.document)
+      return scrollSmooth(refs.document, refs.scrollView)
     if (localyErrors.password)
       return scrollSmooth(refs.password, refs.scrollView)
 
@@ -311,7 +311,7 @@ export default function Login() {
 
             <View
               style={styles.inputContainer}
-              ref={refPrueba}
+              ref={refs.document}
             >
               <Text style={styles.label}>
                 Documento
