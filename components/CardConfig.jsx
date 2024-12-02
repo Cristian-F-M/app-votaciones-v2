@@ -10,7 +10,7 @@ export function CardConfig({ children, title }) {
   const { value } = findConfig({ configs: config, code: 'Color' })
 
   return (
-    <Shadow className="">
+    <Shadow className="mb-6">
       <View className="bg-gray-200/60 p-2">
         <Text
           className="text-lg"
