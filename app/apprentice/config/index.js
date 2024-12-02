@@ -49,7 +49,7 @@ export default function Config() {
   }, [])
 
   function handleCliclHome() {
-    router.replace('/apprentice/')
+    router.navigate('/apprentice/')
   }
 
   async function activateBiometrics() {
