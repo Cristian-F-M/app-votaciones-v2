@@ -186,7 +186,7 @@ export default function Login() {
         expires: new Date(Date.now() + 1000 * 60 * 60 * 12),
       })
 
-      router.replace('apprentice/')
+      router.navigate('apprentice/')
     }
   }
 
