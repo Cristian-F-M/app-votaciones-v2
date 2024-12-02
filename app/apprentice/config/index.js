@@ -31,11 +31,10 @@ export default function Config() {
   const { value } = findConfig({ configs: config, code: 'Color' })
   const [isBiometricsActive, setIsBiometricsActive] = useState(false)
   const [isBiometricsAvailable, setIsBiometricsAvailable] = useState(false)
-  const [configs, setConfigs] = useState({})
 
   const getStoragedConfigs = useCallback(async () => {
     const configs = await getConfigs()
-    setConfigs(configs)
+    setIsBiometricsActive(configs.isBiometricsActive || false)
   }, [])
 
   useEffect(() => {
@@ -44,19 +43,10 @@ export default function Config() {
       setIsBiometricsAvailable(biometricRecords)
     }
 
-    async function getIsBiometricsActive() {
-      const isBiometricsActive = await getItemStorage({
-        name: 'isBiometricsActive',
-      })
-
-      const { value } = isBiometricsActive
-      setIsBiometricsActive(value || false)
-    }
-
     getStoragedConfigs()
 
     getIsBiometricsAvailable()
-    getIsBiometricsActive()
+    // getIsBiometricsActive()
   }, [getStoragedConfigs])
 
   function handleCliclHome() {
@@ -66,7 +56,7 @@ export default function Config() {
   async function activateBiometrics() {
     if (isBiometricsActive) {
       removeConfig('isBiometricsActive')
-      removeConfig('tokenBiometrics')
+      removeItemStorage({ name: 'tokenBiometrics' })
 
       showAlert({
         message: 'Se desactivo la autenticación de huella dactilar',
@@ -83,12 +73,12 @@ export default function Config() {
 
     const { success } = biometricResult
 
-    if (!success) setIsBiometricsActive(false)
+    if (!success) return setIsBiometricsActive(false)
 
     const { value: token } = await getItemStorage({ name: 'token' })
 
     saveConfig('isBiometricsActive', true)
-    saveConfig('tokenBiometrics', token)
+    setItemStorage({ name: 'tokenBiometrics', value: token })
 
     showAlert({
       message: 'Activaste correctamente la autenticación de huella dactilar',
@@ -120,7 +110,7 @@ export default function Config() {
         />
         <ScrollView className="mt-3 flex-1">
           <CardConfig title="Inicio de sesión">
-            {configs.isBiometricsAvailable && (
+            {isBiometricsAvailable && (
               <>
                 <RowConfig>
                   <View>
@@ -134,7 +124,7 @@ export default function Config() {
                         setIsBiometricsActive(!isBiometricsActive)
                       }}
                       onChange={activateBiometrics}
-                      value={configs.isBiometricsActive || isBiometricsActive}
+                      value={isBiometricsActive}
                     />
                   </View>
                 </RowConfig>
