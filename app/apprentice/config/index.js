@@ -7,7 +7,7 @@ import ArrowLeft from '../../../icons/ArrowLeft'
 import { CardConfig } from '../../../components/CardConfig'
 import { useCallback, useEffect, useState } from 'react'
 import { useConfig } from '../../../context/config'
-import { findConfig } from '../../../lib/config'
+import { activateNotifications, findConfig } from '../../../lib/config'
 import {
   hasHardwareAsync,
   isEnrolledAsync,
@@ -25,16 +25,20 @@ import { DropDownAlert, showAlert } from '../../../components/DropDownAlert'
 import { DropdownAlertType } from 'react-native-dropdownalert'
 import { ALERT_TYPE, Toast } from 'react-native-alert-notification'
 import { RowConfig } from '../../../components/RowConfig'
+import { AnimatedModal } from '../../../components/Modal'
+import { saveNotificationToken } from '../../../lib/config'
 
 export default function Config() {
   const { config } = useConfig()
   const { value } = findConfig({ configs: config, code: 'Color' })
   const [isBiometricsActive, setIsBiometricsActive] = useState(false)
   const [isBiometricsAvailable, setIsBiometricsAvailable] = useState(false)
+  const [isNotificationsActive, setIsNotificationsActive] = useState(false)
 
   const getStoragedConfigs = useCallback(async () => {
     const configs = await getConfigs()
     setIsBiometricsActive(configs.isBiometricsActive || false)
+    setIsNotificationsActive(configs.isNotificationsActive || false)
   }, [])
 
   useEffect(() => {
@@ -50,7 +54,7 @@ export default function Config() {
   }, [getStoragedConfigs])
 
   function handleCliclHome() {
-    router.navigate('/apprentice/')
+    router.push('/apprentice/')
   }
 
   async function activateBiometrics() {
@@ -86,8 +90,38 @@ export default function Config() {
     })
   }
 
+  async function toggleNotifications() {
+    if (isNotificationsActive) {
+      removeConfig('isNotificationsActive')
+      saveNotificationToken(null)
+      showAlert({
+        message: 'Notificaciones desactivadas',
+        type: DropdownAlertType.Info,
+      })
+      return setIsNotificationsActive(false)
+    }
+
+    const isActivated = await activateNotifications()
+
+    if (isActivated) {
+      showAlert({
+        message: 'Activaste correctamente las notificaciones',
+        type: DropdownAlertType.Success,
+      })
+      setIsNotificationsActive(true)
+    }
+
+    if (!isActivated) {
+      showAlert({
+        message: 'No se pudo activar las notificaciones',
+        type: DropdownAlertType.Error,
+      })
+    }
+  }
+
   return (
     <>
+      <AnimatedModal />
       <DropDownAlert
         dismissInterval={2000}
         alertPosition="bottom"
@@ -130,6 +164,24 @@ export default function Config() {
                 </RowConfig>
               </>
             )}
+          </CardConfig>
+          <CardConfig title="Notificaciones">
+            <RowConfig>
+              <View>
+                <Text>Activar notificaciones</Text>
+              </View>
+              <View>
+                <Switch
+                  trackColor={{ false: '#767577', true: value }}
+                  thumbColor="white"
+                  onValueChange={() =>
+                    setIsNotificationsActive(!isNotificationsActive)
+                  }
+                  onChange={toggleNotifications}
+                  value={isNotificationsActive}
+                />
+              </View>
+            </RowConfig>
           </CardConfig>
         </ScrollView>
       </Screen>
