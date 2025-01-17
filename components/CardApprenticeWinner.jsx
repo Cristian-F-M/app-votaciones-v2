@@ -7,7 +7,7 @@ import ChevronRight from '../icons/ChevronRight'
 import { Shadow } from 'react-native-shadow-2'
 
 export function CardApprenticeWinner() {
-  const votos = 1200
+  const votos = 1224
   const total = 1500
   const porcentaje = votos / total
 
@@ -57,7 +57,7 @@ export function CardApprenticeWinner() {
             />
           </View>
           <Text className="text-center text-sm text-gray-600/90">
-            {(porcentaje * 100).toFixed(0)}% de los votos totales
+            {(porcentaje * 100).toFixed(1)}% de los votos totales
           </Text>
 
           <View className="mt-4 w-[85%] mb-2">
