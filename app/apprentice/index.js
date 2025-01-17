@@ -13,13 +13,13 @@ export default function Index() {
     doFetch({ url: `${url}/vote/`, method: METHODS.GET }).then(data => {
       if (data.error) return
 
-      const { vote } = data
+      const { lastVote: vote } = data
 
-      if (!vote) return setThereIsVote(false)
-      if (new Date() > vote.endDate) return setIsVoteFinished(true)
+      if (vote) setThereIsVote(true)
 
-      setThereIsVote(true)
-      setIsVoteFinished(false)
+      if (new Date() > vote.endDate) setThereIsVote(false)
+      if (new Date().getTime() > new Date(vote.endDate).getTime())
+        setIsVoteFinished(true)
     })
   }, [url])
 
