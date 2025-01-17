@@ -3,6 +3,7 @@ import CalendarX from '../icons/CalendarX'
 import { useConfig } from '../context/config'
 import { activateNotifications, findConfig } from '../lib/config'
 import ExclamationCircle from '../icons/ExclamationCircle'
+import * as Notifications from 'expo-notifications'
 import { useCallback } from 'react'
 import { getConfigs } from '../lib/api'
 import { AnimatedModal, showModal } from './Modal'
@@ -12,10 +13,6 @@ export function ThereIsNoVote() {
   const color = findConfig({ configs: config, code: 'Color' }).value
 
   const checkPermissions = useCallback(async () => {
-    const { isNotificationsActive } = await getConfigs()
-
-    if (isNotificationsActive) return true
-
     const isActivated = await activateNotifications()
 
     if (isActivated)
@@ -63,7 +60,7 @@ export function ThereIsNoVote() {
   return (
     <>
       <AnimatedModal />
-      <View className="flex flex-1 items-center justify-center bg-gray-100">
+      <View className="mx-auto flex flex-1 items-center justify-center bg-gray-100">
         <View className="w-[95%] flex flex-col items-center bg-white p-5 rounded-lg border border-gray-200">
           <View className="bg-[#ffedd5] p-3 rounded-full">
             <CalendarX
