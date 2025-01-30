@@ -1,4 +1,13 @@
-import { Alert, Image, Pressable, ScrollView, Text, View } from 'react-native'
+import {
+  Alert,
+  Image,
+  Pressable,
+  ScrollView,
+  Text,
+  View,
+  RefreshControl,
+} from 'react-native'
+import { useRouter } from 'expo-router'
 import { Shadow } from 'react-native-shadow-2'
 import { useConfig } from '../context/config'
 import { findConfig } from '../lib/config'
@@ -17,13 +26,12 @@ import { CandidateImage } from './CandidateImage'
 import { useUser } from '../context/user.js'
 import { YourVote } from './YourVote.jsx'
 
-// ! Obtener el valor de isVotingClosed de la api de la votación
-
 export function Vote() {
   const url = process.env.EXPO_PUBLIC_API_URL
   const [candidates, setCandidates] = useState([])
   const [isVotingClosed, setIsVotingClosed] = useState(false)
   const [userAlreadyVoted, setUserAlreadyVoted] = useState(false)
+  const [refreshing, setRefreshing] = useState(false)
   const [voted, setVoted] = useState({})
   const { user } = useUser()
 
@@ -50,15 +58,15 @@ export function Vote() {
     setUserAlreadyVoted(user.voted)
   }, [user])
 
+  const getCandidates = useCallback(async () => {
+    doFetch({ url: `${url}/candidate/all`, method: METHODS.GET }).then(data => {
+      if (data.error) return
+
+      setCandidates(data.candidates)
+    })
+  }, [url])
+
   useEffect(() => {
-    const getCandidates = async () => {
-      doFetch({ url: `${url}/candidate`, method: METHODS.GET }).then(data => {
-        if (data.error) return
-
-        setCandidates(data.candidates)
-      })
-    }
-
     getCandidates()
   }, [url])
 
@@ -85,6 +93,13 @@ export function Vote() {
     Alert.alert('Voto exitoso, Votastes por ' + candidate.user.name)
   }
 
+  const onRefresh = useCallback(async () => {
+    setRefreshing(true)
+    setCandidates([])
+    await getCandidates()
+    setRefreshing(false)
+  }, [])
+
   const isApprentice = user?.roleUser.code === 'Apprentice'
 
   const buttonDisabled = isVotingClosed || userAlreadyVoted || !isApprentice
@@ -95,8 +110,15 @@ export function Vote() {
         <ScrollView
           className="w-full "
           contentContainerStyle={{ alignItems: 'center' }}
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={onRefresh}
+              colors={[color, 'black']}
+            />
+          }
         >
-          <View className="mb-4">
+          <View className="mb-4 mt-4">
             <Text
               className="text-3xl text-center"
               style={{ color }}
@@ -120,6 +142,9 @@ export function Vote() {
                   userAlreadyVoted &&
                   voted?.candidateId === candidate.id &&
                   user?.id === voted?.userId
+                const imageUrl = candidate.imageUrl?.startsWith('http')
+                  ? candidate.imageUrl
+                  : `${url}/candidate/image/${candidate.imageUrl}`
 
                 return (
                   <Shadow
@@ -129,14 +154,19 @@ export function Vote() {
                   >
                     <View className="flex flex-col  justify-between max-w-[90%] min-w-[80%] p-6 px-5 rounded-lg bg-gray-100/70 items-center relative">
                       {isThisCandidateVoted && <YourVote />}
-                      <CandidateImage candidate={candidate} />
+                      <CandidateImage
+                        alt={`Foto del candidato ${candidate.user.name}`}
+                        imageUrl={imageUrl}
+                        classImage="rounded-xl"
+                        classImageContainer="w-11/12 h-auto "
+                      />
 
                       <View className="flex flex-col items-center mt-3 w-full">
                         <Text className="text-2xl text-gray-700">
                           {candidate.user.name}
                         </Text>
                         {candidate.description && (
-                          <Text className="text-sm text-gray-600 text-center mt-1 bg-green-300">
+                          <Text className="text-sm text-gray-600 text-center mt-1">
                             {candidate.description}
                           </Text>
                         )}
