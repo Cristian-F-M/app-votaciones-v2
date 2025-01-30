@@ -1,18 +1,23 @@
 import { Image, View } from 'react-native'
 
-export function CandidateImage({ candidate }) {
-  const url = process.env.EXPO_PUBLIC_API_URL
-
+export function CandidateImage({
+  imageUrl = '',
+  classImageContainer = '',
+  classImage = '',
+  alt = '',
+}) {
   return (
-    <View className="flex justify-center items-center rounded-full w-4/5 h-auto aspect-square">
+    <View
+      className={`flex justify-center items-center w-4/5 h-auto aspect-square ${classImageContainer}`}
+    >
       <Image
-        className="rounded-full overflow-hidden w-full h-full"
+        className={`overflow-hidden w-full h-full ${classImage}`}
         source={{
-          uri: `${url}/candidate/image/${candidate.id}`,
+          uri: imageUrl,
+          cache: 'reload',
         }}
-        alt={`Foto del candidato ${candidate.name}`}
+        alt={alt}
         resizeMode="cover"
-        style={{ width: 200, height: 200 }}
       />
     </View>
   )
