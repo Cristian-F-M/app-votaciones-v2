@@ -8,6 +8,7 @@ import { ALERT_TYPE, Toast } from 'react-native-alert-notification'
 import { Link, router } from 'expo-router'
 import { useUser } from '../context/user.js'
 import { useEffect } from 'react'
+import { MenuItem } from './MenuItem.jsx'
 
 export function ApprenticeMenu({ setMenuIsVisible }) {
   const { user } = useUser()
@@ -38,6 +39,10 @@ export function ApprenticeMenu({ setMenuIsVisible }) {
     router.navigate('candidate/profile/')
   }
 
+  function handleClickProfile() {
+    setMenuIsVisible(false)
+  }
+
   return (
     <Screen>
       <StatusBar
@@ -47,28 +52,30 @@ export function ApprenticeMenu({ setMenuIsVisible }) {
       <ScrollView className="flex-1 bg-gray-[#e0e2e4]">
         <Profile />
 
-        <View className="py-4 flex flex-col gap-y-2">
+        <View className="py-2 flex flex-col">
           {user?.roleUser.code === 'Candidate' && (
-            <Pressable
-              className="mt-4 bg-green-400 py-4 px-2"
+            <MenuItem
+              pressableClass=" bg-[#A3C9F1]"
               onPress={handleClickCandidateProfile}
-            >
-              <Text className="text-base text-center">Perfil de candidato</Text>
-            </Pressable>
+              text="Perfil de candidato"
+            />
           )}
-          <Pressable
-            className="mt-4 bg-blue-400 py-4 px-2"
+          <MenuItem
+            text="Perfil"
+            pressableClass="bg-[#A3D9A5]"
+            onPress={handleClickProfile}
+          />
+          <MenuItem
+            pressableClass=" bg-[#B0BEC5]"
             onPress={handleClickConfig}
-          >
-            <Text className="text-base text-center">Configuraciones</Text>
-          </Pressable>
+            text="Configuraciones"
+          />
           {/*  */}
-          <Pressable
-            className="mt-4 bg-red-400 py-4 px-2"
+          <MenuItem
+            pressableClass=" bg-[#FFB3A1]"
             onPress={handleClickLogout}
-          >
-            <Text className="text-base text-center">Cerrar Sesión</Text>
-          </Pressable>
+            text="Cerrar Sesión"
+          />
         </View>
       </ScrollView>
     </Screen>
