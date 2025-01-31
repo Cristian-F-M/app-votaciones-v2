@@ -39,8 +39,9 @@ export function ApprenticeMenu({ setMenuIsVisible }) {
     router.navigate('candidate/profile/')
   }
 
-  function handleClickProfile() {
+  function handleClickApprenticeProfile() {
     setMenuIsVisible(false)
+    router.navigate('apprentice/profile/')
   }
 
   return (
@@ -53,6 +54,11 @@ export function ApprenticeMenu({ setMenuIsVisible }) {
         <Profile />
 
         <View className="py-2 flex flex-col">
+          <MenuItem
+            text="Perfil"
+            pressableClass="bg-[#A3D9A5]"
+            onPress={handleClickApprenticeProfile}
+          />
           {user?.roleUser.code === 'Candidate' && (
             <MenuItem
               pressableClass=" bg-[#A3C9F1]"
@@ -60,11 +66,6 @@ export function ApprenticeMenu({ setMenuIsVisible }) {
               text="Perfil de candidato"
             />
           )}
-          <MenuItem
-            text="Perfil"
-            pressableClass="bg-[#A3D9A5]"
-            onPress={handleClickProfile}
-          />
           <MenuItem
             pressableClass=" bg-[#B0BEC5]"
             onPress={handleClickConfig}
