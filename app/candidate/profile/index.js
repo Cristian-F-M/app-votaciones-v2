@@ -35,7 +35,8 @@ export default function CandidateProfile() {
   const [refreshing, setRefreshing] = useState(false)
 
   useEffect(() => {
-    const isSameImage = user?.imageUrl === candidate?.imageUrl
+    const isSameImage =
+      user?.imageUrl === candidate?.imageUrl && user?.imageUrl != null
     setIsProfileImage(isSameImage)
     setUseForProfileImage(isSameImage)
   }, [user, candidate])
