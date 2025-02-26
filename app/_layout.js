@@ -5,6 +5,8 @@ import { ConfigProvider } from '../context/config.js'
 import { AlertNotificationRoot } from 'react-native-alert-notification'
 
 import * as Notifications from 'expo-notifications'
+import { GestureHandlerRootView } from 'react-native-gesture-handler'
+import { Toasts } from '@backpackapp-io/react-native-toast'
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -19,9 +21,12 @@ export default function Layout() {
     <ConfigProvider>
       <SafeAreaProvider>
         <AlertNotificationRoot>
-          <View className="flex-1">
-            <Stack screenOptions={{ headerShown: false }} />
-          </View>
+          <GestureHandlerRootView>
+            <View className="flex-1">
+              <Toasts globalAnimationType="spring" />
+              <Stack screenOptions={{ headerShown: false }} />
+            </View>
+          </GestureHandlerRootView>
         </AlertNotificationRoot>
       </SafeAreaProvider>
     </ConfigProvider>
