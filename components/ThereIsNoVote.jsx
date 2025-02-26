@@ -3,9 +3,7 @@ import CalendarX from '../icons/CalendarX'
 import { useConfig } from '../context/config'
 import { activateNotifications, findConfig } from '../lib/config'
 import ExclamationCircle from '../icons/ExclamationCircle'
-import * as Notifications from 'expo-notifications'
 import { useCallback } from 'react'
-import { getConfigs } from '../lib/api'
 import { AnimatedModal, showModal } from './Modal'
 
 export function ThereIsNoVote() {
