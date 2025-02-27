@@ -71,6 +71,7 @@ export default function Login() {
     document: useRef(null),
     password: useRef(null),
     scrollView: useRef(null),
+    typeDocument: useRef(null),
   }
 
   const onRefresh = useCallback(() => {
