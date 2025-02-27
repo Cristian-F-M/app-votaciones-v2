@@ -1,15 +1,12 @@
 import {
   ActivityIndicator,
-  StyleSheet,
   Text,
-  TextInput,
   View,
   Pressable,
   ScrollView,
   RefreshControl,
 } from 'react-native'
 import { Screen } from '../../components/Screen'
-import { Picker } from '@react-native-picker/picker'
 import LogoSena from '../../icons/Logo'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import {
@@ -405,33 +402,3 @@ export default function Login() {
     </Screen>
   )
 }
-
-const styles = StyleSheet.create({
-  inputContainer: {
-    marginBottom: 16,
-    position: 'relative',
-  },
-  input: {
-    borderWidth: 1,
-    borderRadius: 8,
-    height: 55,
-    fontSize: 16,
-  },
-  inputText: {
-    paddingHorizontal: 20,
-  },
-  label: {
-    color: '#000',
-    marginBottom: 4,
-    fontSize: 16,
-  },
-  errorMessage: {
-    color: 'red',
-  },
-  eyeIcon: {
-    color: 'black',
-    position: 'absolute',
-    top: 0,
-    right: 0,
-  },
-})
