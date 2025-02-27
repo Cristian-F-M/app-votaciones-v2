@@ -19,6 +19,7 @@ import BouncyCheckbox from 'react-native-bouncy-checkbox'
 import { DropDownAlert, showAlert } from '../../components/DropDownAlert'
 import { DropdownAlertType } from 'react-native-dropdownalert'
 import { StatusBar } from 'expo-status-bar'
+import { Input, INPUT_TYPES, SELECT_MODES } from '../../components/Input'
 
 export default function Register() {
   const [Color, setColor] = useState('')
@@ -222,201 +223,98 @@ export default function Register() {
       >
         <View className="flex-1 justify-center">
           <View>
-            <View
-              style={styles.inputContainer}
-              ref={refs.name}
-            >
-              <Text style={styles.label}>
-                Nombre
-                <Text className="text-red-500"> *</Text>
-              </Text>
-              <TextInput
-                style={[styles.input, styles.inputText]}
-                value={name}
-                onChangeText={t => {
-                  setName(t)
-                  setErrors({ ...errors, name: null })
-                }}
-                placeholder="Luna Sophia"
-              />
-              {!!errors.name && (
-                <Text style={styles.errorMessage}>{errors.name}</Text>
-              )}
-            </View>
-            {/*  */}
-            <View
-              style={styles.inputContainer}
-              ref={refs.lastname}
-            >
-              <Text style={styles.label}>
-                Apellido
-                <Text className="text-red-500"> *</Text>
-              </Text>
-              <TextInput
-                style={[styles.input, styles.inputText]}
-                value={lastname}
-                onChangeText={t => {
-                  setLastname(t)
-                  setErrors({ ...errors, lastname: null })
-                }}
-                placeholder="Smith Miller"
-              />
-              {!!errors.lastname && (
-                <Text style={styles.errorMessage}>{errors.lastname}</Text>
-              )}
-            </View>
-            {/*  */}
-            <View
-              style={styles.inputContainer}
-              ref={refs.typeDocument}
-            >
-              <Text style={styles.label}>Tipo de documento</Text>
-              <View style={styles.input}>
-                <Picker
-                  selectedValue={typeDocumentCode}
-                  dropdownIconRippleColor={Color}
-                  mode="modal"
-                  prompt="Seleccione tipo de documento"
-                  onValueChange={(itemValue, itemIndex) =>
-                    setTypeDocumentCode(itemValue)
-                  }
-                >
-                  {!typesDocuments ? (
-                    <Picker.Item
-                      label={'Loading...'}
-                      value={0}
-                    />
-                  ) : (
-                    typesDocuments.map(typeDocument => {
-                      return (
-                        <Picker.Item
-                          key={typeDocument.id}
-                          label={typeDocument.name}
-                          value={typeDocument.code}
-                        />
-                      )
-                    })
-                  )}
-                </Picker>
-              </View>
-            </View>
-            {/*  */}
-            <View
-              style={styles.inputContainer}
-              ref={refs.document}
-            >
-              <Text style={styles.label}>
-                Documento
-                <Text className="text-red-500"> *</Text>
-              </Text>
-              <TextInput
-                style={[styles.input, styles.inputText]}
-                value={document}
-                onChangeText={t => {
-                  setDocument(t)
-                  setErrors({ ...errors, document: null })
-                }}
-                keyboardType="numeric"
-                placeholder="123456789"
-              />
-              {!!errors.document && (
-                <Text style={styles.errorMessage}>{errors.document}</Text>
-              )}
-            </View>
-            {/*  */}
-            <View
-              style={styles.inputContainer}
-              ref={refs.phone}
-            >
-              <Text style={styles.label}>
-                Telefono
-                <Text className="text-red-500"> *</Text>
-              </Text>
-              <TextInput
-                style={[styles.input, styles.inputText]}
-                value={phone}
-                onChangeText={t => {
-                  setPhone(t)
-                  setErrors({ ...errors, phone: null })
-                }}
-                keyboardType="phone-pad"
-                placeholder="3512345678"
-              />
-              {!!errors.phone && (
-                <Text style={styles.errorMessage}>{errors.phone}</Text>
-              )}
-            </View>
-            {/*  */}
-            <View
-              style={styles.inputContainer}
-              ref={refs.email}
-            >
-              <Text style={styles.label}>
-                Correo electronico
-                <Text className="text-red-500"> *</Text>
-              </Text>
-              <TextInput
-                style={[styles.input, styles.inputText]}
-                value={email}
-                keyboardType="email-address"
-                onChangeText={t => {
-                  setEmail(t)
-                  setErrors({ ...errors, email: null })
-                }}
-                placeholder="lunasophia@gmail.com"
-              />
-              {!!errors.email && (
-                <Text style={styles.errorMessage}>{errors.email}</Text>
-              )}
-            </View>
-            {/*  */}
-            <View
-              style={styles.inputContainer}
-              ref={refs.password}
-            >
-              <Text style={styles.label}>
-                Contraseña
-                <Text className="text-red-500"> *</Text>
-              </Text>
-              <TextInput
-                style={[styles.input, styles.inputText]}
-                value={password}
-                secureTextEntry={!isVisible}
-                onChangeText={t => {
-                  setPassword(t)
-                  setErrors({ ...errors, password: null })
-                }}
-                placeholder="*********"
-              />
-              {!!errors.password && (
-                <Text style={styles.errorMessage}>{errors.password}</Text>
-              )}
-            </View>
-            {/*  */}
-            <View
-              style={styles.inputContainer}
-              ref={refs.passwordConfirm}
-            >
-              <Text style={styles.label}>
-                Confirmar contraseña
-                <Text className="text-red-500"> *</Text>
-              </Text>
-              <TextInput
-                style={[styles.input, styles.inputText]}
-                value={passwordConfirm}
-                secureTextEntry={!isVisible}
-                onChangeText={t => {
-                  setPasswordConfirm(t)
-                  setErrors({ ...errors, passwordConfirm: null })
-                }}
-                placeholder="*********"
-              />
-              {!!errors.passwordConfirm && (
-                <Text style={styles.errorMessage}>
-                  {errors.passwordConfirm}
-                </Text>
-              )}
-            </View>
+            <Input
+              type={INPUT_TYPES.TEXT}
+              value={{ value: name, setValue: setName }}
+              placeholder={'Luna Sophia'}
+              errors={{ errors, setErrors }}
+              label="Nombre"
+              innerRef={refs.name}
+              inputRefName="name"
+              required
+            />
+
+            <Input
+              type={INPUT_TYPES.TEXT}
+              value={{ value: lastname, setValue: setLastname }}
+              placeholder={'Smith Miller'}
+              errors={{ errors, setErrors }}
+              label="Apellido"
+              innerRef={refs.lastname}
+              inputRefName="lastname"
+              required
+            />
+
+            <Input
+              type={INPUT_TYPES.SELECT}
+              selectedValue={typeDocumentCode}
+              items={typesDocuments}
+              errors={{ errors, setErrors }}
+              innerRef={refs.typeDocument}
+              inputRefName="typeDocument"
+              label="Tipo de documento"
+              dropdownIconRippleColor={Color}
+              mode={SELECT_MODES.DROPDOWN}
+              required
+            />
+
+            <Input
+              type={INPUT_TYPES.TEXT}
+              value={{ value: document, setValue: setDocument }}
+              placeholder={'123456789'}
+              errors={{ errors, setErrors }}
+              label="Documento"
+              innerRef={refs.document}
+              inputRefName="document"
+              required
+            />
+
+            <Input
+              type={INPUT_TYPES.TEXT}
+              value={{ value: phone, setValue: setPhone }}
+              placeholder={'3512345678'}
+              errors={{ errors, setErrors }}
+              label="Telefono"
+              innerRef={refs.phone}
+              inputRefName="phone"
+              required
+            />
+
+            <Input
+              type={INPUT_TYPES.TEXT}
+              value={{ value: email, setValue: setEmail }}
+              placeholder={'lunasophia@gmail.com'}
+              errors={{ errors, setErrors }}
+              label="Correo electronico"
+              innerRef={refs.email}
+              inputRefName="email"
+              required
+            />
+
+            <Input
+              type={INPUT_TYPES.TEXT}
+              value={{ value: password, setValue: setPassword }}
+              placeholder={'*********'}
+              errors={{ errors, setErrors }}
+              label="Contraseña"
+              innerRef={refs.password}
+              inputRefName="password"
+              secureTextEntry={!isVisible}
+              required
+            />
+
+            <Input
+              type={INPUT_TYPES.TEXT}
+              value={{ value: passwordConfirm, setValue: setPasswordConfirm }}
+              placeholder={'*********'}
+              errors={{ errors, setErrors }}
+              label="Confirmar contraseña"
+              innerRef={refs.passwordConfirm}
+              inputRefName="passwordConfirm"
+              secureTextEntry={true}
+              required
+            />
+
             <View className="flex-row items-center gap-x-2 -mt-2">
               <BouncyCheckbox
                 size={24}
