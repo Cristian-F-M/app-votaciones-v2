@@ -235,10 +235,7 @@ export default function Login() {
   return (
     <Screen>
       <DropDownAlert dismissInterval={2000} />
-      <StatusBar
-        style="dark"
-        backgroundColor="#f2f2f2"
-      />
+      <StatusBar style="dark" />
       <Stack.Screen
         options={{
           headerShown: false,
