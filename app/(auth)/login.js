@@ -7,7 +7,6 @@ import {
   Pressable,
   ScrollView,
   RefreshControl,
-  BackHandler,
 } from 'react-native'
 import { Screen } from '../../components/Screen'
 import { Picker } from '@react-native-picker/picker'
@@ -29,11 +28,9 @@ import { findConfig } from '../../lib/config'
 import { scrollSmooth } from '../../lib/scrollSmooth'
 import { DropdownAlertType } from 'react-native-dropdownalert'
 import { DropDownAlert, showAlert } from '../../components/DropDownAlert'
-import { useNetInfo } from '@react-native-community/netinfo'
 import { isEnrolledAsync, authenticateAsync } from 'expo-local-authentication'
 import Finger from '../../icons/Finger'
 import { toast, ToastPosition } from '@backpackapp-io/react-native-toast'
-import { ALERT_TYPE, Dialog } from 'react-native-alert-notification'
 import { TOAST_STYLES } from '../../lib/toastConstants'
 
 export default function Login() {
