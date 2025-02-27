@@ -32,7 +32,9 @@ import { DropDownAlert, showAlert } from '../../components/DropDownAlert'
 import { useNetInfo } from '@react-native-community/netinfo'
 import { isEnrolledAsync, authenticateAsync } from 'expo-local-authentication'
 import Finger from '../../icons/Finger'
+import { toast, ToastPosition } from '@backpackapp-io/react-native-toast'
 import { ALERT_TYPE, Dialog } from 'react-native-alert-notification'
+import { TOAST_STYLES } from '../../lib/toastConstants'
 
 export default function Login() {
   const [Color, setColor] = useState()
@@ -104,15 +106,21 @@ export default function Login() {
       await new Promise(resolve => setTimeout(resolve, 500))
 
       if (res.error) {
-        showAlert({
-          message: res.error,
-          type: DropdownAlertType.Error,
-          title: 'Error',
+        toast.error(res.error, {
+          position: ToastPosition.TOP,
+          styles: {
+            ...TOAST_STYLES.ERROR,
+          },
         })
       }
 
       if (!res.ok) {
-        showAlert({ message: res.message, type: DropdownAlertType.Warn })
+        toast.error(res.message, {
+          position: ToastPosition.TOP,
+          styles: {
+            ...TOAST_STYLES.ERROR,
+          },
+        })
       }
 
       setIsLoading(false)
