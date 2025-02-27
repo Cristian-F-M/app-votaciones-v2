@@ -34,7 +34,7 @@ import { toast, ToastPosition } from '@backpackapp-io/react-native-toast'
 import { TOAST_STYLES } from '../../lib/toastConstants'
 
 export default function Login() {
-  const [typesDocuments, setTypesDocuments] = useState(null)
+  const [typesDocuments, setTypesDocuments] = useState([])
   const [typeDocumentCode, setTypeDocumentCode] = useState('CedulaCiudadania')
   const [document, setDocument] = useState('')
   const [password, setPassword] = useState('')
