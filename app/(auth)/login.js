@@ -51,7 +51,6 @@ export default function Login() {
 
   const getIsBiometricsActive = useCallback(async () => {
     const { isBiometricsActive } = await getConfigs()
-    console.log(isBiometricsActive)
     setIsBiometricsActive(isBiometricsActive || false)
   }, [])
 
