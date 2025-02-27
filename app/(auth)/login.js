@@ -302,6 +302,7 @@ export default function Login() {
               label="Contraseña"
               innerRef={refs.password}
               inputRefName="password"
+              secureTextEntry={!isVisible}
               required
             />
 
