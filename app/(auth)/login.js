@@ -48,7 +48,6 @@ export default function Login() {
   const [refreshing, setRefreshing] = useState(false)
   const [isBiometricsAvailable, setIsBiometricsAvailable] = useState(false)
   const { config } = useConfig()
-  const netInfo = useNetInfo()
   const [isBiometricsActive, setIsBiometricsActive] = useState(false)
   const color = findConfig({ configs: config, code: 'Color' }).value
 
@@ -62,6 +61,7 @@ export default function Login() {
     getIsBiometricsActive()
   }, [])
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const refs = {
     document: useRef(null),
     password: useRef(null),
@@ -77,7 +77,7 @@ export default function Login() {
     }, 600)
   }, [router])
 
-  function handleClickLogin() {
+  const handleClickLogin = useCallback(async () => {
     const localyErrors = {}
 
     if (document.trim() === '') localyErrors.document = 'Campo requerido'
@@ -141,11 +141,7 @@ export default function Login() {
       }
       router.replace('apprentice/')
     }
-  }
-
-  function closeApp() {
-    BackHandler.exitApp()
-  }
+  }, [document, password, router, typeDocumentCode, isBiometricsActive, refs])
 
   const handleClickLoginBiometrics = useCallback(async () => {
     const { isBiometricsActive } = await getConfigs()
@@ -203,44 +199,29 @@ export default function Login() {
     setIsBiometricsAvailable(biometricRecords)
   }, [])
 
+  const getTypesDocuments = useCallback(async () => {
+    const url = `${process.env.EXPO_PUBLIC_API_URL}/typeDocument/`
+    const res = await doFetch({ url, method: METHODS.GET })
+
+    if (!res.ok || res.error) {
+      toast.error(res.error || res.message, {
+        styles: {
+          ...TOAST_STYLES.ERROR,
+        },
+      })
+      return
+    }
+
+    setTypesDocuments(res.typesDocuments)
+  }, [])
+
   useEffect(() => {
     handleBiometrics()
   }, [handleBiometrics])
 
   useEffect(() => {
-    async function getTypesDocuments() {
-      const url = `${process.env.EXPO_PUBLIC_API_URL}/typeDocument/`
-      const res = await doFetch({ url, method: METHODS.GET })
-
-      if (res.error) {
-        return Dialog.show({
-          type: ALERT_TYPE.DANGER,
-          // title: 'Error de conexión',
-          textBody: 'Un error ha ocurrido, por favor intenta mas tarde',
-          button: 'Aceptar',
-          onPressButton: () => closeApp(),
-          closeOnOverlayTap: false,
-        })
-      }
-      setTypesDocuments(res.typesDocuments)
-    }
-
     getTypesDocuments()
-  }, [config, netInfo])
-
-  useEffect(() => {
-    const { type } = netInfo
-
-    if (type !== 'wifi' && type == null) {
-      // eslint-disable-next-line no-undef
-      setTimeout(() => {
-        showAlert({
-          message: 'Estás accediendo a la aplicación con datos móviles',
-          type: DropdownAlertType.Info,
-        })
-      }, 200)
-    }
-  }, [netInfo])
+  }, [getTypesDocuments])
 
   return (
     <Screen>
