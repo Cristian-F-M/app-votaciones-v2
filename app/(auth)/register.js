@@ -213,10 +213,11 @@ export default function Register() {
     setRefreshing(true)
     // eslint-disable-next-line no-undef
     setTimeout(() => {
-      router.replace('register')
+      clearInputs()
+      getTypesDocuments()
       setRefreshing(false)
     }, 600)
-  }, [])
+  }, [getTypesDocuments, clearInputs])
 
   return (
     <Screen>
