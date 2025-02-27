@@ -32,6 +32,7 @@ import { isEnrolledAsync, authenticateAsync } from 'expo-local-authentication'
 import Finger from '../../icons/Finger'
 import { toast, ToastPosition } from '@backpackapp-io/react-native-toast'
 import { TOAST_STYLES } from '../../lib/toastConstants'
+import { Input, INPUT_TYPES, SELECT_MODES } from '../../components/Input'
 
 export default function Login() {
   const [typesDocuments, setTypesDocuments] = useState([])
@@ -269,82 +270,40 @@ export default function Login() {
           </View>
 
           <View>
-            <View style={styles.inputContainer}>
-              <Text style={styles.label}>Tipo de documento</Text>
-              <View style={styles.input}>
-                <Picker
-                  selectedValue={typeDocumentCode}
-                  dropdownIconRippleColor={color}
-                  mode="modal"
-                  prompt="Seleccione tipo de documento"
-                  onValueChange={(itemValue, itemIndex) =>
-                    setTypeDocumentCode(itemValue)
-                  }
-                >
-                  {typesDocuments.length <= 0 ? (
-                    <Picker.Item
-                      label={'Loading...'}
-                      value={0}
-                    />
-                  ) : (
-                    typesDocuments.map(typeDocument => {
-                      return (
-                        <Picker.Item
-                          key={typeDocument.id}
-                          label={typeDocument.name}
-                          value={typeDocument.code}
-                        />
-                      )
-                    })
-                  )}
-                </Picker>
-              </View>
-            </View>
+            <Input
+              type={INPUT_TYPES.SELECT}
+              selectedValue={typeDocumentCode}
+              items={typesDocuments}
+              errors={{ errors, setErrors }}
+              innerRef={refs.typeDocument}
+              inputRefName="typeDocument"
+              label="Tipo de documento"
+              dropdownIconRippleColor={color}
+              mode={SELECT_MODES.DROPDOWN}
+              required
+            />
 
-            <View
-              style={styles.inputContainer}
-              ref={refs.document}
-            >
-              <Text style={styles.label}>
-                Documento
-                <Text className="text-red-500"> *</Text>
-              </Text>
-              <TextInput
-                style={[styles.input, styles.inputText]}
-                inputMode="numeric"
-                value={document}
-                onChangeText={t => {
-                  setDocument(t)
-                  setErrors({ ...errors, document: null })
-                }}
-                placeholder="123456789"
-              />
-              {!!errors.document && (
-                <Text style={styles.errorMessage}>{errors.document}</Text>
-              )}
-            </View>
-            <View
-              style={styles.inputContainer}
-              ref={refs.password}
-            >
-              <Text style={styles.label}>
-                Contraseña
-                <Text className="text-red-500"> *</Text>
-              </Text>
-              <TextInput
-                style={[styles.input, styles.inputText]}
-                secureTextEntry={!isVisible}
-                value={password}
-                onChangeText={t => {
-                  setPassword(t)
-                  setErrors({ ...errors, password: null })
-                }}
-                placeholder="*********"
-              />
-              {!!errors.password && (
-                <Text style={styles.errorMessage}>{errors.password}</Text>
-              )}
-            </View>
+            <Input
+              type={INPUT_TYPES.TEXT}
+              value={{ value: document, setValue: setDocument }}
+              placeholder={'123456789'}
+              errors={{ errors, setErrors }}
+              label="Documento"
+              innerRef={refs.document}
+              inputRefName="document"
+              required
+            />
+
+            <Input
+              type={INPUT_TYPES.TEXT}
+              value={{ value: password, setValue: setPassword }}
+              placeholder={'*********'}
+              errors={{ errors, setErrors }}
+              label="Contraseña"
+              innerRef={refs.password}
+              inputRefName="password"
+              required
+            />
 
             <View className="flex flex-row justify-between items-center w-full">
               <View className="flex flex-row items-center justify-center gap-x-2 -mt-2">
