@@ -42,7 +42,7 @@ export default function Login() {
   const [isLoading, setIsLoading] = useState(false)
   const [errors, setErrors] = useState({})
   const router = useRouter()
-  const [isVisible, setIsVisible] = useState(false)
+  const [passwordIsVisible, setPasswordIsVisible] = useState(false)
   const [refreshing, setRefreshing] = useState(false)
   const [isBiometricsAvailable, setIsBiometricsAvailable] = useState(false)
   const { config } = useConfig()
@@ -59,7 +59,7 @@ export default function Login() {
     setTypeDocumentCode('CedulaCiudadania')
     setDocument('')
     setPassword('')
-    setIsVisible(false)
+    setPasswordIsVisible(false)
     setErrors({})
   }, [])
 
@@ -302,7 +302,7 @@ export default function Login() {
               label="Contraseña"
               innerRef={refs.password}
               inputRefName="password"
-              secureTextEntry={!isVisible}
+              secureTextEntry={!passwordIsVisible}
               required
             />
 
@@ -315,15 +315,15 @@ export default function Login() {
                   iconStyle={{ borderColor: color }}
                   innerIconStyle={{ borderWidth: 2 }}
                   disableText
-                  isChecked={isVisible}
+                  isChecked={passwordIsVisible}
                   onPress={isChecked => {
-                    setIsVisible(isChecked)
+                    setPasswordIsVisible(isChecked)
                   }}
                 />
                 <Text
                   className="text-sm"
                   onPress={() => {
-                    setIsVisible(!isVisible)
+                    setPasswordIsVisible(!passwordIsVisible)
                   }}
                 >
                   Mostrar contraseña
