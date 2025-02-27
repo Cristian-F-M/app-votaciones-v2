@@ -209,6 +209,10 @@ export default function Login() {
   }, [])
 
   const getTypesDocuments = useCallback(async () => {
+    const toastIdTypesDocument = toast.loading(
+      'Cargando tipos de documentos...',
+    )
+
     const url = `${process.env.EXPO_PUBLIC_API_URL}/typeDocument/`
     const res = await doFetch({ url, method: METHODS.GET })
 
@@ -222,6 +226,12 @@ export default function Login() {
     }
 
     setTypesDocuments(res.typesDocuments)
+    toast.dismiss(toastIdTypesDocument)
+    toast.success('Tipos de documentos cargados', {
+      styles: {
+        ...TOAST_STYLES.SUCCESS,
+      },
+    })
   }, [])
 
   useEffect(() => {
