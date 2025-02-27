@@ -48,15 +48,15 @@ export default function Login() {
   const [isBiometricsActive, setIsBiometricsActive] = useState(false)
   const color = findConfig({ configs: config, code: 'Color' }).value
 
-  useEffect(() => {
-    async function getIsBiometricsActive() {
-      const { isBiometricsActive } = await getConfigs()
-      console.log(isBiometricsActive)
-      setIsBiometricsActive(isBiometricsActive || false)
-    }
-
-    getIsBiometricsActive()
+  const getIsBiometricsActive = useCallback(async () => {
+    const { isBiometricsActive } = await getConfigs()
+    console.log(isBiometricsActive)
+    setIsBiometricsActive(isBiometricsActive || false)
   }, [])
+
+  useEffect(() => {
+    getIsBiometricsActive()
+  }, [getIsBiometricsActive])
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const refs = {
