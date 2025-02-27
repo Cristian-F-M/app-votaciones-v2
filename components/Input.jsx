@@ -16,6 +16,7 @@ export function Input({
   placeholder,
   onChange,
   keyboardType = 'default',
+  secureTextEntry = false,
   type = INPUT_TYPES.TEXT,
   label = 'no-label',
   classNameInput = '',
@@ -51,6 +52,7 @@ export function Input({
           }}
           keyboardType={keyboardType}
           editable={!disabled}
+          secureTextEntry={secureTextEntry}
         />
       )}
 
