@@ -166,6 +166,8 @@ export default function Register() {
     setPassword('')
     setPasswordConfirm('')
     setErrors({})
+    setTypeDocumentCode('CedulaCiudadania')
+    setIsVisible(false)
   }
   useEffect(() => {
     async function getTypesDocuments() {
