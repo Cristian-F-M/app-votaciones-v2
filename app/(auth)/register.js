@@ -169,15 +169,31 @@ export default function Register() {
     setTypeDocumentCode('CedulaCiudadania')
     setIsVisible(false)
   }
-  useEffect(() => {
-    async function getTypesDocuments() {
-      const url = `${process.env.EXPO_PUBLIC_API_URL}/typeDocument/`
-      const res = await doFetch({ url, method: METHODS.GET })
-      setTypesDocuments(res.typesDocuments)
+
+  const getTypesDocuments = useCallback(async () => {
+    const toastIdTypesDocument = toast.loading(
+      'Cargando tipos de documentos...',
+    )
+    const url = `${process.env.EXPO_PUBLIC_API_URL}/typeDocument/`
+    const res = await doFetch({ url, method: METHODS.GET })
+
+    if (!res.ok || res.error) {
+      toast.error(res.error || res.message, {
+        styles: TOAST_STYLES.ERROR,
+      })
+      return
     }
 
-    getTypesDocuments()
+    setTypesDocuments(res.typesDocuments)
+    toast.dismiss(toastIdTypesDocument)
+    toast.success('Tipos de documentos cargados', {
+      styles: TOAST_STYLES.SUCCESS,
+    })
   }, [])
+
+  useEffect(() => {
+    getTypesDocuments()
+  }, [getTypesDocuments])
 
   const onRefresh = useCallback(() => {
     setRefreshing(true)
