@@ -1,4 +1,4 @@
-import { ActivityIndicator, BackHandler, Text, View } from 'react-native'
+import { ActivityIndicator, Text, View } from 'react-native'
 import LogoSena from '../icons/Logo'
 import { useCallback, useEffect, useState } from 'react'
 import { doFetch, METHODS } from '../lib/api.js'
@@ -7,7 +7,6 @@ import { Screen } from './Screen.jsx'
 import { StatusBar } from 'expo-status-bar'
 import { useConfig } from '../context/config.js'
 import { findConfig } from '../lib/config'
-import { ALERT_TYPE, Dialog } from 'react-native-alert-notification'
 import { useNetInfo } from '@react-native-community/netinfo'
 
 export function Main() {
@@ -15,10 +14,6 @@ export function Main() {
   const router = useRouter()
   const { config } = useConfig()
   const netInfo = useNetInfo()
-
-  function closeApp() {
-    BackHandler.exitApp()
-  }
 
   // Verifica si hay conexión a internet
   const hasConnection = useCallback(() => {
@@ -36,16 +31,6 @@ export function Main() {
       const url = `${process.env.EXPO_PUBLIC_API_URL}/`
 
       const res = await doFetch({ url, method: METHODS.GET })
-
-      if (res.error) {
-        return Dialog.show({
-          type: ALERT_TYPE.DANGER,
-          textBody: 'Un error ha ocurrido, por favor intenta más tarde',
-          button: 'Aceptar',
-          onPressButton: () => closeApp(),
-          closeOnOverlayTap: false,
-        })
-      }
 
       if (res.ok) {
         router.replace('apprentice/')
