@@ -40,6 +40,7 @@ export default function Register() {
   const router = useRouter()
   const { config } = useConfig()
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const refs = {
     name: useRef(null),
     lastname: useRef(null),
@@ -55,7 +56,7 @@ export default function Register() {
 
   const [name, setName] = useState('')
   const [lastname, setLastname] = useState('')
-  const [typesDocuments, setTypesDocuments] = useState(null)
+  const [typesDocuments, setTypesDocuments] = useState([])
   const [document, setDocument] = useState('')
   const [phone, setPhone] = useState('')
   const [email, setEmail] = useState('')
@@ -63,7 +64,7 @@ export default function Register() {
   const [passwordConfirm, setPasswordConfirm] = useState('')
   const color = findConfig({ configs: config, code: 'Color' }).value
 
-  function handleClickRegister() {
+  const handleClickRegister = useCallback(() => {
     let localyErrors = {}
 
     if (name.trim() === '')
@@ -155,7 +156,19 @@ export default function Register() {
         router.replace('login')
       }, 2000)
     }
-  }
+  }, [
+    document,
+    email,
+    lastname,
+    name,
+    password,
+    passwordConfirm,
+    phone,
+    refs,
+    errors,
+    router,
+    typeDocumentCode,
+  ])
 
   function clearInputs() {
     setName('')
@@ -174,6 +187,7 @@ export default function Register() {
     const toastIdTypesDocument = toast.loading(
       'Cargando tipos de documentos...',
     )
+    setTypesDocuments([])
     const url = `${process.env.EXPO_PUBLIC_API_URL}/typeDocument/`
     const res = await doFetch({ url, method: METHODS.GET })
 
