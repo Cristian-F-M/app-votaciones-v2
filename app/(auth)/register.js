@@ -197,7 +197,8 @@ export default function Register() {
       <Stack.Screen
         options={{
           headerShown: true,
-          title: '',
+          title: 'Registro',
+          headerTitleAlign: 'center',
           headerRight: () => (
             <LogoSena
               width={40}
@@ -218,15 +219,6 @@ export default function Register() {
         }
       >
         <View className="flex-1 justify-center">
-          <View
-            className="flex-col items-center gap-4 mb-10"
-            ref={refs.title}
-          >
-            <Text className="text-4xl text-center tracking-widest">
-              Registro
-            </Text>
-          </View>
-
           <View>
             <View
               style={styles.inputContainer}
