@@ -168,9 +168,10 @@ export default function Register() {
     errors,
     router,
     typeDocumentCode,
+    clearInputs,
   ])
 
-  function clearInputs() {
+  const clearInputs = useCallback(() => {
     setName('')
     setLastname('')
     setDocument('')
@@ -181,7 +182,7 @@ export default function Register() {
     setErrors({})
     setTypeDocumentCode('CedulaCiudadania')
     setIsVisible(false)
-  }
+  }, [])
 
   const getTypesDocuments = useCallback(async () => {
     const toastIdTypesDocument = toast.loading(
