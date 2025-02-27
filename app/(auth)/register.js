@@ -20,15 +20,17 @@ import { DropDownAlert, showAlert } from '../../components/DropDownAlert'
 import { DropdownAlertType } from 'react-native-dropdownalert'
 import { StatusBar } from 'expo-status-bar'
 import { Input, INPUT_TYPES, SELECT_MODES } from '../../components/Input'
+import { findConfig } from '../../lib/config'
+import { useConfig } from '../../context/config'
 
 export default function Register() {
-  const [Color, setColor] = useState('')
   const [errors, setErrors] = useState({})
   const [typeDocumentCode, setTypeDocumentCode] = useState('CedulaCiudadania')
   const [isLoading, setIsLoading] = useState(false)
   const [isVisible, setIsVisible] = useState(false)
   const [refreshing, setRefreshing] = useState(false)
   const router = useRouter()
+  const { config } = useConfig()
 
   const refs = {
     name: useRef(null),
@@ -51,6 +53,7 @@ export default function Register() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [passwordConfirm, setPasswordConfirm] = useState('')
+  const color = findConfig({ configs: config, code: 'Color' }).value
 
   function handleClickRegister() {
     let localyErrors = {}
@@ -156,31 +159,12 @@ export default function Register() {
     setErrors({})
   }
   useEffect(() => {
-    async function getConfigs() {
-      const colorStoraged = await getItemStorage({ name: 'color' })
-
-      if (!colorStoraged || new Date() > colorStoraged.expires) {
-        const url = `${process.env.EXPO_PUBLIC_API_URL}/config/?code=Color`
-        const res = await doFetch({ url, method: METHODS.GET })
-        const color = res.config.value
-
-        await setItemStorage({
-          name: 'color',
-          value: color,
-          expires: new Date(Date.now() + 1000 * 60 * 60 * 4),
-        })
-        return setColor(color)
-      }
-      setColor(colorStoraged.value)
-    }
-
     async function getTypesDocuments() {
       const url = `${process.env.EXPO_PUBLIC_API_URL}/typeDocument/`
       const res = await doFetch({ url, method: METHODS.GET })
       setTypesDocuments(res.typesDocuments)
     }
 
-    getConfigs()
     getTypesDocuments()
   }, [])
 
@@ -206,7 +190,7 @@ export default function Register() {
             <LogoSena
               width={40}
               height={40}
-              style={{ fill: Color }}
+              style={{ fill: color }}
             />
           ),
         }}
@@ -253,7 +237,7 @@ export default function Register() {
               innerRef={refs.typeDocument}
               inputRefName="typeDocument"
               label="Tipo de documento"
-              dropdownIconRippleColor={Color}
+              dropdownIconRippleColor={color}
               mode={SELECT_MODES.DROPDOWN}
               required
             />
@@ -318,9 +302,9 @@ export default function Register() {
             <View className="flex-row items-center gap-x-2 -mt-2">
               <BouncyCheckbox
                 size={24}
-                fillColor={Color}
+                fillColor={color}
                 unFillColor="#FFFFFF"
-                iconStyle={{ borderColor: Color }}
+                iconStyle={{ borderColor: color }}
                 innerIconStyle={{ borderWidth: 2 }}
                 disableText
                 isChecked={isVisible}
@@ -345,7 +329,7 @@ export default function Register() {
               className={`rounded-lg px-4 py-2 mt-6 flex-row justify-center gap-x-3 relative items-center active:opacity-60`}
               disabled={isLoading}
               style={{
-                backgroundColor: `${Color}${isLoading ? '80' : ''}`,
+                backgroundColor: `${color}${isLoading ? '80' : 'dd'}`,
                 color: `#000000${isLoading ? '80' : ''}`,
               }}
               onPress={!isLoading ? handleClickRegister : null}
