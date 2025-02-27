@@ -29,13 +29,17 @@ export function Input({
   items = [],
   disabled = false,
   mode = SELECT_MODES.MODAL,
+  required = false,
 }) {
   return (
     <View
       className="mb-4 relative"
       ref={innerRef}
     >
-      <Text className="text-black mb-1 text-base">{label}</Text>
+      <Text className="text-black mb-1 text-base">
+        {label}
+        {required && <Text className="text-red-500"> *</Text>}
+      </Text>
       {type === INPUT_TYPES.TEXT && (
         <TextInput
           className={`border rounded-lg h-14 w-full text-base px-3 ${classNameInput}`}
