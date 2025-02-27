@@ -11,7 +11,13 @@ import {
 import { Screen } from '../../components/Screen'
 import LogoSena from '../../icons/Logo'
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { doFetch, getItemStorage, METHODS, setItemStorage } from '../../lib/api'
+import {
+  doFetch,
+  getApiErrors,
+  getItemStorage,
+  METHODS,
+  setItemStorage,
+} from '../../lib/api'
 import { Picker } from '@react-native-picker/picker'
 import { Stack, useRouter } from 'expo-router'
 import { scrollSmooth } from '../../lib/scrollSmooth'
@@ -22,6 +28,8 @@ import { StatusBar } from 'expo-status-bar'
 import { Input, INPUT_TYPES, SELECT_MODES } from '../../components/Input'
 import { findConfig } from '../../lib/config'
 import { useConfig } from '../../context/config'
+import { toast } from '@backpackapp-io/react-native-toast'
+import { TOAST_STYLES } from '../../lib/toastConstants'
 
 export default function Register() {
   const [errors, setErrors] = useState({})
@@ -82,9 +90,10 @@ export default function Register() {
     setErrors(prev => ({ ...prev, ...localyErrors }))
 
     const localyErrorsEntries = Object.entries(localyErrors)
+    const errorsEntries = Object.entries(errors)
 
-    if (localyErrorsEntries.length > 0) {
-      const [key] = localyErrorsEntries[0]
+    if (localyErrorsEntries.length > 0 || errorsEntries.length > 0) {
+      const [key] = localyErrorsEntries[0] || errorsEntries[0]
       scrollSmooth(refs[key], refs.scrollView)
       return
     }
@@ -109,21 +118,24 @@ export default function Register() {
       })
 
       setIsLoading(false)
-      if (res.error) {
-        return showAlert({
-          message: res.error,
-          type: DropdownAlertType.Error,
-          title: 'Error',
+
+      if (res.error)
+        return toast.error(res.error, {
+          styles: {
+            ...TOAST_STYLES.ERROR,
+          },
         })
-      }
 
       if (res.errors) {
         const { errors } = res
+        const apiErrors = getApiErrors(errors)
+        const apiErrorsEntries = Object.entries(apiErrors)
 
-        for (const key in errors) {
-          const { msg, path, message } = errors[key][0]
-          setErrors({ ...errors, [path]: msg || message })
-          scrollSmooth(refs[path], refs.scrollView)
+        setErrors(prev => ({ ...prev, ...apiErrors }))
+
+        if (apiErrorsEntries.length > 0) {
+          const [key] = apiErrorsEntries[0]
+          scrollSmooth(refs[key], refs.scrollView)
         }
         return
       }
@@ -132,10 +144,10 @@ export default function Register() {
       // eslint-disable-next-line no-undef
       await new Promise(resolve => setTimeout(resolve, 500))
 
-      showAlert({
-        message: 'Registro exitoso',
-        type: DropdownAlertType.Success,
-        title: 'Exitoso',
+      toast.success('Registro exitoso', {
+        styles: {
+          ...TOAST_STYLES.SUCCESS,
+        },
       })
 
       // eslint-disable-next-line no-undef
