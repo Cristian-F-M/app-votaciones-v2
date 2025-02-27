@@ -3,27 +3,16 @@ import {
   Pressable,
   RefreshControl,
   ScrollView,
-  StyleSheet,
   Text,
-  TextInput,
   View,
 } from 'react-native'
 import { Screen } from '../../components/Screen'
 import LogoSena from '../../icons/Logo'
 import { useCallback, useEffect, useRef, useState } from 'react'
-import {
-  doFetch,
-  getApiErrors,
-  getItemStorage,
-  METHODS,
-  setItemStorage,
-} from '../../lib/api'
-import { Picker } from '@react-native-picker/picker'
+import { doFetch, getApiErrors, METHODS } from '../../lib/api'
 import { Stack, useRouter } from 'expo-router'
 import { scrollSmooth } from '../../lib/scrollSmooth'
 import BouncyCheckbox from 'react-native-bouncy-checkbox'
-import { DropDownAlert, showAlert } from '../../components/DropDownAlert'
-import { DropdownAlertType } from 'react-native-dropdownalert'
 import { StatusBar } from 'expo-status-bar'
 import { Input, INPUT_TYPES, SELECT_MODES } from '../../components/Input'
 import { findConfig } from '../../lib/config'
@@ -223,7 +212,6 @@ export default function Register() {
   return (
     <Screen>
       <StatusBar style="dark" />
-      <DropDownAlert />
       <Stack.Screen
         options={{
           headerShown: true,
@@ -365,7 +353,6 @@ export default function Register() {
               </Text>
             </View>
           </View>
-          {/*  */}
           <View className="mb-16">
             <Pressable
               // onPress={!isLoading ? handleClickLogin : null}
