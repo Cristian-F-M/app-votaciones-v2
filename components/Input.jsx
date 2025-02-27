@@ -58,7 +58,7 @@ export function Input({
 
       {type === INPUT_TYPES.SELECT && (
         <View
-          className={`border rounded-lg h-14 w-full text-base px-3 ${classNameInput}`}
+          className={`border rounded-lg h-14 w-full text-base px-0 ${classNameInput}`}
         >
           <Picker
             selectedValue={selectedValue}
