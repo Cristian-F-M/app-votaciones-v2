@@ -18,6 +18,7 @@ import { scrollSmooth } from '../../lib/scrollSmooth'
 import BouncyCheckbox from 'react-native-bouncy-checkbox'
 import { DropDownAlert, showAlert } from '../../components/DropDownAlert'
 import { DropdownAlertType } from 'react-native-dropdownalert'
+import { StatusBar } from 'expo-status-bar'
 
 export default function Register() {
   const [Color, setColor] = useState('')
@@ -193,6 +194,7 @@ export default function Register() {
 
   return (
     <Screen>
+      <StatusBar style="dark" />
       <DropDownAlert />
       <Stack.Screen
         options={{
