@@ -6,6 +6,11 @@ export const INPUT_TYPES = {
   SELECT: 'select',
 }
 
+export const SELECT_MODES = {
+  DROPDOWN: 'dropdown',
+  MODAL: 'modal',
+}
+
 export function Input({
   value,
   placeholder,
@@ -23,6 +28,7 @@ export function Input({
   selectText = '',
   items = [],
   disabled = false,
+  mode = SELECT_MODES.MODAL,
 }) {
   return (
     <View
@@ -51,7 +57,7 @@ export function Input({
           <Picker
             selectedValue={selectedValue}
             dropdownIconRippleColor={dropdownIconRippleColor}
-            mode="modal"
+            mode={mode}
             prompt={selectText}
             onValueChange={(itemValue, itemIndex) =>
               onValueChange(itemValue, itemIndex)
