@@ -78,19 +78,16 @@ export default function Register() {
         ...localyErrors,
         passwordConfirm: 'Las contraseñas no coinciden',
       }
-    setErrors(localyErrors)
 
-    if (localyErrors.name) return scrollSmooth(refs.name, refs.scrollView)
-    if (localyErrors.phone) return scrollSmooth(refs.phone, refs.scrollView)
-    if (localyErrors.email) return scrollSmooth(refs.email, refs.scrollView)
-    if (localyErrors.lastname)
-      return scrollSmooth(refs.lastname, refs.scrollView)
-    if (localyErrors.document)
-      return scrollSmooth(refs.document, refs.scrollView)
-    if (localyErrors.password)
-      return scrollSmooth(refs.password, refs.scrollView)
+    setErrors(prev => ({ ...prev, ...localyErrors }))
 
-    if (localyErrors.length > 0) return
+    const localyErrorsEntries = Object.entries(localyErrors)
+
+    if (localyErrorsEntries.length > 0) {
+      const [key] = localyErrorsEntries[0]
+      scrollSmooth(refs[key], refs.scrollView)
+      return
+    }
 
     register()
 
