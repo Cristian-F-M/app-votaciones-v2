@@ -1,6 +1,4 @@
 import {
-  Button,
-  findNodeHandle,
   Pressable,
   RefreshControl,
   ScrollView,
@@ -11,8 +9,7 @@ import {
 import { Screen } from '../../../components/Screen.jsx'
 import { Stack } from 'expo-router'
 import { Input, INPUT_TYPES } from '../../../components/Input.jsx'
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import ArrowLeft from '../../../icons/ArrowLeft'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { router } from 'expo-router'
 import { UpLoadImage } from '../../../components/UpLoadImage.jsx'
 import { CandidateImage } from '../../../components/CandidateImage.jsx'
