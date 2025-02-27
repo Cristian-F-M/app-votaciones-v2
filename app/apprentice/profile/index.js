@@ -127,15 +127,14 @@ export default function ApprenticeProfilePage() {
     if (email.trim() === '')
       localyErrors = { ...localyErrors, email: 'Campo requerido' }
 
-    // localyErrors = { ...localyErrors, ...errors }
-
     setErrors(prev => ({ ...prev, ...localyErrors }))
 
-    if (Object.keys(localyErrors).length > 0) {
-      const [key, error] = Object.entries(localyErrors)[0]
+    const localyErrorsEntries = Object.entries(localyErrors)
+    const errorsEntries = Object.entries(errors)
 
-      setErrors(prev => ({ ...prev, [key]: error.msg }))
-      scrollSmooth(refs.name, refs.scrollViewRef)
+    if (localyErrorsEntries.length > 0 || errorsEntries.length > 0) {
+      const [key] = localyErrorsEntries[0] || errorsEntries[0]
+      scrollSmooth(refs[key], refs.scrollViewRef)
       return
     }
 
@@ -175,7 +174,7 @@ export default function ApprenticeProfilePage() {
 
     ToastAndroid.show(data.message, ToastAndroid.LONG)
     router.replace('apprentice/')
-  }, [name, lastname, phone, email, imageUrl, url, refs])
+  }, [name, lastname, phone, email, imageUrl, url, refs, errors])
 
   const { config } = useConfig()
   const color = findConfig({ configs: config, code: 'Color' }).value
