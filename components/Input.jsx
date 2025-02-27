@@ -18,7 +18,7 @@ export function Input({
   inputRefName = '',
   innerRef = null,
   selectedValue = '',
-  dropdownIconRippleColor = 'white',
+  dropdownIconRippleColor = 'gray',
   onValueChange = () => {},
   selectText = '',
   items = [],
