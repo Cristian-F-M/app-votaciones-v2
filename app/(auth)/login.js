@@ -37,7 +37,6 @@ import { ALERT_TYPE, Dialog } from 'react-native-alert-notification'
 import { TOAST_STYLES } from '../../lib/toastConstants'
 
 export default function Login() {
-  const [Color, setColor] = useState()
   const [typesDocuments, setTypesDocuments] = useState(null)
   const [typeDocumentCode, setTypeDocumentCode] = useState('CedulaCiudadania')
   const [document, setDocument] = useState('')
@@ -51,6 +50,7 @@ export default function Login() {
   const { config } = useConfig()
   const netInfo = useNetInfo()
   const [isBiometricsActive, setIsBiometricsActive] = useState(false)
+  const color = findConfig({ configs: config, code: 'Color' }).value
 
   useEffect(() => {
     async function getIsBiometricsActive() {
@@ -147,7 +147,7 @@ export default function Login() {
     BackHandler.exitApp()
   }
 
-  async function handleClickLoginBiometrics() {
+  const handleClickLoginBiometrics = useCallback(async () => {
     const { isBiometricsActive } = await getConfigs()
 
     if (!isBiometricsActive) {
@@ -196,23 +196,18 @@ export default function Login() {
 
       router.navigate('apprentice/')
     }
-  }
+  }, [router])
 
-  useEffect(() => {
-    async function handleBiometrics() {
-      const biometricRecords = await isEnrolledAsync()
-      setIsBiometricsAvailable(biometricRecords)
-    }
-
-    handleBiometrics()
+  const handleBiometrics = useCallback(async () => {
+    const biometricRecords = await isEnrolledAsync()
+    setIsBiometricsAvailable(biometricRecords)
   }, [])
 
   useEffect(() => {
-    async function getConfigs() {
-      const { value: color } = findConfig({ configs: config, code: 'Color' })
-      setColor(color)
-    }
+    handleBiometrics()
+  }, [handleBiometrics])
 
+  useEffect(() => {
     async function getTypesDocuments() {
       const url = `${process.env.EXPO_PUBLIC_API_URL}/typeDocument/`
       const res = await doFetch({ url, method: METHODS.GET })
@@ -230,7 +225,6 @@ export default function Login() {
       setTypesDocuments(res.typesDocuments)
     }
 
-    getConfigs()
     getTypesDocuments()
   }, [config, netInfo])
 
@@ -274,7 +268,7 @@ export default function Login() {
           <View className="flex-col items-center gap-4 mb-10">
             <View>
               <LogoSena
-                style={{ fill: Color }}
+                style={{ fill: color }}
                 width={170}
                 height={168}
               />
@@ -290,7 +284,7 @@ export default function Login() {
               <View style={styles.input}>
                 <Picker
                   selectedValue={typeDocumentCode}
-                  dropdownIconRippleColor={Color}
+                  dropdownIconRippleColor={color}
                   mode="modal"
                   prompt="Seleccione tipo de documento"
                   onValueChange={(itemValue, itemIndex) =>
@@ -366,9 +360,9 @@ export default function Login() {
               <View className="flex flex-row items-center justify-center gap-x-2 -mt-2">
                 <BouncyCheckbox
                   size={24}
-                  fillColor={Color}
+                  fillColor={color}
                   unFillColor="#FFFFFF"
-                  iconStyle={{ borderColor: Color }}
+                  iconStyle={{ borderColor: color }}
                   innerIconStyle={{ borderWidth: 2 }}
                   disableText
                   isChecked={isVisible}
@@ -392,8 +386,8 @@ export default function Login() {
                       className="flex p-1 w-[42px] h-[42px] items-center justify-center rounded-full bg-white"
                       style={{
                         backgroundColor: isBiometricsActive
-                          ? Color
-                          : `${Color}80`,
+                          ? color
+                          : `${color}80`,
                       }}
                     >
                       <Finger
@@ -413,7 +407,7 @@ export default function Login() {
                 className={`rounded-lg px-4 py-2 mt-6 flex-row justify-center gap-x-3 relative items-center active:opacity-60`}
                 disabled={isLoading}
                 style={{
-                  backgroundColor: `${Color}${isLoading ? '80' : ''}`,
+                  backgroundColor: `${color}${isLoading ? '80' : 'ee'}`,
                   color: `#000000${isLoading ? '80' : ''}`,
                 }}
               >
