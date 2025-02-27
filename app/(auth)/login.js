@@ -54,6 +54,14 @@ export default function Login() {
     setIsBiometricsActive(isBiometricsActive || false)
   }, [])
 
+  const resetInputs = useCallback(() => {
+    setTypeDocumentCode('CedulaCiudadania')
+    setDocument('')
+    setPassword('')
+    setIsVisible(false)
+    setErrors({})
+  }, [])
+
   useEffect(() => {
     getIsBiometricsActive()
   }, [getIsBiometricsActive])
@@ -67,12 +75,14 @@ export default function Login() {
 
   const onRefresh = useCallback(() => {
     setRefreshing(true)
+    setTypesDocuments([])
     // eslint-disable-next-line no-undef
     setTimeout(() => {
-      router.replace('login')
+      resetInputs()
+      getTypesDocuments()
       setRefreshing(false)
     }, 600)
-  }, [router])
+  }, [getTypesDocuments, resetInputs])
 
   const handleClickLogin = useCallback(async () => {
     const localyErrors = {}
@@ -239,6 +249,7 @@ export default function Login() {
           <RefreshControl
             refreshing={refreshing}
             onRefresh={onRefresh}
+            colors={[color]}
           />
         }
       >
@@ -269,7 +280,7 @@ export default function Login() {
                     setTypeDocumentCode(itemValue)
                   }
                 >
-                  {!typesDocuments ? (
+                  {typesDocuments.length <= 0 ? (
                     <Picker.Item
                       label={'Loading...'}
                       value={0}
