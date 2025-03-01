@@ -281,6 +281,7 @@ export default function Register() {
               label="Documento"
               innerRef={refs.document}
               inputRefName="document"
+              keyboardType="number-pad"
               required
             />
 
@@ -292,6 +293,7 @@ export default function Register() {
               label="Telefono"
               innerRef={refs.phone}
               inputRefName="phone"
+              keyboardType="phone-pad"
               required
             />
 
