@@ -294,6 +294,7 @@ export default function Login() {
               label="Documento"
               innerRef={refs.document}
               inputRefName="document"
+              keyboardType="number-pad"
               required
             />
 
