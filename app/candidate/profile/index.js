@@ -20,6 +20,7 @@ import Save from '../../../icons/Save'
 import { doFetch, METHODS } from '../../../lib/api'
 import BouncyCheckbox from 'react-native-bouncy-checkbox'
 import { useUser } from '../../../context/user'
+import { StyledPressable } from '../../../components/StyledPressable'
 
 export default function CandidateProfile() {
   const url = process.env.EXPO_PUBLIC_API_URL
@@ -33,6 +34,8 @@ export default function CandidateProfile() {
   const [description, setDescription] = useState('')
   const [errors, setErrors] = useState({})
   const [refreshing, setRefreshing] = useState(false)
+  const [isLoadingProfileImage, setIsLoadingProfileImage] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
 
   useEffect(() => {
     const isSameImage =
@@ -80,7 +83,9 @@ export default function CandidateProfile() {
         ToastAndroid.SHORT,
       )
 
+    setIsLoadingProfileImage(true)
     const data = await getUser()
+    setIsLoadingProfileImage(false)
 
     if (data.error)
       return ToastAndroid.show('No se pudo obtener la imagen', ToastAndroid.TOP)
@@ -132,6 +137,7 @@ export default function CandidateProfile() {
     formData.set('description', description)
     formData.set('useForProfileImage', useForProfileImage)
 
+    setIsLoading(true)
     const data = await doFetch({
       url: `${url}/candidate`,
       method: METHODS.PUT,
@@ -139,6 +145,8 @@ export default function CandidateProfile() {
       includeContentType: false,
       stringifyBody: false,
     })
+
+    setIsLoading(false)
 
     if (!data.ok) return ToastAndroid.show(data.message, ToastAndroid.SHORT)
 
@@ -212,17 +220,14 @@ export default function CandidateProfile() {
           {errors.image && <Text style={styles.errorText}>{errors.image}</Text>}
         </View>
         <View className="mt-5">
-          <Pressable
-            className="px-8 py-2 rounded"
-            style={{
-              backgroundColor: !isProfileImage ? `${color}cc` : '#9e9d9d',
-            }}
+          <StyledPressable
+            text="Usar foto de perfil"
+            backgroundColor={`${color}cc`}
+            pressableClass="w-48 h-10 py-1 -mt-2"
             onPress={getProfileImage}
-          >
-            <Text className="text-[#122313] text-base">
-              Usar foto de perfil
-            </Text>
-          </Pressable>
+            isLoading={isLoadingProfileImage}
+            showLoadingIndicator={true}
+          />
         </View>
 
         <View className="w-3/4 mt-10">
@@ -266,18 +271,14 @@ export default function CandidateProfile() {
           </Text>
         </View>
 
-        <Pressable
-          style={{ backgroundColor: `${color}cc` }}
-          className="flex flex-row items-center justify-center px-10 py-2 mt-2 mb-10 w-3/4 rounded"
+        <StyledPressable
+          text="Guardar"
+          backgroundColor={`${color}cc`}
+          pressableClass="mt-5 mb-7 w-3/4 rounded"
           onPress={saveCandidateInfo}
-        >
-          <Save
-            className="text-gray-100"
-            width={24}
-            height={24}
-          />
-          <Text className="ml-2 text-[#122313] text-base">Guardar</Text>
-        </Pressable>
+          isLoading={isLoading}
+          showLoadingIndicator={true}
+        />
       </ScrollView>
     </Screen>
   )
