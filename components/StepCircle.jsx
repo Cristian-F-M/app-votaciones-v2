@@ -5,6 +5,7 @@ export function StepCircle({ color, currentStep, step }) {
   const scaleAnimatedValue = useAnimatedValue(0)
   const scaleAnimationValuePulse = useAnimatedValue(0.5)
   const opacityAnimationValuePulse = useAnimatedValue(0.8)
+  const animationDuration = 1300
 
   const stepCompleted = currentStep >= step
   const isThisStep = currentStep === step
@@ -26,31 +27,45 @@ export function StepCircle({ color, currentStep, step }) {
       Animated.sequence([
         Animated.timing(scaleAnimationValuePulse, {
           toValue: 1,
-          duration: 1500,
+          duration: animationDuration,
+          useNativeDriver: true,
+        }),
+        Animated.timing(scaleAnimationValuePulse, {
+          toValue: 0,
+          duration: 0,
           useNativeDriver: true,
         }),
       ]),
     ),
-    [],
-  )
+  ).current
 
   const opacityPulse = useRef(
     Animated.loop(
       Animated.sequence([
         Animated.timing(opacityAnimationValuePulse, {
           toValue: 0,
-          duration: 1500,
+          duration: animationDuration,
+          useNativeDriver: true,
+        }),
+        Animated.timing(opacityAnimationValuePulse, {
+          toValue: 0,
+          duration: 0,
           useNativeDriver: true,
         }),
       ]),
     ),
-    [],
-  )
+  ).current
 
   useEffect(() => {
-    if (isThisStep) scalePulse?.current.start()
-    if (isThisStep) opacityPulse?.current.start()
-  }, [isThisStep, scaleAnimationValuePulse, opacityAnimationValuePulse])
+    if (isThisStep) scalePulse.start()
+    if (isThisStep) opacityPulse.start()
+  }, [
+    isThisStep,
+    scaleAnimationValuePulse,
+    opacityAnimationValuePulse,
+    scalePulse,
+    opacityPulse,
+  ])
 
   return (
     <View
