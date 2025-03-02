@@ -16,8 +16,6 @@ import BouncyCheckbox from 'react-native-bouncy-checkbox'
 import { useConfig } from '../../context/config'
 import { findConfig } from '../../lib/config'
 import { scrollSmooth } from '../../lib/scrollSmooth'
-import { DropdownAlertType } from 'react-native-dropdownalert'
-import { DropDownAlert, showAlert } from '../../components/DropDownAlert'
 import { isEnrolledAsync, authenticateAsync } from 'expo-local-authentication'
 import Finger from '../../icons/Finger'
 import { toast, ToastPosition } from '@backpackapp-io/react-native-toast'
@@ -146,11 +144,13 @@ export default function Login() {
     const { isBiometricsActive } = await getConfigs()
 
     if (!isBiometricsActive) {
-      return showAlert({
-        message:
-          'Debes activar la autenticación de huella dactilar desde la aplicación.',
-        type: DropdownAlertType.Info,
-      })
+      return toast.error(
+        'Debes activar la autenticación de huella dactilar desde la aplicación.',
+        {
+          duration: 6000,
+          styles: TOAST_STYLES.INFO,
+        },
+      )
     }
 
     const biometricResult = await authenticateAsync({
@@ -170,17 +170,15 @@ export default function Login() {
       })
 
       if (res.error) {
-        showAlert({
-          message: res.error,
-          type: DropdownAlertType.Error,
-          title: 'Error',
+        return toast.error(res.error, {
+          styles: TOAST_STYLES.ERROR,
         })
-        return
       }
 
       if (!res.ok) {
-        showAlert({ message: res.message, type: DropdownAlertType.Warn })
-        return
+        return toast.error(res.message, {
+          styles: TOAST_STYLES.ERROR,
+        })
       }
 
       setItemStorage({
@@ -234,7 +232,6 @@ export default function Login() {
 
   return (
     <Screen>
-      <DropDownAlert dismissInterval={2000} />
       <StatusBar style="dark" />
       <Stack.Screen
         options={{
