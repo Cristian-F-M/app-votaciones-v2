@@ -352,7 +352,7 @@ export default function Register() {
           <View className="mb-16">
             <StyledPressable
               text="Registrar"
-              color={`${color}cc`}
+              backgroundColor={`${color}cc`}
               onPress={handleClickRegister}
               isLoading={isLoading}
               showLoadingIndicator={true}
