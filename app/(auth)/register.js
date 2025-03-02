@@ -1,11 +1,4 @@
-import {
-  ActivityIndicator,
-  Pressable,
-  RefreshControl,
-  ScrollView,
-  Text,
-  View,
-} from 'react-native'
+import { RefreshControl, ScrollView, Text, View } from 'react-native'
 import { Screen } from '../../components/Screen'
 import LogoSena from '../../icons/Logo'
 import { useCallback, useEffect, useRef, useState } from 'react'
@@ -19,6 +12,7 @@ import { findConfig } from '../../lib/config'
 import { useConfig } from '../../context/config'
 import { toast } from '@backpackapp-io/react-native-toast'
 import { TOAST_STYLES } from '../../lib/toastConstants'
+import { StyledPressable } from '../../components/StyledPressable'
 
 export default function Register() {
   const [errors, setErrors] = useState({})
@@ -356,25 +350,14 @@ export default function Register() {
             </View>
           </View>
           <View className="mb-16">
-            <Pressable
-              // onPress={!isLoading ? handleClickLogin : null}
-              className={`rounded-lg px-4 py-2 mt-6 flex-row justify-center gap-x-3 relative items-center active:opacity-60`}
-              disabled={isLoading}
-              style={{
-                backgroundColor: `${color}${isLoading ? '80' : 'dd'}`,
-                color: `#000000${isLoading ? '80' : ''}`,
-              }}
-              onPress={!isLoading ? handleClickRegister : null}
-            >
-              <Text className="text-lg">Registro</Text>
-              {isLoading && (
-                <ActivityIndicator
-                  className="absolute right-0 mr-2"
-                  size={30}
-                  color="white"
-                />
-              )}
-            </Pressable>
+            <StyledPressable
+              text="Registrar"
+              color={`${color}cc`}
+              onPress={handleClickRegister}
+              isLoading={isLoading}
+              showLoadingIndicator={true}
+              pressableClass="mt-3"
+            />
           </View>
         </View>
       </ScrollView>
