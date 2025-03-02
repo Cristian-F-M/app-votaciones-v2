@@ -3,19 +3,33 @@ import CalendarX from '../icons/CalendarX'
 import { useConfig } from '../context/config'
 import { activateNotifications, findConfig } from '../lib/config'
 import ExclamationCircle from '../icons/ExclamationCircle'
-import { useCallback } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { StyledPressable } from './StyledPressable'
 import { toast } from '@backpackapp-io/react-native-toast'
+import { getConfigs } from '../lib/api'
 
 export function ThereIsNoVote() {
+  const [isNotificationsActive, setIsNotificationsActive] = useState(false)
   const { config } = useConfig()
   const color = findConfig({ configs: config, code: 'Color' }).value
+
+  const setConfigs = useCallback(async () => {
+    const configs = await getConfigs()
+    setIsNotificationsActive(configs.isNotificationsActive || false)
+  }, [])
+
+  useEffect(() => {
+    setConfigs()
+  }, [setConfigs])
 
   const checkPermissions = useCallback(async () => {
     const isActivated = await activateNotifications()
 
     if (isActivated)
-      return ToastAndroid.show('Notificaciones activadas', ToastAndroid.LONG)
+      return ToastAndroid.show(
+        'Ya tienes las notificaciones activadas',
+        ToastAndroid.LONG,
+      )
 
     if (!isActivated) {
       ToastAndroid.show(
@@ -70,7 +84,11 @@ export function ThereIsNoVote() {
           </View>
           <View className="w-full">
             <StyledPressable
-              text="Notificarme al iniciar la votación"
+              text={
+                isNotificationsActive
+                  ? 'Notificaciones activadas'
+                  : 'Notificarme al iniciar la votación'
+              }
               backgroundColor={`${color}aa`}
               pressableClass="mt-6 px-6 py-3 rounded-lg w-full"
               onPress={checkPermissions}
