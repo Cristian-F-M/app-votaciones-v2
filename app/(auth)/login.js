@@ -1,11 +1,4 @@
-import {
-  ActivityIndicator,
-  Text,
-  View,
-  Pressable,
-  ScrollView,
-  RefreshControl,
-} from 'react-native'
+import { Text, View, Pressable, ScrollView, RefreshControl } from 'react-native'
 import { Screen } from '../../components/Screen'
 import LogoSena from '../../icons/Logo'
 import { useCallback, useEffect, useRef, useState } from 'react'
@@ -30,6 +23,7 @@ import Finger from '../../icons/Finger'
 import { toast, ToastPosition } from '@backpackapp-io/react-native-toast'
 import { TOAST_STYLES } from '../../lib/toastConstants'
 import { Input, INPUT_TYPES, SELECT_MODES } from '../../components/Input'
+import { StyledPressable } from '../../components/StyledPressable'
 
 export default function Login() {
   const [typesDocuments, setTypesDocuments] = useState([])
@@ -356,24 +350,14 @@ export default function Login() {
             </View>
 
             <View clasName="flex flex-row justify-between items-center w-full">
-              <Pressable
-                onPress={!isLoading ? handleClickLogin : null}
-                className={`rounded-lg px-4 py-2 mt-6 flex-row justify-center gap-x-3 relative items-center active:opacity-60`}
-                disabled={isLoading}
-                style={{
-                  backgroundColor: `${color}${isLoading ? '80' : 'ee'}`,
-                  color: `#000000${isLoading ? '80' : ''}`,
-                }}
-              >
-                <Text className="text-lg">Iniciar sesión</Text>
-                {isLoading && (
-                  <ActivityIndicator
-                    className="absolute right-0 mr-2"
-                    size={30}
-                    color="white"
-                  />
-                )}
-              </Pressable>
+              <StyledPressable
+                text="Iniciar Sesión"
+                color={`${color}cc`}
+                pressableClass="mt-3"
+                isLoading={isLoading}
+                showLoadingIndicator={true}
+                onPress={handleClickLogin}
+              />
             </View>
           </View>
           <View className="flex-row items-center justify-between pt-1">
