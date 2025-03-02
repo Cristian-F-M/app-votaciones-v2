@@ -352,7 +352,7 @@ export default function Login() {
             <View clasName="flex flex-row justify-between items-center w-full">
               <StyledPressable
                 text="Iniciar Sesión"
-                color={`${color}cc`}
+                backgroundColor={`${color}cc`}
                 pressableClass="mt-3"
                 isLoading={isLoading}
                 showLoadingIndicator={true}
