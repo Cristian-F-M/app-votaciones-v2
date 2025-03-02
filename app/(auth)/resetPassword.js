@@ -24,6 +24,7 @@ import { TOAST_STYLES } from '../../lib/toastConstants'
 import { Pressable, RefreshControl } from 'react-native-gesture-handler'
 import { StepIndicator } from '../../components/StepIndicator'
 import { scrollSmooth } from '../../lib/scrollSmooth'
+import ExclamationCircle from '../../icons/ExclamationCircle'
 
 export default function ResetPassword() {
   const [typesDocuments, setTypesDocuments] = useState([])
@@ -539,9 +540,12 @@ export default function ResetPassword() {
               />
               <Pressable
                 onPress={!isLoading ? handleClickChangePassword : null}
-                className="bg-blue-400 mt-10 w-full"
+                className="mt-4 w-full px-2 py-3 rounded-lg"
+                style={{ backgroundColor: `${color}cc` }}
               >
-                <Text>Guardar</Text>
+                <Text className="text-white text-base text-center">
+                  Restablecer
+                </Text>
               </Pressable>
             </View>
           )}
