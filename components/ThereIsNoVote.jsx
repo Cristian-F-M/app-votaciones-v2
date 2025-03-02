@@ -1,10 +1,11 @@
-import { Linking, Text, View } from 'react-native'
+import { Linking, Text, ToastAndroid, View } from 'react-native'
 import CalendarX from '../icons/CalendarX'
 import { useConfig } from '../context/config'
 import { activateNotifications, findConfig } from '../lib/config'
 import ExclamationCircle from '../icons/ExclamationCircle'
 import { useCallback } from 'react'
 import { StyledPressable } from './StyledPressable'
+import { toast } from '@backpackapp-io/react-native-toast'
 
 export function ThereIsNoVote() {
   const { config } = useConfig()
@@ -14,50 +15,29 @@ export function ThereIsNoVote() {
     const isActivated = await activateNotifications()
 
     if (isActivated)
-      showModal({
-        content: (
-          <>
-            <View>
-              <Text>
-                Te informarem cuando la votación comience, y cuando haya
-                finalizado.
-              </Text>
-            </View>
-          </>
-        ),
-        title: 'Notificaciones',
-        closeButton: true,
-      })
+      return ToastAndroid.show('Notificaciones activadas', ToastAndroid.LONG)
 
-    if (!isActivated)
-      showModal({
-        content: (
-          <>
-            <View>
-              <Text>
-                Para recibir notificaciones, por favor, habilite las
-                notificaciones en la configuración del dispositivo.
-              </Text>
-            </View>
-          </>
-        ),
-        title: 'Habilitar notificaciones',
-        closeButton: true,
-        buttons: [
-          {
-            text: 'Abrir configuración',
-            onPress: () => Linking.openSettings(),
-            hideModalOnPress: true,
-            className: `p-2 px-3 rounded-lg bg-blue-500/60`,
-            textClassName: 'text-gray-800 text-base text-center',
-          },
-        ],
-      })
+    if (!isActivated) {
+      ToastAndroid.show(
+        'Debes activar las notificaciones en la configuración del dispositivo',
+        ToastAndroid.LONG,
+      )
+
+      const toastOpenSettingsId = toast.loading('Abriendo configuraciones...')
+
+      // eslint-disable-next-line no-undef
+      setTimeout(() => {
+        Linking.openSettings()
+        // eslint-disable-next-line no-undef
+        setTimeout(() => {
+          toast.dismiss(toastOpenSettingsId)
+        }, 1000)
+      }, 2000)
+    }
   }, [])
 
   return (
     <>
-      <AnimatedModal />
       <View className="mx-auto flex flex-1 items-center justify-center bg-gray-100">
         <View className="w-[95%] flex flex-col items-center bg-white p-5 rounded-lg border border-gray-200">
           <View className="bg-[#ffedd5] p-3 rounded-full">
