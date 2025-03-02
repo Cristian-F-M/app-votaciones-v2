@@ -467,6 +467,19 @@ export default function ResetPassword() {
               id="step-2"
               className="w-full"
             >
+              <View className="flex flex-row border border-red-300 rounded px-4 py-2 bg-red-100/20 items-center justify-between mb-5">
+                <View className="self-start mr-2 w-[10%]">
+                  <ExclamationCircle
+                    style={{ color: 'red' }}
+                    width={25}
+                    height={25}
+                  />
+                </View>
+                <Text className="text-center text-sm leading-4 w-[90%] text-red-700">
+                  Ten en cuenta que el código de verificación tiene una validez
+                  de 6 horas.
+                </Text>
+              </View>
               <Input
                 type={INPUT_TYPES.TEXT}
                 label="Código de Verificación"
