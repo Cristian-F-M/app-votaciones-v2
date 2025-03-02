@@ -2,7 +2,6 @@ import {
   Pressable,
   RefreshControl,
   ScrollView,
-  Text,
   ToastAndroid,
   View,
 } from 'react-native'
