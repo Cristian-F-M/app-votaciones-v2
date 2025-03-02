@@ -1,10 +1,4 @@
-import {
-  ActivityIndicator,
-  ScrollView,
-  Text,
-  ToastAndroid,
-  View,
-} from 'react-native'
+import { ScrollView, Text, ToastAndroid, View } from 'react-native'
 import { Screen } from '../../components/Screen'
 import { router, Stack } from 'expo-router'
 import { useCallback, useEffect, useRef, useState } from 'react'
@@ -21,10 +15,11 @@ import {
 } from '../../lib/api'
 import { toast, ToastPosition } from '@backpackapp-io/react-native-toast'
 import { TOAST_STYLES } from '../../lib/toastConstants'
-import { Pressable, RefreshControl } from 'react-native-gesture-handler'
+import { RefreshControl } from 'react-native-gesture-handler'
 import { StepIndicator } from '../../components/StepIndicator'
 import { scrollSmooth } from '../../lib/scrollSmooth'
 import ExclamationCircle from '../../icons/ExclamationCircle'
+import { StyledPressable } from '../../components/StyledPressable'
 
 export default function ResetPassword() {
   const [typesDocuments, setTypesDocuments] = useState([])
@@ -38,7 +33,6 @@ export default function ResetPassword() {
   const [user, setUser] = useState({})
   const [passwordConfirmation, setPasswordConfirmation] = useState('')
   const [currentStep, setCurrentStep] = useState(0)
-  // const StyledPressable = styled(Pressable)
 
   const { config } = useConfig()
   const color = findConfig({ configs: config, code: 'Color' }).value
@@ -412,24 +406,14 @@ export default function ResetPassword() {
               />
 
               <View clasName="flex flex-row justify-between items-center w-full overflow-hidden">
-                <Pressable
+                <StyledPressable
+                  text="Buscar usuario"
+                  backgroundColor={`${color}cc`}
+                  pressableClass="mt-3"
+                  isLoading={isLoading}
+                  showLoadingIndicator={true}
                   onPress={handleClickFindUser}
-                  className={`rounded-lg px-4 py-2 mt-6 flex-row justify-center relative items-center active:opacity-20`}
-                  disabled={isLoading}
-                  style={{
-                    backgroundColor: `${color}${isLoading ? '80' : 'dd'}`,
-                    color: `#000000${isLoading ? '80' : ''}`,
-                  }}
-                >
-                  <Text className="text-lg">Buscar usuario</Text>
-                  {isLoading && (
-                    <ActivityIndicator
-                      className="absolute right-0 mr-2"
-                      size={30}
-                      color="white"
-                    />
-                  )}
-                </Pressable>
+                />
               </View>
             </View>
           )}
@@ -445,20 +429,18 @@ export default function ResetPassword() {
                 <Text className="text-black font-semibold">{user.email}</Text>.
               </Text>
               <View className="flex flex-row justify-evenly mt-8 w-full">
-                <Pressable
-                  onPress={!isLoading ? handleClickChangeUser : null}
-                  className="rounded px-6 py-3 w-[48%]"
-                  style={{ borderColor: 'gray', borderWidth: 1 }}
-                >
-                  <Text className="text-center">Cambiar usuario</Text>
-                </Pressable>
-                <Pressable
-                  onPress={!isLoading ? handleClickSendEmail : null}
-                  className="rounded px-6 py-3 w-[48%]"
-                  style={{ backgroundColor: color }}
-                >
-                  <Text className="text-white text-center">Enviar correo</Text>
-                </Pressable>
+                <StyledPressable
+                  text="Cambiar usuario"
+                  backgroundColor="transparent"
+                  pressableClass="w-[48%] border border-gray-400"
+                  onPress={handleClickChangeUser}
+                />
+                <StyledPressable
+                  text="Enviar correo"
+                  backgroundColor={`${color}cc`}
+                  pressableClass="w-[48%]"
+                  onPress={handleClickSendEmail}
+                />
               </View>
             </View>
           )}
@@ -495,15 +477,14 @@ export default function ResetPassword() {
                 required
               />
 
-              <Pressable
-                onPress={!isLoading ? handleClickVerifyCode : null}
-                className="mt-2 px-2 py-3 rounded-lg w-full"
-                style={{ backgroundColor: `${color}cc` }}
-              >
-                <Text className="text-white text-center text-base">
-                  Verificar
-                </Text>
-              </Pressable>
+              <StyledPressable
+                text="Verificar"
+                backgroundColor={`${color}cc`}
+                pressableClass="mt-2 px-2 py-3 rounded-lg w-full"
+                onPress={handleClickVerifyCode}
+                isLoading={isLoading}
+                showLoadingIndicator={true}
+              />
             </View>
           )}
 
@@ -538,15 +519,15 @@ export default function ResetPassword() {
                 secureTextEntry={true}
                 required
               />
-              <Pressable
-                onPress={!isLoading ? handleClickChangePassword : null}
-                className="mt-4 w-full px-2 py-3 rounded-lg"
-                style={{ backgroundColor: `${color}cc` }}
-              >
-                <Text className="text-white text-base text-center">
-                  Restablecer
-                </Text>
-              </Pressable>
+
+              <StyledPressable
+                text="Restablecer"
+                backgroundColor={`${color}cc`}
+                pressableClass="mt-4 w-full px-2 py-3 rounded-lg"
+                onPress={handleClickChangePassword}
+                isLoading={isLoading}
+                showLoadingIndicator={true}
+              />
             </View>
           )}
         </View>
