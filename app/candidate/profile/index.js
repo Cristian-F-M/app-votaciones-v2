@@ -9,14 +9,13 @@ import {
   ToastAndroid,
 } from 'react-native'
 import { Screen } from '../../../components/Screen'
-import { router, Stack } from 'expo-router'
+import { Stack } from 'expo-router'
 import { useConfig } from '../../../context/config'
 import { findConfig } from '../../../lib/config'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { UpLoadImage } from '../../../components/UpLoadImage'
 import { CandidateImage } from '../../../components/CandidateImage'
 import * as ImagePicker from 'expo-image-picker'
-import Save from '../../../icons/Save'
 import { doFetch, getApiErrors, METHODS } from '../../../lib/api'
 import BouncyCheckbox from 'react-native-bouncy-checkbox'
 import { useUser } from '../../../context/user'
@@ -38,6 +37,7 @@ export default function CandidateProfile() {
   const [isLoadingProfileImage, setIsLoadingProfileImage] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const refs = {
     image: useRef(null),
     scrollView: useRef(null),
