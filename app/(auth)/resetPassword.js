@@ -496,9 +496,12 @@ export default function ResetPassword() {
 
               <Pressable
                 onPress={!isLoading ? handleClickVerifyCode : null}
-                className="bg-blue-400"
+                className="mt-2 px-2 py-3 rounded-lg w-full"
+                style={{ backgroundColor: `${color}cc` }}
               >
-                <Text>Enviar</Text>
+                <Text className="text-white text-center text-base">
+                  Verificar
+                </Text>
               </Pressable>
             </View>
           )}
