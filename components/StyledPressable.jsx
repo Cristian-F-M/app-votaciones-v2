@@ -19,7 +19,9 @@ export function StyledPressable({
       onPress={!isLoading ? onPress : null}
       disabled={isLoading}
     >
-      <Text className={`text-black text-base text-center ${textClassName}`}>
+      <Text
+        className={`text-black text-base text-center w-full ${textClassName}`}
+      >
         {text}
       </Text>
       {showLoadingIndicator && isLoading && (
