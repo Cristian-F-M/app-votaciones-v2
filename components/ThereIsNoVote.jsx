@@ -1,10 +1,10 @@
-import { Linking, Pressable, Text, View } from 'react-native'
+import { Linking, Text, View } from 'react-native'
 import CalendarX from '../icons/CalendarX'
 import { useConfig } from '../context/config'
 import { activateNotifications, findConfig } from '../lib/config'
 import ExclamationCircle from '../icons/ExclamationCircle'
 import { useCallback } from 'react'
-import { AnimatedModal, showModal } from './Modal'
+import { StyledPressable } from './StyledPressable'
 
 export function ThereIsNoVote() {
   const { config } = useConfig()
@@ -89,15 +89,12 @@ export function ThereIsNoVote() {
             </Text>
           </View>
           <View className="w-full">
-            <Pressable
-              className="mt-6 px-6 py-3 rounded-lg w-full"
-              style={{ backgroundColor: `${color}cc` }}
+            <StyledPressable
+              text="Notificarme al iniciar la votación"
+              backgroundColor={`${color}aa`}
+              pressableClass="mt-6 px-6 py-3 rounded-lg w-full"
               onPress={checkPermissions}
-            >
-              <Text className="text-gray-100 text-base text-center">
-                Notificarme al iniciar la votación
-              </Text>
-            </Pressable>
+            />
           </View>
         </View>
       </View>
