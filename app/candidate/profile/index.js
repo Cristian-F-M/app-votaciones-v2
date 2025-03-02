@@ -187,8 +187,11 @@ export default function CandidateProfile() {
   const onRefresh = useCallback(async () => {
     setRefreshing(true)
 
-    // setImageUrl('')
-    // setDescription('')
+    setImageUrl('')
+    setDescription('')
+    setUseSameUserImage(false)
+    setIsProfileImage(false)
+    setUseForProfileImage(false)
     await getCandidate()
     setRefreshing(false)
   }, [getCandidate])
