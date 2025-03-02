@@ -12,15 +12,16 @@ import { Screen } from '../../../components/Screen'
 import { router, Stack } from 'expo-router'
 import { useConfig } from '../../../context/config'
 import { findConfig } from '../../../lib/config'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { UpLoadImage } from '../../../components/UpLoadImage'
 import { CandidateImage } from '../../../components/CandidateImage'
 import * as ImagePicker from 'expo-image-picker'
 import Save from '../../../icons/Save'
-import { doFetch, METHODS } from '../../../lib/api'
+import { doFetch, getApiErrors, METHODS } from '../../../lib/api'
 import BouncyCheckbox from 'react-native-bouncy-checkbox'
 import { useUser } from '../../../context/user'
 import { StyledPressable } from '../../../components/StyledPressable'
+import { scrollSmooth } from '../../../lib/scrollSmooth'
 
 export default function CandidateProfile() {
   const url = process.env.EXPO_PUBLIC_API_URL
@@ -36,6 +37,12 @@ export default function CandidateProfile() {
   const [refreshing, setRefreshing] = useState(false)
   const [isLoadingProfileImage, setIsLoadingProfileImage] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
+
+  const refs = {
+    image: useRef(null),
+    scrollView: useRef(null),
+    description: useRef(null),
+  }
 
   useEffect(() => {
     const isSameImage =
@@ -105,18 +112,23 @@ export default function CandidateProfile() {
 
   const saveCandidateInfo = useCallback(async () => {
     // TODO Hacer el fetch
-
     const localyErrors = {}
 
-    if (!imageUrl) localyErrors.image = 'Debes seleccionar una imagen'
-    if (!description)
-      localyErrors.description = 'Debes escribir una descripción'
-    if (description.trim() === '')
+    if (!imageUrl || imageUrl.trim() === '')
+      localyErrors.image = 'Debes seleccionar una imagen'
+    if (!description || description.trim() === '')
       localyErrors.description = 'Debes escribir una descripción'
 
-    setErrors(localyErrors)
+    setErrors(prev => ({ ...prev, ...localyErrors }))
 
-    if (Object.keys(localyErrors).length > 0) return
+    const localyErrorsEntries = Object.entries(localyErrors)
+    const errorsEntries = Object.entries(errors)
+
+    if (localyErrorsEntries.length > 0 || errorsEntries.length > 0) {
+      const [key] = localyErrorsEntries[0] || errorsEntries[0]
+      scrollSmooth(refs[key], refs.scrollView)
+      return
+    }
 
     const urlSplited = imageUrl.split('.')
     const fileType = urlSplited[urlSplited.length - 1]
@@ -148,6 +160,13 @@ export default function CandidateProfile() {
 
     setIsLoading(false)
 
+    if (data.errors) {
+      const apiErrors = getApiErrors(data.errors)
+      setErrors(prev => ({ ...prev, ...apiErrors }))
+      scrollSmooth(refs[Object.keys(apiErrors)[0]], refs.scrollView)
+      return
+    }
+
     if (!data.ok) return ToastAndroid.show(data.message, ToastAndroid.SHORT)
 
     return ToastAndroid.showWithGravity(
@@ -155,7 +174,15 @@ export default function CandidateProfile() {
       ToastAndroid.SHORT,
       ToastAndroid.TOP,
     )
-  }, [url, imageUrl, useForProfileImage, description, useSameUserImage])
+  }, [
+    url,
+    imageUrl,
+    useForProfileImage,
+    description,
+    useSameUserImage,
+    refs,
+    errors,
+  ])
 
   const onRefresh = useCallback(async () => {
     setRefreshing(true)
@@ -185,6 +212,7 @@ export default function CandidateProfile() {
       <ScrollView
         className="mt-4 flex w-full"
         contentContainerStyle={{ alignItems: 'center' }}
+        ref={refs.scrollView}
         refreshControl={
           <RefreshControl
             refreshing={refreshing}
@@ -201,13 +229,19 @@ export default function CandidateProfile() {
           style={{ borderColor: imageUrl ? `${color}77` : 'rgb(156 163 175)' }}
         >
           {!imageUrl && (
-            <Pressable onPress={pickImage}>
+            <Pressable
+              onPress={pickImage}
+              ref={refs.image}
+            >
               <UpLoadImage />
             </Pressable>
           )}
 
           {imageUrl && (
-            <Pressable onPress={pickImage}>
+            <Pressable
+              onPress={pickImage}
+              ref={refs.image}
+            >
               <CandidateImage
                 imageUrl={imageUrl}
                 alt="Foto de perfil"
@@ -232,7 +266,10 @@ export default function CandidateProfile() {
 
         <View className="w-3/4 mt-10">
           <Text className="text-lg text-gray-600">Descripción</Text>
-          <View className="border w-full h-28 mt-2 rounded-lg border-gray-400">
+          <View
+            className="border w-full h-28 mt-2 rounded-lg border-gray-400"
+            ref={refs.description}
+          >
             <TextInput
               keyboardType="default"
               placeholder="Escribe aquí tu descripción"
