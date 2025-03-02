@@ -20,6 +20,7 @@ import { useUser } from '../../../context/user.js'
 import { doFetch, METHODS } from '../../../lib/api.js'
 import { getApiErrors } from '../../../lib/api.js'
 import { scrollSmooth } from '../../../lib/scrollSmooth.js'
+import { StyledPressable } from '../../../components/StyledPressable'
 
 export default function ApprenticeProfilePage() {
   const [name, setName] = useState('')
@@ -35,6 +36,7 @@ export default function ApprenticeProfilePage() {
   const [imageUrl, setImageUrl] = useState(null)
   const { user } = useUser()
   const [refreshing, setRefreshing] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
   const url = process.env.EXPO_PUBLIC_API_URL
 
   const getTypeDocuments = useCallback(async () => {
@@ -154,6 +156,8 @@ export default function ApprenticeProfilePage() {
       `image.${fileType}`,
     )
 
+    setIsLoading(true)
+
     const data = await doFetch({
       url: `${url}/user/profile`,
       method: METHODS.PUT,
@@ -161,6 +165,8 @@ export default function ApprenticeProfilePage() {
       includeContentType: false,
       stringifyBody: false,
     })
+
+    setIsLoading(false)
 
     if (!data.ok && data.errors) {
       const apiErrors = getApiErrors(data.errors)
@@ -322,15 +328,14 @@ export default function ApprenticeProfilePage() {
             disabled={true}
           />
 
-          <Pressable
-            className="rounded-lg px-4 py-2 mt-2 flex-row justify-center items-center active:opacity-60 mb-6"
-            style={{
-              backgroundColor: `${color}cc`,
-            }}
+          <StyledPressable
+            text="Guardar"
+            backgroundColor={`${color}cc`}
+            pressableClass="mt-2 mb-6"
             onPress={handleClickSaveProfile}
-          >
-            <Text className="text-lg">Guardar</Text>
-          </Pressable>
+            isLoading={isLoading}
+            showLoadingIndicator={true}
+          />
         </View>
       </ScrollView>
     </Screen>
