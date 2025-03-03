@@ -60,7 +60,7 @@ export default function Config() {
     router.push('/apprentice/')
   }
 
-  async function toggleLoginBiometrics() {
+  const toggleLoginBiometrics = useCallback(async () => {
     if (isBiometricsActive) {
       await saveConfig('isBiometricsActive', false)
       await removeItemStorage({ name: 'tokenBiometrics' })
@@ -93,7 +93,7 @@ export default function Config() {
     toast.success('Autenticación de huella dactilar activada', {
       styles: TOAST_STYLES.SUCCESS,
     })
-  }
+  }, [isBiometricsActive])
 
   const toggleNotifications = useCallback(async () => {
     if (isNotificationsActive) {
