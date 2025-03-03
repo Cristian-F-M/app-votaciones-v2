@@ -8,25 +8,15 @@ import { CardConfig } from '../../../components/CardConfig'
 import { useCallback, useEffect, useState } from 'react'
 import { useConfig } from '../../../context/config'
 import { activateNotifications, findConfig } from '../../../lib/config'
-import {
-  hasHardwareAsync,
-  isEnrolledAsync,
-  authenticateAsync,
-} from 'expo-local-authentication'
+import { isEnrolledAsync, authenticateAsync } from 'expo-local-authentication'
 import {
   getConfigs,
   getItemStorage,
-  removeConfig,
   removeItemStorage,
   saveConfig,
   setItemStorage,
-  getAllKeys,
 } from '../../../lib/api'
-import { DropDownAlert, showAlert } from '../../../components/DropDownAlert'
-import { DropdownAlertType } from 'react-native-dropdownalert'
-import { ALERT_TYPE, Toast } from 'react-native-alert-notification'
 import { RowConfig } from '../../../components/RowConfig'
-import { AnimatedModal } from '../../../components/Modal'
 import { saveNotificationToken } from '../../../lib/config'
 import { toast } from '@backpackapp-io/react-native-toast'
 import { TOAST_STYLES } from '../../../lib/toastConstants'
@@ -136,11 +126,6 @@ export default function Config() {
 
   return (
     <>
-      <AnimatedModal />
-      <DropDownAlert
-        dismissInterval={2000}
-        alertPosition="bottom"
-      />
       <Screen safeArea={false}>
         <Stack.Screen
           options={{
