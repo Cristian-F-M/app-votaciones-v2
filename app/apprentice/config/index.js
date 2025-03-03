@@ -20,6 +20,7 @@ import {
   removeItemStorage,
   saveConfig,
   setItemStorage,
+  getAllKeys,
 } from '../../../lib/api'
 import { DropDownAlert, showAlert } from '../../../components/DropDownAlert'
 import { DropdownAlertType } from 'react-native-dropdownalert'
@@ -27,6 +28,8 @@ import { ALERT_TYPE, Toast } from 'react-native-alert-notification'
 import { RowConfig } from '../../../components/RowConfig'
 import { AnimatedModal } from '../../../components/Modal'
 import { saveNotificationToken } from '../../../lib/config'
+import { toast } from '@backpackapp-io/react-native-toast'
+import { TOAST_STYLES } from '../../../lib/toastConstants'
 
 export default function Config() {
   const { config } = useConfig()
@@ -90,34 +93,44 @@ export default function Config() {
     })
   }
 
-  async function toggleNotifications() {
+  const toggleNotifications = useCallback(async () => {
     if (isNotificationsActive) {
-      removeConfig('isNotificationsActive')
-      saveNotificationToken(null)
-      showAlert({
-        message: 'Notificaciones desactivadas',
-        type: DropdownAlertType.Info,
+      await saveConfig('isNotificationsActive', false)
+
+      const res = await saveNotificationToken(null)
+
+      if (!res.ok) {
+        toast.error(res.message, {
+          styles: TOAST_STYLES.ERROR,
+        })
+        return
+      }
+
+      toast.success('Notificaciones desactivadas', {
+        styles: TOAST_STYLES.SUCCESS,
       })
       return setIsNotificationsActive(false)
     }
 
     const isActivated = await activateNotifications()
+    console.log({ isActivated })
 
     if (isActivated) {
-      showAlert({
-        message: 'Activaste correctamente las notificaciones',
-        type: DropdownAlertType.Success,
+      toast.success('Activaste correctamente las notificaciones', {
+        styles: TOAST_STYLES.SUCCESS,
       })
       setIsNotificationsActive(true)
+      return
     }
 
-    if (!isActivated) {
-      showAlert({
-        message: 'No se pudo activar las notificaciones',
-        type: DropdownAlertType.Error,
-      })
-    }
-  }
+    toast.error('No se pudo activar las notificaciones', {
+      styles: TOAST_STYLES.ERROR,
+    })
+    // eslint-disable-next-line no-undef
+    setTimeout(() => {
+      setIsNotificationsActive(false)
+    }, 1500)
+  }, [isNotificationsActive])
 
   return (
     <>
