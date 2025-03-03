@@ -1,13 +1,11 @@
 import { router } from 'expo-router'
-import { ScrollView, Switch, Text, ToastAndroid } from 'react-native'
+import { ScrollView, ToastAndroid } from 'react-native'
 import { Screen } from '../../../components/Screen'
 import { Stack } from 'expo-router'
-import { View } from 'react-native'
 import ArrowLeft from '../../../icons/ArrowLeft'
 import { CardConfig } from '../../../components/CardConfig'
 import { useCallback, useEffect, useState } from 'react'
-import { useConfig } from '../../../context/config'
-import { activateNotifications, findConfig } from '../../../lib/config'
+import { activateNotifications } from '../../../lib/config'
 import { isEnrolledAsync, authenticateAsync } from 'expo-local-authentication'
 import {
   getConfigs,
@@ -22,8 +20,6 @@ import { toast } from '@backpackapp-io/react-native-toast'
 import { TOAST_STYLES } from '../../../lib/toastConstants'
 
 export default function Config() {
-  const { config } = useConfig()
-  const color = findConfig({ configs: config, code: 'Color' }).value
   const [isBiometricsActive, setIsBiometricsActive] = useState(false)
   const [isBiometricsAvailable, setIsBiometricsAvailable] = useState(false)
   const [isNotificationsActive, setIsNotificationsActive] = useState(false)
