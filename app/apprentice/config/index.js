@@ -1,5 +1,5 @@
 import { router } from 'expo-router'
-import { ScrollView, Switch, Text } from 'react-native'
+import { ScrollView, Switch, Text, ToastAndroid } from 'react-native'
 import { Screen } from '../../../components/Screen'
 import { Stack } from 'expo-router'
 import { View } from 'react-native'
@@ -60,16 +60,15 @@ export default function Config() {
     router.push('/apprentice/')
   }
 
-  async function activateBiometrics() {
+  async function toggleLoginBiometrics() {
     if (isBiometricsActive) {
-      removeConfig('isBiometricsActive')
-      removeItemStorage({ name: 'tokenBiometrics' })
+      await saveConfig('isBiometricsActive', false)
+      await removeItemStorage({ name: 'tokenBiometrics' })
 
-      showAlert({
-        message: 'Se desactivo la autenticación de huella dactilar',
-        type: DropdownAlertType.Success,
+      toast.success('Autenticación de huella dactilar desactivada', {
+        styles: TOAST_STYLES.INFO,
       })
-      return
+      return setIsBiometricsActive(false)
     }
 
     const biometricResult = await authenticateAsync({
@@ -80,16 +79,19 @@ export default function Config() {
 
     const { success } = biometricResult
 
-    if (!success) return setIsBiometricsActive(false)
+    if (!success) {
+      ToastAndroid.show('Cancelado', ToastAndroid.SHORT)
+      return setIsBiometricsActive(false)
+    }
 
     const { value: token } = await getItemStorage({ name: 'token' })
 
     saveConfig('isBiometricsActive', true)
     setItemStorage({ name: 'tokenBiometrics', value: token })
 
-    showAlert({
-      message: 'Activaste correctamente la autenticación de huella dactilar',
-      type: DropdownAlertType.Success,
+    setIsBiometricsActive(true)
+    toast.success('Autenticación de huella dactilar activada', {
+      styles: TOAST_STYLES.SUCCESS,
     })
   }
 
@@ -170,7 +172,7 @@ export default function Config() {
                       onValueChange={() => {
                         setIsBiometricsActive(!isBiometricsActive)
                       }}
-                      onChange={activateBiometrics}
+                      onChange={toggleLoginBiometrics}
                       value={isBiometricsActive}
                     />
                   </View>
