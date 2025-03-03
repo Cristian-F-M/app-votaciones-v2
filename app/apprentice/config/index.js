@@ -144,44 +144,27 @@ export default function Config() {
         />
         <ScrollView className="mt-3 flex-1">
           <CardConfig title="Inicio de sesión">
-            {isBiometricsAvailable && (
-              <>
-                <RowConfig>
-                  <View>
-                    <Text>Activar inicio con huella</Text>
-                  </View>
-                  <View>
-                    <Switch
-                      trackColor={{ false: '#767577', true: color }}
-                      thumbColor="white"
-                      onValueChange={() => {
-                        setIsBiometricsActive(!isBiometricsActive)
-                      }}
-                      onChange={toggleLoginBiometrics}
-                      value={isBiometricsActive}
-                    />
-                  </View>
-                </RowConfig>
-              </>
-            )}
+            <RowConfig
+              label="Activar inicio con huella"
+              onChange={toggleLoginBiometrics}
+              switchValue={{
+                value: isBiometricsActive,
+                setValue: setIsBiometricsActive,
+              }}
+              disabled={isBiometricsAvailable}
+              useSwitch
+            />
           </CardConfig>
           <CardConfig title="Notificaciones">
-            <RowConfig>
-              <View>
-                <Text>Activar notificaciones</Text>
-              </View>
-              <View>
-                <Switch
-                  trackColor={{ false: '#767577', true: color }}
-                  thumbColor="white"
-                  onValueChange={() =>
-                    setIsNotificationsActive(!isNotificationsActive)
-                  }
-                  onChange={toggleNotifications}
-                  value={isNotificationsActive}
-                />
-              </View>
-            </RowConfig>
+            <RowConfig
+              label="Activar notificaciones"
+              onChange={toggleNotifications}
+              useSwitch
+              switchValue={{
+                value: isNotificationsActive,
+                setValue: setIsNotificationsActive,
+              }}
+            />
           </CardConfig>
         </ScrollView>
       </Screen>
