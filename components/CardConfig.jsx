@@ -2,7 +2,6 @@ import { Text, View } from 'react-native'
 import { useConfig } from '../context/config'
 import { findConfig } from '../lib/config'
 import { HorizontalSeparator } from './HorizontalSeparator'
-import InsetShadow from 'react-native-inset-shadow'
 import { Shadow } from 'react-native-shadow-2'
 
 export function CardConfig({ children, title }) {
