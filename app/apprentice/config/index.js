@@ -33,7 +33,7 @@ import { TOAST_STYLES } from '../../../lib/toastConstants'
 
 export default function Config() {
   const { config } = useConfig()
-  const { value } = findConfig({ configs: config, code: 'Color' })
+  const color = findConfig({ configs: config, code: 'Color' }).value
   const [isBiometricsActive, setIsBiometricsActive] = useState(false)
   const [isBiometricsAvailable, setIsBiometricsAvailable] = useState(false)
   const [isNotificationsActive, setIsNotificationsActive] = useState(false)
@@ -167,7 +167,7 @@ export default function Config() {
                   </View>
                   <View>
                     <Switch
-                      trackColor={{ false: '#767577', true: value }}
+                      trackColor={{ false: '#767577', true: color }}
                       thumbColor="white"
                       onValueChange={() => {
                         setIsBiometricsActive(!isBiometricsActive)
@@ -187,7 +187,7 @@ export default function Config() {
               </View>
               <View>
                 <Switch
-                  trackColor={{ false: '#767577', true: value }}
+                  trackColor={{ false: '#767577', true: color }}
                   thumbColor="white"
                   onValueChange={() =>
                     setIsNotificationsActive(!isNotificationsActive)
