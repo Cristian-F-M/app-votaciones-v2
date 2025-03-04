@@ -42,7 +42,7 @@ export function ThereIsNoVote() {
         ToastAndroid.LONG,
       )
 
-      openModalize()
+      openModalize(e)
     }
   }, [])
 
