@@ -17,7 +17,8 @@ export default function Index() {
 
       if (vote) setThereIsVote(true)
 
-      if (new Date() > vote.endDate) setThereIsVote(false)
+      if (new Date().getTime() > new Date(vote.startDate).getTime())
+        setThereIsVote(true)
       if (new Date().getTime() > new Date(vote.endDate).getTime())
         setIsVoteFinished(true)
     })
