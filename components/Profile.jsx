@@ -1,17 +1,7 @@
 import { useEffect, useState } from 'react'
-import {
-  Image,
-  Linking,
-  Pressable,
-  ScrollView,
-  StyleSheet,
-  Text,
-  View,
-} from 'react-native'
+import { ScrollView, StyleSheet, Text, View } from 'react-native'
 import { UserBaseLogo } from '../icons/UserBaseLogo.jsx'
-import { doFetch, METHODS } from '../lib/api.js'
 import { useUser } from '../context/user.js'
-import { ALERT_TYPE, Dialog } from 'react-native-alert-notification'
 import { useConfig } from '../context/config.js'
 import { Shadow } from 'react-native-shadow-2'
 import { findConfig } from '../lib/config'
