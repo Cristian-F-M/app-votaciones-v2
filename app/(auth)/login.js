@@ -136,7 +136,7 @@ export default function Login() {
           value: res.token,
         })
       }
-      router.replace('apprentice/')
+      router.replace(res.urlRedirect || '404/')
     }
   }, [document, password, router, typeDocumentCode, isBiometricsActive, refs])
 
@@ -187,7 +187,7 @@ export default function Login() {
         expires: new Date(Date.now() + 1000 * 60 * 60 * 12),
       })
 
-      router.navigate('apprentice/')
+      router.navigate(res.urlRedirect || '404/')
     }
   }, [router])
 
