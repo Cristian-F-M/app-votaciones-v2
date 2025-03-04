@@ -39,20 +39,20 @@ export function Vote() {
   const { user } = useUser()
 
   const getLastVote = useCallback(async () => {
-    doFetch({ url: `${url}/vote/`, method: METHODS.GET }).then(data => {
+    doFetch({ url: `vote/`, method: METHODS.GET }).then(data => {
       if (data.error) return
 
       if (new Date() > data.vote.endDate) return setIsVotingClosed(true)
       setIsVotingClosed(false)
     })
-  }, [url])
+  }, [])
 
   useEffect(() => {
     getLastVote()
-    getItemStorage({ name: user.id }).then(data => {
+    getItemStorage({ name: 'candidateVoted' }).then(data => {
       if (data) setVoted(data.value)
     })
-  }, [getLastVote, user.id])
+  }, [getLastVote])
 
   const { config } = useConfig()
   const color = findConfig({ configs: config, code: 'Color' }).value
@@ -62,12 +62,12 @@ export function Vote() {
   }, [user])
 
   const getCandidates = useCallback(async () => {
-    doFetch({ url: `${url}/candidate/all`, method: METHODS.GET }).then(data => {
+    doFetch({ url: `candidate/all`, method: METHODS.GET }).then(data => {
       if (data.error) return
 
       setCandidates(data.candidates)
     })
-  }, [url])
+  }, [])
 
   useEffect(() => {
     getCandidates()
