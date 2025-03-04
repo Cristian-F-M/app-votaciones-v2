@@ -61,30 +61,33 @@ export function Vote() {
     getCandidates()
   }, [getCandidates])
 
-  async function handleClickVote(candidate) {
-    setUserAlreadyVoted(true)
-    const data = await doFetch({
-      url: `${url}/candidate/${candidate.id}/vote`,
-      method: METHODS.POST,
-    })
+  const handleClickVote = useCallback(
+    async candidate => {
+      setUserAlreadyVoted(true)
+      const data = await doFetch({
+        url: `candidate/${candidate.id}/vote`,
+        method: METHODS.POST,
+      })
 
-    if (!data.ok) return Alert.alert(data.message)
+      if (!data.ok) return Alert.alert(data.message)
 
-    const votedObj = {
-      userId: user.id,
-      candidateId: candidate.id,
-    }
+      const votedObj = {
+        userId: user.id,
+        candidateId: candidate.id,
+      }
 
-    await setItemStorage({
-      name: 'candidateVoted',
-      value: votedObj,
-    })
+      await setItemStorage({
+        name: 'candidateVoted',
+        value: votedObj,
+      })
 
-    setVoted(votedObj)
-    toast.success('Voto exitoso, Votastes por ' + candidate.user.name, {
-      styles: TOAST_STYLES.SUCCESS,
-    })
-  }
+      setVoted(votedObj)
+      toast.success('Voto exitoso, Votastes por ' + candidate.user.name, {
+        styles: TOAST_STYLES.SUCCESS,
+      })
+    },
+    [user],
+  )
 
   const onRefresh = useCallback(async () => {
     setRefreshing(true)
