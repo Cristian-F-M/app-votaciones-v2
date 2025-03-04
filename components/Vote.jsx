@@ -88,7 +88,7 @@ export function Vote() {
     }
 
     await setItemStorage({
-      name: user.id,
+      name: 'candidateVoted',
       value: votedObj,
     })
 
