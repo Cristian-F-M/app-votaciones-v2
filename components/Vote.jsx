@@ -47,11 +47,14 @@ export function Vote() {
   }, [user])
 
   const getCandidates = useCallback(async () => {
-    doFetch({ url: `candidate/all`, method: METHODS.GET }).then(data => {
-      if (data.error) return
+    const toastGetCandidatesId = toast.loading('Cargando candidatos...')
+    const res = await doFetch({ url: `candidate/all`, method: METHODS.GET })
 
-      setCandidates(data.candidates)
-    })
+    if (res.error) return toast.error(res.error, { styles: TOAST_STYLES.ERROR })
+    if (!res.ok) return toast.error(res.message, { styles: TOAST_STYLES.ERROR })
+
+    setCandidates(res.candidates)
+    toast.dismiss(toastGetCandidatesId)
   }, [])
 
   useEffect(() => {
