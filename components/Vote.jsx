@@ -1,26 +1,11 @@
-import {
-  Alert,
-  Image,
-  Pressable,
-  ScrollView,
-  Text,
-  View,
-  RefreshControl,
-} from 'react-native'
-import { useRouter } from 'expo-router'
+import { Alert, ScrollView, Text, View, RefreshControl } from 'react-native'
 import { Shadow } from 'react-native-shadow-2'
 import { useConfig } from '../context/config'
 import { findConfig } from '../lib/config'
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { CardRemainingTime } from './CardRemainingTime'
 import { Screen } from './Screen'
-import {
-  doFetch,
-  getItemStorage,
-  METHODS,
-  removeItemStorage,
-  setItemStorage,
-} from '../lib/api'
+import { doFetch, getItemStorage, METHODS, setItemStorage } from '../lib/api'
 import { NoCandidates } from './NoCandidates'
 import { CandidateImage } from './CandidateImage'
 import { useUser } from '../context/user.js'
