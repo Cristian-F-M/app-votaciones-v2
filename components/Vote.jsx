@@ -71,7 +71,7 @@ export function Vote() {
 
   useEffect(() => {
     getCandidates()
-  }, [url])
+  }, [getCandidates])
 
   async function handleClickVote(candidate) {
     setUserAlreadyVoted(true)
@@ -103,7 +103,7 @@ export function Vote() {
     setCandidates([])
     await getCandidates()
     setRefreshing(false)
-  }, [])
+  }, [getCandidates])
 
   const isApprentice = user?.roleUser.code === 'Apprentice'
 
