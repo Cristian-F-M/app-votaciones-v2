@@ -2,7 +2,6 @@ import { Text, View } from 'react-native'
 import { CardApprenticeWinner } from './CardApprenticeWinner'
 import { useConfig } from '../context/config'
 import { findConfig } from '../lib/config'
-import { Shadow } from 'react-native-shadow-2'
 
 export function ApprenticeWinner() {
   const { config } = useConfig()
@@ -30,7 +29,7 @@ export function ApprenticeWinner() {
         </View>
 
         <View className="mt-auto w-full flex flex-row justify-center">
-          <Text className="px-[7px] text-center text-xs"> 
+          <Text className="px-[7px] text-center text-xs">
             El Aprendiz será representante hasta el 15 de septiembre de 2022
           </Text>
         </View>
@@ -38,4 +37,3 @@ export function ApprenticeWinner() {
     </>
   )
 }
-
