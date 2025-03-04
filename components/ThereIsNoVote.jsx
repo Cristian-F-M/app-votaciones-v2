@@ -3,15 +3,17 @@ import CalendarX from '../icons/CalendarX'
 import { useConfig } from '../context/config'
 import { activateNotifications, findConfig } from '../lib/config'
 import ExclamationCircle from '../icons/ExclamationCircle'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { StyledPressable } from './StyledPressable'
-import { toast } from '@backpackapp-io/react-native-toast'
 import { getConfigs } from '../lib/api'
+import { Modalize } from 'react-native-modalize'
+import Bell from '../icons/Bell'
 
 export function ThereIsNoVote() {
   const [isNotificationsActive, setIsNotificationsActive] = useState(false)
   const { config } = useConfig()
   const color = findConfig({ configs: config, code: 'Color' }).value
+  const modalizeRef = useRef(null)
 
   const setConfigs = useCallback(async () => {
     const configs = await getConfigs()
@@ -22,7 +24,7 @@ export function ThereIsNoVote() {
     setConfigs()
   }, [setConfigs])
 
-  const checkPermissions = useCallback(async () => {
+  const checkPermissions = useCallback(async e => {
     const isActivated = await activateNotifications()
 
     if (isActivated) {
@@ -40,22 +42,58 @@ export function ThereIsNoVote() {
         ToastAndroid.LONG,
       )
 
-      const toastOpenSettingsId = toast.loading('Abriendo configuraciones...')
-
-      // eslint-disable-next-line no-undef
-      setTimeout(() => {
-        Linking.openSettings()
-        // eslint-disable-next-line no-undef
-        setTimeout(() => {
-          toast.dismiss(toastOpenSettingsId)
-        }, 1000)
-      }, 2000)
+      openModalize()
     }
+  }, [])
+
+  const openModalize = e => {
+    e.persist()
+    modalizeRef.current.open()
+  }
+  const handleClickOpenSettings = useCallback(() => {
+    Linking.openSettings()
+    modalizeRef.current.close()
+  }, [])
+
+  const handleClickdDismissModalize = useCallback(() => {
+    modalizeRef.current.close()
   }, [])
 
   return (
     <>
       <View className="mx-auto flex flex-1 items-center justify-center bg-gray-100">
+        <Modalize
+          ref={modalizeRef}
+          adjustToContentHeight
+          modalStyle={{ paddingVertical: 15, paddingHorizontal: 20 }}
+        >
+          <View className="w-full items-center">
+            <Bell
+              width={50}
+              height={50}
+              style={{ color }}
+            />
+            <Text className="text-xl font-semibold mt-2">
+              Activa las notificaciones
+            </Text>
+            <Text className="text-gray-600 mt-2 text-center">
+              Para recibir actualizaciones importantes, debes activar las
+              notificaciones en la configuración de tu dispositivo.
+            </Text>
+            <StyledPressable
+              pressableClass="mt-5"
+              text="Abrir configuraciones"
+              backgroundColor={`${color}cc`}
+              onPress={handleClickOpenSettings}
+            />
+            <StyledPressable
+              text="Más tarde"
+              textClassName="text-sm text-gray-600"
+              pressableClass="h-7 p-0 mt-2 mb-4"
+              onPress={handleClickdDismissModalize}
+            />
+          </View>
+        </Modalize>
         <View className="w-[95%] flex flex-col items-center bg-white p-5 rounded-lg border border-gray-200">
           <View className="bg-[#ffedd5] p-3 rounded-full">
             <CalendarX
