@@ -26,6 +26,8 @@ import { CandidateImage } from './CandidateImage'
 import { useUser } from '../context/user.js'
 import { YourVote } from './YourVote.jsx'
 import { StyledPressable } from './StyledPressable.jsx'
+import { toast } from '@backpackapp-io/react-native-toast'
+import { TOAST_STYLES } from '../lib/toastConstants'
 
 export function Vote() {
   const url = process.env.EXPO_PUBLIC_API_URL
@@ -91,7 +93,9 @@ export function Vote() {
     })
 
     setVoted(votedObj)
-    Alert.alert('Voto exitoso, Votastes por ' + candidate.user.name)
+    toast.success('Voto exitoso, Votastes por ' + candidate.user.name, {
+      styles: TOAST_STYLES.SUCCESS,
+    })
   }
 
   const onRefresh = useCallback(async () => {
