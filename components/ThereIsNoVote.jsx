@@ -25,11 +25,14 @@ export function ThereIsNoVote() {
   const checkPermissions = useCallback(async () => {
     const isActivated = await activateNotifications()
 
-    if (isActivated)
-      return ToastAndroid.show(
+    if (isActivated) {
+      ToastAndroid.show(
         'Ya tienes las notificaciones activadas',
         ToastAndroid.LONG,
       )
+      setIsNotificationsActive(true)
+      return
+    }
 
     if (!isActivated) {
       ToastAndroid.show(
