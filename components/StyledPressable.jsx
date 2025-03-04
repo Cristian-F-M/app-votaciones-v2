@@ -9,15 +9,16 @@ export function StyledPressable({
   onPress = () => {},
   showLoadingIndicator = false,
   isLoading = false,
+  disabled = false,
 }) {
   const StyledPressable = styled(Pressable)
 
   return (
     <StyledPressable
       className={`px-2 py-3 rounded-lg w-full active:opacity-70 flex-row justify-center items-center ${isLoading ? 'opacity-70' : ''} ${pressableClass}`}
-      style={{ backgroundColor }}
+      style={{ backgroundColor: disabled ? '#b3b6bd' : backgroundColor }}
       onPress={!isLoading ? onPress : null}
-      disabled={isLoading}
+      disabled={isLoading || disabled}
     >
       <Text
         className={`text-black text-base text-center w-full ${textClassName}`}
