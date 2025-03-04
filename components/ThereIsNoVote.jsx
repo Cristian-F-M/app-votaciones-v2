@@ -36,14 +36,7 @@ export function ThereIsNoVote() {
       return
     }
 
-    if (!isActivated) {
-      ToastAndroid.show(
-        'Debes activar las notificaciones en la configuración del dispositivo',
-        ToastAndroid.LONG,
-      )
-
-      openModalize(e)
-    }
+    if (!isActivated) openModalize(e)
   }, [])
 
   const openModalize = e => {
