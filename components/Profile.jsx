@@ -1,5 +1,13 @@
 import { useEffect, useState } from 'react'
-import { Image, Linking, Pressable, StyleSheet, Text, View } from 'react-native'
+import {
+  Image,
+  Linking,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native'
 import { UserBaseLogo } from '../icons/UserBaseLogo.jsx'
 import { doFetch, METHODS } from '../lib/api.js'
 import { useUser } from '../context/user.js'
@@ -32,10 +40,10 @@ export function Profile() {
   return (
     <Shadow className="flex-1 w-full">
       <View
-        className="bg-gray-300/40 py-6 px-3 flex-row items-center max-h-[140px] overflow-hidden w-full h-full"
+        className="bg-gray-300/40 py-3 px-3 flex-row items-center max-h-[130px] overflow-hidden w-full h-full"
         style={{ backgroundColor: `${color}55` }}
       >
-        <View className="w-[25%] h-full flex items-center justify-center">
+        <View className="w-[22%] h-full flex items-center justify-center">
           <View className="rounded-full overflow-hidden w-full h-auto aspect-square items-center justify-center bg-[#ffe6d9] bg-opacity-80">
             {!imageUrl && <UserBaseLogo letter={userLetter} />}
             {imageUrl && (
@@ -48,7 +56,7 @@ export function Profile() {
           </View>
         </View>
         {/*  */}
-        <View className="w-[75%] h-full ml-3">
+        <ScrollView className="w-[75%] h-full ml-3">
           <View style={styles.containerLabelText}>
             <Text style={styles.labelTextInformation}>
               {user?.name} {user?.lastname}
@@ -70,7 +78,7 @@ export function Profile() {
               Rol : {user?.roleUser.code}
             </Text>
           </View>
-        </View>
+        </ScrollView>
       </View>
     </Shadow>
   )
