@@ -147,7 +147,7 @@ export default function Config() {
                 value: isBiometricsActive,
                 setValue: setIsBiometricsActive,
               }}
-              disabled={isBiometricsAvailable}
+              disabled={!isBiometricsAvailable}
               useSwitch
             />
           </CardConfig>
