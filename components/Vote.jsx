@@ -25,6 +25,7 @@ import { NoCandidates } from './NoCandidates'
 import { CandidateImage } from './CandidateImage'
 import { useUser } from '../context/user.js'
 import { YourVote } from './YourVote.jsx'
+import { StyledPressable } from './StyledPressable.jsx'
 
 export function Vote() {
   const url = process.env.EXPO_PUBLIC_API_URL
@@ -146,6 +147,25 @@ export function Vote() {
                   ? candidate.imageUrl
                   : `${url}/candidate/image/${candidate.imageUrl}`
 
+                let buttonVoteText = 'Votación cerrada'
+                const candidateName =
+                  candidate.user.document === '0'
+                    ? candidate.user.name
+                    : candidate.user.name.split(' ')[0] +
+                      ' ' +
+                      candidate.user.lastname.split(' ')[0]
+
+                if (
+                  userAlreadyVoted &&
+                  !isVotingClosed &&
+                  !isThisCandidateVoted
+                )
+                  buttonVoteText = 'Ya has votado'
+                if (!buttonDisabled)
+                  buttonVoteText = `Votar por ${candidateName}`
+                if (isThisCandidateVoted) buttonVoteText = 'Tu voto'
+                if (!isApprentice) buttonVoteText = 'No puedes votar'
+
                 return (
                   <Shadow
                     key={candidate.id}
@@ -155,15 +175,15 @@ export function Vote() {
                     <View className="flex flex-col  justify-between max-w-[90%] min-w-[80%] p-6 px-5 rounded-lg bg-gray-100/70 items-center relative">
                       {isThisCandidateVoted && <YourVote />}
                       <CandidateImage
-                        alt={`Foto del candidato ${candidate.user.name}`}
+                        alt={`Foto del candidato ${candidate.user.name} ${candidate.user.lastname}`}
                         imageUrl={imageUrl}
                         classImage="rounded-xl"
                         classImageContainer="w-11/12 h-auto "
                       />
 
                       <View className="flex flex-col items-center mt-3 w-full">
-                        <Text className="text-2xl text-gray-700">
-                          {candidate.user.name}
+                        <Text className="text-lg text-gray-700 text-center w-11/12">
+                          {candidate.user.name} {candidate.user.lastname}
                         </Text>
                         {candidate.description && (
                           <Text className="text-sm text-gray-600 text-center mt-1">
@@ -172,33 +192,12 @@ export function Vote() {
                         )}
                       </View>
                       <View className="mt-8 w-full self-center">
-                        <Pressable
+                        <StyledPressable
+                          text={buttonVoteText}
+                          backgroundColor={`${color}cc`}
                           disabled={buttonDisabled}
-                          className="w-full px-1 py-2 rounded-lg"
-                          style={{
-                            backgroundColor: buttonDisabled ? '#cdd0d6' : color,
-                          }}
                           onPress={() => handleClickVote(candidate)}
-                        >
-                          <Text
-                            className="w-full text-center text-lg text-gray-100"
-                            style={{
-                              color: buttonDisabled ? `#495160` : '#f3f4f6',
-                            }}
-                          >
-                            {isVotingClosed && 'Votación cerrada'}
-                            {userAlreadyVoted &&
-                              !isVotingClosed &&
-                              !isThisCandidateVoted &&
-                              'Ya has votado'}
-                            {!buttonDisabled &&
-                              `Votar por ${candidate.user.name}`}
-                            {isThisCandidateVoted && 'Tu voto'}
-                            {buttonDisabled &&
-                              !isApprentice &&
-                              'No puedes votar'}
-                          </Text>
-                        </Pressable>
+                        />
                       </View>
                     </View>
                   </Shadow>
