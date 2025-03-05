@@ -91,13 +91,13 @@ export default function ResetPassword() {
   }, [getTypesDocuments])
 
   useEffect(() => {
-    const seconds = getRemainingSeconds(dateNewCode)
+    const { seconds } = getRemainingTime(dateNewCode)
     if (seconds > 0) setSecondsNewCode(seconds)
     if (seconds <= 0) setSecondsNewCode(0)
 
     // eslint-disable-next-line no-undef
     const interval = setInterval(() => {
-      const seconds = getRemainingSeconds(dateNewCode)
+      const { seconds } = getRemainingTime(dateNewCode)
 
       if (seconds <= 0) {
         // eslint-disable-next-line no-undef
@@ -107,14 +107,21 @@ export default function ResetPassword() {
       }
       setSecondsNewCode(seconds)
     }, 1000)
-  }, [dateNewCode, getRemainingSeconds])
+  }, [dateNewCode, getRemainingTime])
 
-  const getRemainingSeconds = useCallback(targetDateString => {
+  const getRemainingTime = useCallback(targetDateString => {
     const targetDate = new Date(targetDateString).getTime()
     const now = new Date().getTime()
     const difference = targetDate - now
-    const seconds = Math.floor(difference / 1000) || 0
-    return seconds
+
+    if (difference <= 0) return { hours: null, minutes: null, seconds: null }
+
+    const secondsTotal = Math.floor(difference / 1000)
+    const hours = Math.floor(secondsTotal / 3600) || null
+    const minutes = Math.floor((secondsTotal % 3600) / 60) || null
+    const seconds = secondsTotal % 60 || null
+
+    return { hours, minutes, seconds }
   }, [])
 
   const handleClickFindUser = useCallback(async () => {
@@ -363,6 +370,15 @@ export default function ResetPassword() {
     isLoading,
   ])
 
+  const getTimeString = useCallback(({ seconds, hours, minutes }) => {
+    let text = ''
+    if (hours) text += `${hours}h `
+    if (minutes) text += `${minutes}m `
+    if (seconds) text += `${seconds}s`
+
+    return text
+  }, [])
+
   return (
     <Screen>
       <StatusBar style="dark" />
@@ -462,7 +478,10 @@ export default function ResetPassword() {
               <Text
                 className={`text-center mt-1 text-gray-500 ${secondsNewCode > 0 ? '' : 'opacity-0'}`}
               >
-                Tiempo restante para enviar el código: {secondsNewCode}s
+                Enviar nuevamente{' '}
+                {secondsNewCode > 0
+                  ? 'en ' + getTimeString(getRemainingTime(dateNewCode))
+                  : ''}
               </Text>
               <View className="flex flex-row justify-evenly mt-6 w-full">
                 <StyledPressable
@@ -517,7 +536,10 @@ export default function ResetPassword() {
               <Text
                 className={`text-center mt-1 text-gray-500 ${secondsNewCode > 0 ? '' : 'opacity-0'}`}
               >
-                Tiempo restante para reenviar el código: {secondsNewCode}s
+                Reenviar{' '}
+                {secondsNewCode > 0
+                  ? 'en ' + getTimeString(getRemainingTime(dateNewCode))
+                  : ''}
               </Text>
 
               <View className="flex flex-row justify-between">
