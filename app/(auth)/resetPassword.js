@@ -33,6 +33,8 @@ export default function ResetPassword() {
   const [user, setUser] = useState({})
   const [passwordConfirmation, setPasswordConfirmation] = useState('')
   const [currentStep, setCurrentStep] = useState(0)
+  const [secondsNewCode, setSecondsNewCode] = useState(0)
+  const [dateNewCode, setDateNewCode] = useState('')
 
   const { config } = useConfig()
   const color = findConfig({ configs: config, code: 'Color' }).value
@@ -87,6 +89,33 @@ export default function ResetPassword() {
   useEffect(() => {
     getTypesDocuments()
   }, [getTypesDocuments])
+
+  useEffect(() => {
+    const seconds = getRemainingSeconds(dateNewCode)
+    if (seconds > 0) setSecondsNewCode(seconds)
+    if (seconds <= 0) setSecondsNewCode(0)
+
+    // eslint-disable-next-line no-undef
+    const interval = setInterval(() => {
+      const seconds = getRemainingSeconds(dateNewCode)
+
+      if (seconds <= 0) {
+        // eslint-disable-next-line no-undef
+        clearInterval(interval)
+        setSecondsNewCode(0)
+        return
+      }
+      setSecondsNewCode(seconds)
+    }, 1000)
+  }, [dateNewCode, getRemainingSeconds])
+
+  const getRemainingSeconds = useCallback(targetDateString => {
+    const targetDate = new Date(targetDateString).getTime()
+    const now = new Date().getTime()
+    const difference = targetDate - now
+    const seconds = Math.floor(difference / 1000) || 0
+    return seconds
+  }, [])
 
   const handleClickFindUser = useCallback(async () => {
     if (isLoading) ToastAndroid.show('Espera un momento...', ToastAndroid.SHORT)
@@ -149,6 +178,7 @@ export default function ResetPassword() {
     setCurrentStep(1)
     setTypeDocumentCode('CedulaCiudadania')
     setDocument('')
+    setDateNewCode(res.user.timeNewCode)
   }, [typeDocumentCode, document, errors, refs, isLoading])
 
   const handleClickChangeUser = useCallback(() => {
@@ -174,6 +204,7 @@ export default function ResetPassword() {
       body: { userId: user.id },
     })
 
+    setDateNewCode(res.timeNewCode)
     toast.dismiss(toastSendEmailId)
     setIsLoading(false)
 
@@ -428,7 +459,12 @@ export default function ResetPassword() {
                 restablecer su contraseña al correo{' '}
                 <Text className="text-black font-semibold">{user.email}</Text>.
               </Text>
-              <View className="flex flex-row justify-evenly mt-8 w-full">
+              <Text
+                className={`text-center mt-1 text-gray-500 ${secondsNewCode > 0 ? '' : 'opacity-0'}`}
+              >
+                Tiempo restante para enviar el código: {secondsNewCode}s
+              </Text>
+              <View className="flex flex-row justify-evenly mt-6 w-full">
                 <StyledPressable
                   text="Cambiar usuario"
                   backgroundColor="transparent"
@@ -440,6 +476,7 @@ export default function ResetPassword() {
                   backgroundColor={`${color}cc`}
                   pressableClass="w-[48%]"
                   onPress={handleClickSendEmail}
+                  disabled={secondsNewCode > 0}
                 />
               </View>
             </View>
@@ -477,14 +514,32 @@ export default function ResetPassword() {
                 required
               />
 
-              <StyledPressable
-                text="Verificar"
-                backgroundColor={`${color}cc`}
-                pressableClass="mt-2 px-2 py-3 rounded-lg w-full"
-                onPress={handleClickVerifyCode}
-                isLoading={isLoading}
-                showLoadingIndicator={true}
-              />
+              <Text
+                className={`text-center mt-1 text-gray-500 ${secondsNewCode > 0 ? '' : 'opacity-0'}`}
+              >
+                Tiempo restante para reenviar el código: {secondsNewCode}s
+              </Text>
+
+              <View className="flex flex-row justify-between">
+                <StyledPressable
+                  text={`Reenviar`}
+                  backgroundColor="transparent"
+                  pressableClass="mt-2 w-[48%] border border-gray-400"
+                  onPress={handleClickSendEmail}
+                  isLoading={isLoading}
+                  showLoadingIndicator={true}
+                  disabled={secondsNewCode > 0}
+                />
+
+                <StyledPressable
+                  text="Verificar"
+                  backgroundColor={`${color}cc`}
+                  pressableClass="mt-2 px-2 py-3 rounded-lg w-full w-[48%]"
+                  onPress={handleClickVerifyCode}
+                  isLoading={isLoading}
+                  showLoadingIndicator={true}
+                />
+              </View>
             </View>
           )}
 
