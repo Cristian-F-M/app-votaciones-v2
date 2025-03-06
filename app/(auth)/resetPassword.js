@@ -32,7 +32,7 @@ export default function ResetPassword() {
   const [password, setPassword] = useState('')
   const [user, setUser] = useState({})
   const [passwordConfirmation, setPasswordConfirmation] = useState('')
-  const [currentStep, setCurrentStep] = useState(0)
+  const [currentStep, setCurrentStep] = useState(1)
   const [secondsNewCode, setSecondsNewCode] = useState(0)
   const [dateNewCode, setDateNewCode] = useState('')
 
@@ -429,7 +429,7 @@ export default function ResetPassword() {
         />
 
         <View className="w-full mt-10 mb-8">
-          {currentStep === 0 && (
+          {currentStep === 1 && (
             <View
               id="step-0"
               className="user w-full"
@@ -472,7 +472,7 @@ export default function ResetPassword() {
             </View>
           )}
 
-          {currentStep === 1 && (
+          {currentStep === 2 && (
             <View
               id="step-1"
               className=""
@@ -508,7 +508,7 @@ export default function ResetPassword() {
             </View>
           )}
 
-          {currentStep === 2 && (
+          {currentStep === 3 && (
             <View
               id="step-2"
               className="w-full"
@@ -572,7 +572,7 @@ export default function ResetPassword() {
             </View>
           )}
 
-          {currentStep === 3 && (
+          {currentStep === 4 && (
             <View
               id="step-3"
               className="w-full"
