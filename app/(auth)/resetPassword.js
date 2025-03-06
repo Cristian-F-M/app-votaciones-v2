@@ -77,7 +77,7 @@ export default function ResetPassword() {
     setTimeout(() => {
       setIsRefreshing(false)
       getTypesDocuments()
-      setCurrentStep(0)
+      setCurrentStep(1)
     }, 600)
   }, [getTypesDocuments, resetInputs])
 
@@ -189,7 +189,7 @@ export default function ResetPassword() {
     }
 
     setUser(res.user)
-    setCurrentStep(1)
+    setCurrentStep(2)
     setTypeDocumentCode('CedulaCiudadania')
     setDocument('')
     setDateNewCode(res.user.timeNewCode)
@@ -198,14 +198,14 @@ export default function ResetPassword() {
   const handleClickChangeUser = useCallback(() => {
     if (isLoading)
       return ToastAndroid.show('Espera un momento...', ToastAndroid.SHORT)
-    setCurrentStep(0)
+    setCurrentStep(1)
     setUser('')
     setDocument('')
     setTypeDocumentCode('CedulaCiudadania')
   }, [isLoading])
 
   const handleClickSendEmail = useCallback(async () => {
-    if (!user) return setCurrentStep(0)
+    if (!user) return setCurrentStep(1)
     if (isLoading)
       return ToastAndroid.show('Espera un momento...', ToastAndroid.SHORT)
 
@@ -228,11 +228,11 @@ export default function ResetPassword() {
       })
     }
 
-    setCurrentStep(2)
+    setCurrentStep(3)
   }, [user, isLoading])
 
   const handleClickVerifyCode = useCallback(async () => {
-    if (!user) return setCurrentStep(0)
+    if (!user) return setCurrentStep(1)
     if (isLoading)
       return ToastAndroid.show('Espera un momento...', ToastAndroid.SHORT)
 
@@ -288,7 +288,7 @@ export default function ResetPassword() {
       })
     }
 
-    setCurrentStep(3)
+    setCurrentStep(4)
   }, [user, verificationCode, errors, refs, isLoading])
 
   const handleClickChangePassword = useCallback(async () => {
@@ -344,7 +344,7 @@ export default function ResetPassword() {
       toast.error(res.message, {
         style: TOAST_STYLES.ERROR,
       })
-      setCurrentStep(0)
+      setCurrentStep(1)
       setDocument('')
       setTypeDocumentCode('CedulaCiudadania')
       setErrors({})
