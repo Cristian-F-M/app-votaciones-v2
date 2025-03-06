@@ -77,6 +77,7 @@ export default function ResetPassword() {
     setTimeout(() => {
       setIsRefreshing(false)
       getTypesDocuments()
+      setCurrentStep(0)
     }, 600)
   }, [getTypesDocuments, resetInputs])
 
