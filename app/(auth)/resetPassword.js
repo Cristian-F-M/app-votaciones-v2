@@ -91,22 +91,27 @@ export default function ResetPassword() {
   }, [getTypesDocuments])
 
   useEffect(() => {
-    const { seconds } = getRemainingTime(dateNewCode)
-    if (seconds > 0) setSecondsNewCode(seconds)
-    if (seconds <= 0) setSecondsNewCode(0)
+    if (!dateNewCode) return
+
+    const { secondsTotal } = getRemainingTime(dateNewCode)
+    if (secondsTotal > 0) setSecondsNewCode(secondsTotal)
+    if (secondsTotal <= 0) setSecondsNewCode(0)
 
     // eslint-disable-next-line no-undef
     const interval = setInterval(() => {
-      const { seconds } = getRemainingTime(dateNewCode)
+      const { secondsTotal } = getRemainingTime(dateNewCode)
 
-      if (seconds <= 0) {
+      if (secondsTotal <= 0) {
         // eslint-disable-next-line no-undef
         clearInterval(interval)
         setSecondsNewCode(0)
         return
       }
-      setSecondsNewCode(seconds)
+      if (!isNaN(secondsTotal)) setSecondsNewCode(secondsTotal)
     }, 1000)
+
+    // eslint-disable-next-line no-undef
+    return () => clearInterval(interval)
   }, [dateNewCode, getRemainingTime])
 
   const getRemainingTime = useCallback(targetDateString => {
@@ -114,14 +119,15 @@ export default function ResetPassword() {
     const now = new Date().getTime()
     const difference = targetDate - now
 
-    if (difference <= 0) return { hours: null, minutes: null, seconds: null }
+    if (difference <= 0)
+      return { hours: null, minutes: null, seconds: null, secondsTotal: 0 }
 
     const secondsTotal = Math.floor(difference / 1000)
     const hours = Math.floor(secondsTotal / 3600) || null
     const minutes = Math.floor((secondsTotal % 3600) / 60) || null
     const seconds = secondsTotal % 60 || null
 
-    return { hours, minutes, seconds }
+    return { hours, minutes, seconds, secondsTotal }
   }, [])
 
   const handleClickFindUser = useCallback(async () => {
@@ -374,7 +380,7 @@ export default function ResetPassword() {
     let text = ''
     if (hours) text += `${hours}h `
     if (minutes) text += `${minutes}m `
-    if (seconds) text += `${seconds}s`
+    text += `${seconds}s`
 
     return text
   }, [])
