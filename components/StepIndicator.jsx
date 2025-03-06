@@ -13,7 +13,7 @@ export function StepIndicator({ color, currentStep, totalSteps }) {
                 key={i}
                 color={color}
                 currentStep={currentStep}
-                step={i}
+                step={i + 1}
               />
             )
           })}
