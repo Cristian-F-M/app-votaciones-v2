@@ -2,7 +2,12 @@ import { RefreshControl, ScrollView, Text, View } from 'react-native'
 import { Screen } from '../../components/Screen'
 import LogoSena from '../../icons/Logo'
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { doFetch, getApiErrors, METHODS } from '../../lib/api'
+import {
+  doFetch,
+  getApiErrors,
+  getApiErrorsEntries,
+  METHODS,
+} from '../../lib/api'
 import { Stack, useRouter } from 'expo-router'
 import { scrollSmooth } from '../../lib/scrollSmooth'
 import BouncyCheckbox from 'react-native-bouncy-checkbox'
@@ -73,8 +78,10 @@ export default function Register() {
 
     setErrors(prev => ({ ...prev, ...localyErrors }))
 
-    const localyErrorsEntries = Object.entries(localyErrors)
-    const errorsEntries = Object.entries(errors)
+    const localyErrorsEntries = getApiErrorsEntries(localyErrors)
+    const errorsEntries = getApiErrorsEntries(errors)
+
+    console.log({ localyErrorsEntries, errorsEntries })
 
     if (localyErrorsEntries.length > 0 || errorsEntries.length > 0) {
       const [key] = localyErrorsEntries[0] || errorsEntries[0]
@@ -113,7 +120,7 @@ export default function Register() {
       if (res.errors) {
         const { errors } = res
         const apiErrors = getApiErrors(errors)
-        const apiErrorsEntries = Object.entries(apiErrors)
+        const apiErrorsEntries = getApiErrorsEntries(apiErrors)
 
         setErrors(prev => ({ ...prev, ...apiErrors }))
 
