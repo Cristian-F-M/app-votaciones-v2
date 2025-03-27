@@ -1,13 +1,11 @@
-import { Pressable, ScrollView, Text, View } from 'react-native'
+import { ScrollView, View } from 'react-native'
 import { Screen } from './Screen.jsx'
 import { StatusBar } from 'expo-status-bar'
 import { Profile } from './Profile.jsx'
-import { Shadow } from 'react-native-shadow-2'
 import { doFetch, METHODS, removeItemStorage } from '../lib/api.js'
 import { ALERT_TYPE, Toast } from 'react-native-alert-notification'
-import { Link, router } from 'expo-router'
+import { router } from 'expo-router'
 import { useUser } from '../context/user.js'
-import { useEffect } from 'react'
 import { MenuItem } from './MenuItem.jsx'
 
 export function ApprenticeMenu({ setMenuIsVisible }) {
