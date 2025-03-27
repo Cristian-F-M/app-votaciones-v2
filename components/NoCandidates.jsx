@@ -1,5 +1,4 @@
 import { Text, View } from 'react-native'
-import { Shadow } from 'react-native-shadow-2'
 
 export function NoCandidates() {
   return (
