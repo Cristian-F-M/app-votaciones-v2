@@ -18,7 +18,7 @@ export function StyledPressable({
       disabled={isLoading || disabled}
     >
       <Text
-        className={`text-black text-base text-center w-full ${textClassName}`}
+        className={`text-black text-lg text-center w-full ${textClassName}`}
       >
         {text}
       </Text>
