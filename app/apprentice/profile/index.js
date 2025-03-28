@@ -197,6 +197,7 @@ export default function ApprenticeProfilePage() {
       <ScrollView
         ref={refs.scrollViewRef}
         contentContainerStyle={{ alignItems: 'center' }}
+        className="w-full"
         refreshControl={
           <RefreshControl
             refreshing={refreshing}
