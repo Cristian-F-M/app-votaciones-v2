@@ -34,7 +34,7 @@ export function Input({
 }) {
   return (
     <View
-      className="mb-4 relative"
+      className="mb-4"
       ref={innerRef}
     >
       <Text className="text-black mb-1 text-base">
@@ -42,23 +42,26 @@ export function Input({
         {required && <Text className="text-red-500"> *</Text>}
       </Text>
       {type === INPUT_TYPES.TEXT && (
-        <TextInput
-          className={`border rounded-lg h-14 w-full text-base px-3 ${classNameInput}`}
-          value={value.value}
-          placeholder={placeholder}
-          onChangeText={text => {
-            value.setValue(text)
-            errors.setErrors(prev => ({ ...prev, [inputRefName]: null }))
-          }}
-          keyboardType={keyboardType}
-          editable={!disabled}
-          secureTextEntry={secureTextEntry}
-        />
+        <View className="border h-14 w-full rounded-lg items-center justify-center">
+          <TextInput
+            className={`h-full w-full items-center justify-center px-3 ${classNameInput}`}
+            textAlignVertical="center"
+            value={value.value}
+            placeholder={placeholder}
+            onChangeText={text => {
+              value.setValue(text)
+              errors.setErrors(prev => ({ ...prev, [inputRefName]: null }))
+            }}
+            keyboardType={keyboardType}
+            editable={!disabled}
+            secureTextEntry={secureTextEntry}
+          />
+        </View>
       )}
 
       {type === INPUT_TYPES.SELECT && (
         <View
-          className={`border rounded-lg h-14 w-full text-base px-0 ${classNameInput}`}
+          className={`border rounded-lg h-14 w-full justify-center text-base px-0 ${classNameInput}`}
         >
           <Picker
             selectedValue={selectedValue}
