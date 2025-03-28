@@ -240,7 +240,8 @@ export default function Login() {
       />
       <ScrollView
         ref={refs.scrollView}
-        className="p-5 flex-1"
+        className="flex-1 p-5"
+        contentContainerStyle={{ flexGrow: 1 }}
         refreshControl={
           <RefreshControl
             refreshing={refreshing}
@@ -316,7 +317,7 @@ export default function Login() {
                   }}
                 />
                 <Text
-                  className="text-sm"
+                  className="text-base"
                   onPress={() => {
                     setPasswordIsVisible(!passwordIsVisible)
                   }}
