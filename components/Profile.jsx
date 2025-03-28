@@ -30,7 +30,7 @@ export function Profile() {
   return (
     <Shadow className="flex-1 w-full">
       <View
-        className="bg-gray-300/40 py-3 px-3 flex-row items-center max-h-[130px] overflow-hidden w-full h-full"
+        className="bg-gray-300/40 py-3 px-3 flex-row items-center max-h-[110px] overflow-hidden w-full h-full"
         style={{ backgroundColor: `${color}55` }}
       >
         <View className="w-[22%] h-full flex items-center justify-center">
@@ -46,7 +46,13 @@ export function Profile() {
           </View>
         </View>
         {/*  */}
-        <ScrollView className="w-[75%] h-full ml-3">
+        <ScrollView
+          className="w-[75%] ml-3"
+          contentContainerStyle={{
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+        >
           <View style={styles.containerLabelText}>
             <Text style={styles.labelTextInformation}>
               {user?.name} {user?.lastname}
