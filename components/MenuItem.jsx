@@ -8,7 +8,7 @@ export function MenuItem({ text, onPress, pressableClass = '', children }) {
         onPress={onPress}
       >
         {children && children}
-        {!children && <Text className="text-base text-center">{text}</Text>}
+        {!children && <Text className="text-lg text-center">{text}</Text>}
       </Pressable>
     </>
   )
