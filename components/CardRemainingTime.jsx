@@ -30,7 +30,7 @@ export function CardRemainingTime() {
         className="rounded-lg mb-4"
         distance={20}
       >
-        <View className="bg-gray-100/70 flex items-center py-2 px-5 rounded-lg min-w-[85%] max-w-[85%]">
+        <View className="bg-gray-100/70 flex items-center py-2 px-5 min-w-[85%] bg-white w-11/12">
           <View>
             <Text className={`${isVotingClosed ? 'text-xl' : 'texte-base'}`}>
               {isVotingClosed && 'Votación cerrada'}
