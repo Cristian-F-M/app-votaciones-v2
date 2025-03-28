@@ -211,7 +211,7 @@ export default function Register() {
   }, [getTypesDocuments, clearInputs])
 
   return (
-    <Screen>
+    <Screen safeArea={false}>
       <StatusBar style="dark" />
       <Stack.Screen
         options={{
@@ -228,7 +228,7 @@ export default function Register() {
         }}
       />
       <ScrollView
-        className="p-5 flex-1"
+        className="p-5 flex-1 mt-2"
         ref={refs.scrollView}
         refreshControl={
           <RefreshControl
@@ -347,7 +347,7 @@ export default function Register() {
                 }}
               />
               <Text
-                className="text-sm"
+                className="text-base"
                 onPress={() => {
                   setIsVisible(!isVisible)
                 }}
@@ -356,7 +356,7 @@ export default function Register() {
               </Text>
             </View>
           </View>
-          <View className="mb-16">
+          <View className="mb-16 mt-1">
             <StyledPressable
               text="Registrar"
               backgroundColor={`${color}cc`}
