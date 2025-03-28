@@ -396,7 +396,7 @@ export default function ResetPassword() {
         }}
       />
       <ScrollView
-        className="flex-1 w-11/12 mx-auto"
+        className="flex-1 w-full mx-auto px-4"
         contentContainerStyle={{
           alignItems: 'center',
           // marginVertical: 'auto',
