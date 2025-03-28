@@ -494,13 +494,13 @@ export default function ResetPassword() {
                 <StyledPressable
                   text="Cambiar usuario"
                   backgroundColor="transparent"
-                  pressableClass="w-[48%] border border-gray-400"
+                  pressableClass="!w-[48%] border border-gray-400"
                   onPress={handleClickChangeUser}
                 />
                 <StyledPressable
                   text="Enviar correo"
                   backgroundColor={`${color}cc`}
-                  pressableClass="w-[48%]"
+                  pressableClass="!w-[48%]"
                   onPress={handleClickSendEmail}
                   disabled={secondsNewCode > 0}
                 />
