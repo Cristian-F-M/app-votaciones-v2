@@ -43,7 +43,7 @@ export function Vote() {
   const color = findConfig({ configs: config, code: 'Color' }).value
 
   useEffect(() => {
-    setUserAlreadyVoted(user.voted)
+    setUserAlreadyVoted(user?.voted || false)
   }, [user])
 
   const getCandidates = useCallback(async () => {
