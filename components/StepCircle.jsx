@@ -11,6 +11,11 @@ export function StepCircle({ color, currentStep, step }) {
   const isThisStep = currentStep === step
 
   useEffect(() => {
+    console.log(currentStep, step)
+    console.log(currentStep >= step)
+  }, [currentStep, step])
+
+  useEffect(() => {
     const scaleValue = currentStep >= step ? 1 : 0.2
 
     const animation = Animated.timing(scaleAnimatedValue, {
@@ -73,7 +78,7 @@ export function StepCircle({ color, currentStep, step }) {
       className="relative justify-center items-center"
     >
       <Animated.View
-        className="absolute z-10 w-12 h-12 rounded-full"
+        className="absolute z-10 size-14 rounded-full"
         style={{
           backgroundColor: `${color}9f`,
           transform: [{ scale: isThisStep ? scaleAnimationValuePulse : 0 }],
@@ -81,7 +86,7 @@ export function StepCircle({ color, currentStep, step }) {
         }}
       ></Animated.View>
       <Animated.View
-        className="w-6 h-6 rounded-full z-50"
+        className="size-7 rounded-full z-50"
         style={{
           backgroundColor: stepCompleted ? `${color}cc` : '#f2f2f2',
           transform: [{ scale: scaleAnimatedValue }],
@@ -90,11 +95,11 @@ export function StepCircle({ color, currentStep, step }) {
         }}
       />
       <View
-        className="w-6 h-6 rounded-full absolute z-40 border"
+        className="size-7 rounded-full absolute z-40 border"
         style={{
           backgroundColor: '#f2f2f2',
           borderColor: `${color}88`,
-          borderWidth: stepCompleted ? 1 : 0,
+          borderWidth: stepCompleted ? 0 : 1,
         }}
       />
     </View>
