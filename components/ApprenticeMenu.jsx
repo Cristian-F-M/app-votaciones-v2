@@ -54,24 +54,24 @@ export function ApprenticeMenu({ setMenuIsVisible }) {
         <View className="py-2 flex flex-col">
           <MenuItem
             text="Perfil"
-            pressableClass="bg-[#A3D9A5]"
+            pressableClass="!bg-[#A3D9A5]"
             onPress={handleClickApprenticeProfile}
           />
           {user?.roleUser.code === 'Candidate' && (
             <MenuItem
-              pressableClass=" bg-[#A3C9F1]"
+              pressableClass=" !bg-[#A3C9F1]"
               onPress={handleClickCandidateProfile}
               text="Perfil de candidato"
             />
           )}
           <MenuItem
-            pressableClass=" bg-[#B0BEC5]"
+            pressableClass=" !bg-[#B0BEC5]"
             onPress={handleClickConfig}
             text="Configuraciones"
           />
           {/*  */}
           <MenuItem
-            pressableClass=" bg-[#FFB3A1]"
+            pressableClass=" !bg-[#FFB3A1]"
             onPress={handleClickLogout}
             text="Cerrar Sesión"
           />
