@@ -1,13 +1,16 @@
-import { Pressable, ScrollView, Text, View } from 'react-native'
+import { ScrollView, View } from 'react-native'
 import { Screen } from './Screen.jsx'
 import { StatusBar } from 'expo-status-bar'
 import { Profile } from './Profile.jsx'
-import { Shadow } from 'react-native-shadow-2'
 import { doFetch, METHODS, removeItemStorage } from '../lib/api.js'
 import { ALERT_TYPE, Toast } from 'react-native-alert-notification'
-import { Link, router } from 'expo-router'
+import { router } from 'expo-router'
+import { useUser } from '../context/user.js'
+import { MenuItem } from './MenuItem.jsx'
 
 export function ApprenticeMenu({ setMenuIsVisible }) {
+  const { user } = useUser()
+
   async function handleClickLogout() {
     const url = `${process.env.EXPO_PUBLIC_API_URL}/Logout`
     const res = await doFetch({ url, method: METHODS.POST })
@@ -29,6 +32,16 @@ export function ApprenticeMenu({ setMenuIsVisible }) {
     router.push('apprentice/config/')
   }
 
+  function handleClickCandidateProfile() {
+    setMenuIsVisible(false)
+    router.navigate('candidate/profile/')
+  }
+
+  function handleClickApprenticeProfile() {
+    setMenuIsVisible(false)
+    router.navigate('apprentice/profile/')
+  }
+
   return (
     <Screen>
       <StatusBar
@@ -38,20 +51,30 @@ export function ApprenticeMenu({ setMenuIsVisible }) {
       <ScrollView className="flex-1 bg-gray-[#e0e2e4]">
         <Profile />
 
-        <View className="py-4 flex flex-col gap-y-2">
-          <Pressable
-            className="mt-4 bg-blue-400 py-4 px-2"
+        <View className="py-2 flex flex-col">
+          <MenuItem
+            text="Perfil"
+            pressableClass="!bg-[#A3D9A5]"
+            onPress={handleClickApprenticeProfile}
+          />
+          {user?.roleUser.code === 'Candidate' && (
+            <MenuItem
+              pressableClass=" !bg-[#A3C9F1]"
+              onPress={handleClickCandidateProfile}
+              text="Perfil de candidato"
+            />
+          )}
+          <MenuItem
+            pressableClass=" !bg-[#B0BEC5]"
             onPress={handleClickConfig}
-          >
-            <Text className="text-base text-center">Configuraciones</Text>
-          </Pressable>
+            text="Configuraciones"
+          />
           {/*  */}
-          <Pressable
-            className="mt-4 bg-red-400 py-4 px-2"
+          <MenuItem
+            pressableClass=" !bg-[#FFB3A1]"
             onPress={handleClickLogout}
-          >
-            <Text className="text-base text-center">Cerrar Sesión</Text>
-          </Pressable>
+            text="Cerrar Sesión"
+          />
         </View>
       </ScrollView>
     </Screen>

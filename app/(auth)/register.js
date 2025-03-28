@@ -1,33 +1,34 @@
-import {
-  ActivityIndicator,
-  Pressable,
-  RefreshControl,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TextInput,
-  View,
-} from 'react-native'
+import { RefreshControl, ScrollView, Text, View } from 'react-native'
 import { Screen } from '../../components/Screen'
 import LogoSena from '../../icons/Logo'
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { doFetch, getItemStorage, METHODS, setItemStorage } from '../../lib/api'
-import { Picker } from '@react-native-picker/picker'
+import {
+  doFetch,
+  getApiErrors,
+  getApiErrorsEntries,
+  METHODS,
+} from '../../lib/api'
 import { Stack, useRouter } from 'expo-router'
 import { scrollSmooth } from '../../lib/scrollSmooth'
 import BouncyCheckbox from 'react-native-bouncy-checkbox'
-import { DropDownAlert, showAlert } from '../../components/DropDownAlert'
-import { DropdownAlertType } from 'react-native-dropdownalert'
+import { StatusBar } from 'expo-status-bar'
+import { Input, INPUT_TYPES, SELECT_MODES } from '../../components/Input'
+import { findConfig } from '../../lib/config'
+import { useConfig } from '../../context/config'
+import { toast } from '@backpackapp-io/react-native-toast'
+import { TOAST_STYLES } from '../../lib/toastConstants'
+import { StyledPressable } from '../../components/StyledPressable'
 
 export default function Register() {
-  const [Color, setColor] = useState('')
   const [errors, setErrors] = useState({})
   const [typeDocumentCode, setTypeDocumentCode] = useState('CedulaCiudadania')
   const [isLoading, setIsLoading] = useState(false)
   const [isVisible, setIsVisible] = useState(false)
   const [refreshing, setRefreshing] = useState(false)
   const router = useRouter()
+  const { config } = useConfig()
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const refs = {
     name: useRef(null),
     lastname: useRef(null),
@@ -43,14 +44,15 @@ export default function Register() {
 
   const [name, setName] = useState('')
   const [lastname, setLastname] = useState('')
-  const [typesDocuments, setTypesDocuments] = useState(null)
+  const [typesDocuments, setTypesDocuments] = useState([])
   const [document, setDocument] = useState('')
   const [phone, setPhone] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [passwordConfirm, setPasswordConfirm] = useState('')
+  const color = findConfig({ configs: config, code: 'Color' }).value
 
-  function handleClickRegister() {
+  const handleClickRegister = useCallback(() => {
     let localyErrors = {}
 
     if (name.trim() === '')
@@ -73,19 +75,19 @@ export default function Register() {
         ...localyErrors,
         passwordConfirm: 'Las contraseñas no coinciden',
       }
-    setErrors(localyErrors)
 
-    if (localyErrors.name) return scrollSmooth(refs.name, refs.scrollView)
-    if (localyErrors.phone) return scrollSmooth(refs.phone, refs.scrollView)
-    if (localyErrors.email) return scrollSmooth(refs.email, refs.scrollView)
-    if (localyErrors.lastname)
-      return scrollSmooth(refs.lastname, refs.scrollView)
-    if (localyErrors.document)
-      return scrollSmooth(refs.document, refs.scrollView)
-    if (localyErrors.password)
-      return scrollSmooth(refs.password, refs.scrollView)
+    setErrors(prev => ({ ...prev, ...localyErrors }))
 
-    if (localyErrors.length > 0) return
+    const localyErrorsEntries = getApiErrorsEntries(localyErrors)
+    const errorsEntries = getApiErrorsEntries(errors)
+
+    console.log({ localyErrorsEntries, errorsEntries })
+
+    if (localyErrorsEntries.length > 0 || errorsEntries.length > 0) {
+      const [key] = localyErrorsEntries[0] || errorsEntries[0]
+      scrollSmooth(refs[key], refs.scrollView)
+      return
+    }
 
     register()
 
@@ -107,21 +109,24 @@ export default function Register() {
       })
 
       setIsLoading(false)
-      if (res.error) {
-        return showAlert({
-          message: res.error,
-          type: DropdownAlertType.Error,
-          title: 'Error',
+
+      if (res.error)
+        return toast.error(res.error, {
+          styles: {
+            ...TOAST_STYLES.ERROR,
+          },
         })
-      }
 
       if (res.errors) {
         const { errors } = res
+        const apiErrors = getApiErrors(errors)
+        const apiErrorsEntries = getApiErrorsEntries(apiErrors)
 
-        for (const key in errors) {
-          const { msg, path, message } = errors[key][0]
-          setErrors({ ...errors, [path]: msg || message })
-          scrollSmooth(refs[path], refs.scrollView)
+        setErrors(prev => ({ ...prev, ...apiErrors }))
+
+        if (apiErrorsEntries.length > 0) {
+          const [key] = apiErrorsEntries[0]
+          scrollSmooth(refs[key], refs.scrollView)
         }
         return
       }
@@ -130,10 +135,10 @@ export default function Register() {
       // eslint-disable-next-line no-undef
       await new Promise(resolve => setTimeout(resolve, 500))
 
-      showAlert({
-        message: 'Registro exitoso',
-        type: DropdownAlertType.Success,
-        title: 'Exitoso',
+      toast.success('Registro exitoso', {
+        styles: {
+          ...TOAST_STYLES.SUCCESS,
+        },
       })
 
       // eslint-disable-next-line no-undef
@@ -141,9 +146,22 @@ export default function Register() {
         router.replace('login')
       }, 2000)
     }
-  }
+  }, [
+    document,
+    email,
+    lastname,
+    name,
+    password,
+    passwordConfirm,
+    phone,
+    refs,
+    errors,
+    router,
+    typeDocumentCode,
+    clearInputs,
+  ])
 
-  function clearInputs() {
+  const clearInputs = useCallback(() => {
     setName('')
     setLastname('')
     setDocument('')
@@ -152,63 +170,65 @@ export default function Register() {
     setPassword('')
     setPasswordConfirm('')
     setErrors({})
-  }
-  useEffect(() => {
-    async function getConfigs() {
-      const colorStoraged = await getItemStorage({ name: 'color' })
-
-      if (!colorStoraged || new Date() > colorStoraged.expires) {
-        const url = `${process.env.EXPO_PUBLIC_API_URL}/config/?code=Color`
-        const res = await doFetch({ url, method: METHODS.GET })
-        const color = res.config.value
-
-        await setItemStorage({
-          name: 'color',
-          value: color,
-          expires: new Date(Date.now() + 1000 * 60 * 60 * 4),
-        })
-        return setColor(color)
-      }
-      setColor(colorStoraged.value)
-    }
-
-    async function getTypesDocuments() {
-      const url = `${process.env.EXPO_PUBLIC_API_URL}/typeDocument/`
-      const res = await doFetch({ url, method: METHODS.GET })
-      setTypesDocuments(res.typesDocuments)
-    }
-
-    getConfigs()
-    getTypesDocuments()
+    setTypeDocumentCode('CedulaCiudadania')
+    setIsVisible(false)
   }, [])
+
+  const getTypesDocuments = useCallback(async () => {
+    const toastIdTypesDocument = toast.loading(
+      'Cargando tipos de documentos...',
+    )
+    setTypesDocuments([])
+    const url = `${process.env.EXPO_PUBLIC_API_URL}/typeDocument/`
+    const res = await doFetch({ url, method: METHODS.GET })
+
+    if (!res.ok || res.error) {
+      toast.error(res.error || res.message, {
+        styles: TOAST_STYLES.ERROR,
+      })
+      return
+    }
+
+    setTypesDocuments(res.typesDocuments)
+    toast.dismiss(toastIdTypesDocument)
+    toast.success('Tipos de documentos cargados', {
+      styles: TOAST_STYLES.SUCCESS,
+    })
+  }, [])
+
+  useEffect(() => {
+    getTypesDocuments()
+  }, [getTypesDocuments])
 
   const onRefresh = useCallback(() => {
     setRefreshing(true)
     // eslint-disable-next-line no-undef
     setTimeout(() => {
-      router.replace('register')
+      clearInputs()
+      getTypesDocuments()
       setRefreshing(false)
     }, 600)
-  }, [])
+  }, [getTypesDocuments, clearInputs])
 
   return (
-    <Screen>
-      <DropDownAlert />
+    <Screen safeArea={false}>
+      <StatusBar style="dark" />
       <Stack.Screen
         options={{
           headerShown: true,
-          title: '',
+          title: 'Registro',
+          headerTitleAlign: 'center',
           headerRight: () => (
             <LogoSena
               width={40}
               height={40}
-              style={{ fill: Color }}
+              style={{ fill: color }}
             />
           ),
         }}
       />
       <ScrollView
-        className="p-5 flex-1"
+        className="p-5 flex-1 mt-2"
         ref={refs.scrollView}
         refreshControl={
           <RefreshControl
@@ -218,217 +238,107 @@ export default function Register() {
         }
       >
         <View className="flex-1 justify-center">
-          <View
-            className="flex-col items-center gap-4 mb-10"
-            ref={refs.title}
-          >
-            <Text className="text-4xl text-center tracking-widest">
-              Registro
-            </Text>
-          </View>
-
           <View>
-            <View
-              style={styles.inputContainer}
-              ref={refs.name}
-            >
-              <Text style={styles.label}>
-                Nombre
-                <Text className="text-red-500"> *</Text>
-              </Text>
-              <TextInput
-                style={[styles.input, styles.inputText]}
-                value={name}
-                onChangeText={t => {
-                  setName(t)
-                  setErrors({ ...errors, name: null })
-                }}
-                placeholder="Luna Sophia"
-              />
-              {!!errors.name && (
-                <Text style={styles.errorMessage}>{errors.name}</Text>
-              )}
-            </View>
-            {/*  */}
-            <View
-              style={styles.inputContainer}
-              ref={refs.lastname}
-            >
-              <Text style={styles.label}>
-                Apellido
-                <Text className="text-red-500"> *</Text>
-              </Text>
-              <TextInput
-                style={[styles.input, styles.inputText]}
-                value={lastname}
-                onChangeText={t => {
-                  setLastname(t)
-                  setErrors({ ...errors, lastname: null })
-                }}
-                placeholder="Smith Miller"
-              />
-              {!!errors.lastname && (
-                <Text style={styles.errorMessage}>{errors.lastname}</Text>
-              )}
-            </View>
-            {/*  */}
-            <View
-              style={styles.inputContainer}
-              ref={refs.typeDocument}
-            >
-              <Text style={styles.label}>Tipo de documento</Text>
-              <View style={styles.input}>
-                <Picker
-                  selectedValue={typeDocumentCode}
-                  dropdownIconRippleColor={Color}
-                  mode="modal"
-                  prompt="Seleccione tipo de documento"
-                  onValueChange={(itemValue, itemIndex) =>
-                    setTypeDocumentCode(itemValue)
-                  }
-                >
-                  {!typesDocuments ? (
-                    <Picker.Item
-                      label={'Loading...'}
-                      value={0}
-                    />
-                  ) : (
-                    typesDocuments.map(typeDocument => {
-                      return (
-                        <Picker.Item
-                          key={typeDocument.id}
-                          label={typeDocument.name}
-                          value={typeDocument.code}
-                        />
-                      )
-                    })
-                  )}
-                </Picker>
-              </View>
-            </View>
-            {/*  */}
-            <View
-              style={styles.inputContainer}
-              ref={refs.document}
-            >
-              <Text style={styles.label}>
-                Documento
-                <Text className="text-red-500"> *</Text>
-              </Text>
-              <TextInput
-                style={[styles.input, styles.inputText]}
-                value={document}
-                onChangeText={t => {
-                  setDocument(t)
-                  setErrors({ ...errors, document: null })
-                }}
-                keyboardType="numeric"
-                placeholder="123456789"
-              />
-              {!!errors.document && (
-                <Text style={styles.errorMessage}>{errors.document}</Text>
-              )}
-            </View>
-            {/*  */}
-            <View
-              style={styles.inputContainer}
-              ref={refs.phone}
-            >
-              <Text style={styles.label}>
-                Telefono
-                <Text className="text-red-500"> *</Text>
-              </Text>
-              <TextInput
-                style={[styles.input, styles.inputText]}
-                value={phone}
-                onChangeText={t => {
-                  setPhone(t)
-                  setErrors({ ...errors, phone: null })
-                }}
-                keyboardType="phone-pad"
-                placeholder="3512345678"
-              />
-              {!!errors.phone && (
-                <Text style={styles.errorMessage}>{errors.phone}</Text>
-              )}
-            </View>
-            {/*  */}
-            <View
-              style={styles.inputContainer}
-              ref={refs.email}
-            >
-              <Text style={styles.label}>
-                Correo electronico
-                <Text className="text-red-500"> *</Text>
-              </Text>
-              <TextInput
-                style={[styles.input, styles.inputText]}
-                value={email}
-                keyboardType="email-address"
-                onChangeText={t => {
-                  setEmail(t)
-                  setErrors({ ...errors, email: null })
-                }}
-                placeholder="lunasophia@gmail.com"
-              />
-              {!!errors.email && (
-                <Text style={styles.errorMessage}>{errors.email}</Text>
-              )}
-            </View>
-            {/*  */}
-            <View
-              style={styles.inputContainer}
-              ref={refs.password}
-            >
-              <Text style={styles.label}>
-                Contraseña
-                <Text className="text-red-500"> *</Text>
-              </Text>
-              <TextInput
-                style={[styles.input, styles.inputText]}
-                value={password}
-                secureTextEntry={!isVisible}
-                onChangeText={t => {
-                  setPassword(t)
-                  setErrors({ ...errors, password: null })
-                }}
-                placeholder="*********"
-              />
-              {!!errors.password && (
-                <Text style={styles.errorMessage}>{errors.password}</Text>
-              )}
-            </View>
-            {/*  */}
-            <View
-              style={styles.inputContainer}
-              ref={refs.passwordConfirm}
-            >
-              <Text style={styles.label}>
-                Confirmar contraseña
-                <Text className="text-red-500"> *</Text>
-              </Text>
-              <TextInput
-                style={[styles.input, styles.inputText]}
-                value={passwordConfirm}
-                secureTextEntry={!isVisible}
-                onChangeText={t => {
-                  setPasswordConfirm(t)
-                  setErrors({ ...errors, passwordConfirm: null })
-                }}
-                placeholder="*********"
-              />
-              {!!errors.passwordConfirm && (
-                <Text style={styles.errorMessage}>
-                  {errors.passwordConfirm}
-                </Text>
-              )}
-            </View>
+            <Input
+              type={INPUT_TYPES.TEXT}
+              value={{ value: name, setValue: setName }}
+              placeholder={'Luna Sophia'}
+              errors={{ errors, setErrors }}
+              label="Nombre"
+              innerRef={refs.name}
+              inputRefName="name"
+              required
+            />
+
+            <Input
+              type={INPUT_TYPES.TEXT}
+              value={{ value: lastname, setValue: setLastname }}
+              placeholder={'Smith Miller'}
+              errors={{ errors, setErrors }}
+              label="Apellido"
+              innerRef={refs.lastname}
+              inputRefName="lastname"
+              required
+            />
+
+            <Input
+              type={INPUT_TYPES.SELECT}
+              selectedValue={typeDocumentCode}
+              items={typesDocuments}
+              errors={{ errors, setErrors }}
+              innerRef={refs.typeDocument}
+              inputRefName="typeDocument"
+              label="Tipo de documento"
+              dropdownIconRippleColor={color}
+              mode={SELECT_MODES.DROPDOWN}
+              required
+            />
+
+            <Input
+              type={INPUT_TYPES.TEXT}
+              value={{ value: document, setValue: setDocument }}
+              placeholder={'123456789'}
+              errors={{ errors, setErrors }}
+              label="Documento"
+              innerRef={refs.document}
+              inputRefName="document"
+              keyboardType="number-pad"
+              required
+            />
+
+            <Input
+              type={INPUT_TYPES.TEXT}
+              value={{ value: phone, setValue: setPhone }}
+              placeholder={'3512345678'}
+              errors={{ errors, setErrors }}
+              label="Telefono"
+              innerRef={refs.phone}
+              inputRefName="phone"
+              keyboardType="phone-pad"
+              required
+            />
+
+            <Input
+              type={INPUT_TYPES.TEXT}
+              value={{ value: email, setValue: setEmail }}
+              placeholder={'lunasophia@gmail.com'}
+              errors={{ errors, setErrors }}
+              label="Correo electronico"
+              innerRef={refs.email}
+              inputRefName="email"
+              required
+            />
+
+            <Input
+              type={INPUT_TYPES.TEXT}
+              value={{ value: password, setValue: setPassword }}
+              placeholder={'*********'}
+              errors={{ errors, setErrors }}
+              label="Contraseña"
+              innerRef={refs.password}
+              inputRefName="password"
+              secureTextEntry={!isVisible}
+              required
+            />
+
+            <Input
+              type={INPUT_TYPES.TEXT}
+              value={{ value: passwordConfirm, setValue: setPasswordConfirm }}
+              placeholder={'*********'}
+              errors={{ errors, setErrors }}
+              label="Confirmar contraseña"
+              innerRef={refs.passwordConfirm}
+              inputRefName="passwordConfirm"
+              secureTextEntry={true}
+              required
+            />
+
             <View className="flex-row items-center gap-x-2 -mt-2">
               <BouncyCheckbox
                 size={24}
-                fillColor={Color}
+                fillColor={color}
                 unFillColor="#FFFFFF"
-                iconStyle={{ borderColor: Color }}
+                iconStyle={{ borderColor: color }}
                 innerIconStyle={{ borderWidth: 2 }}
                 disableText
                 isChecked={isVisible}
@@ -437,7 +347,7 @@ export default function Register() {
                 }}
               />
               <Text
-                className="text-sm"
+                className="text-base"
                 onPress={() => {
                   setIsVisible(!isVisible)
                 }}
@@ -446,54 +356,18 @@ export default function Register() {
               </Text>
             </View>
           </View>
-          {/*  */}
-          <View className="mb-16">
-            <Pressable
-              // onPress={!isLoading ? handleClickLogin : null}
-              className={`rounded-lg px-4 py-2 mt-6 flex-row justify-center gap-x-3 relative items-center active:opacity-60`}
-              disabled={isLoading}
-              style={{
-                backgroundColor: `${Color}${isLoading ? '80' : ''}`,
-                color: `#000000${isLoading ? '80' : ''}`,
-              }}
-              onPress={!isLoading ? handleClickRegister : null}
-            >
-              <Text className="text-lg">Registro</Text>
-              {isLoading && (
-                <ActivityIndicator
-                  className="absolute right-0 mr-2"
-                  size={30}
-                  color="white"
-                />
-              )}
-            </Pressable>
+          <View className="mb-16 mt-1">
+            <StyledPressable
+              text="Registrar"
+              backgroundColor={`${color}cc`}
+              onPress={handleClickRegister}
+              isLoading={isLoading}
+              showLoadingIndicator={true}
+              pressableClass="mt-3"
+            />
           </View>
         </View>
       </ScrollView>
     </Screen>
   )
 }
-
-const styles = StyleSheet.create({
-  inputContainer: {
-    marginBottom: 16,
-    position: 'relative',
-  },
-  input: {
-    borderWidth: 1,
-    borderRadius: 8,
-    height: 55,
-    fontSize: 16,
-  },
-  inputText: {
-    paddingHorizontal: 20,
-  },
-  label: {
-    color: '#000',
-    marginBottom: 4,
-    fontSize: 16,
-  },
-  errorMessage: {
-    color: 'red',
-  },
-})

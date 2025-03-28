@@ -1,5 +1,6 @@
 import { createContext, useState, useContext, useEffect } from 'react'
 import { doFetch, METHODS } from '../lib/api'
+import { router } from 'expo-router'
 
 const UserContext = createContext()
 
@@ -11,17 +12,12 @@ export const UserProvider = ({ children }) => {
   }, [])
 
   async function getUser() {
-    const url = `${process.env.EXPO_PUBLIC_API_URL}/`
-    const res = await doFetch({ url, method: METHODS.GET })
+    const urlGetUser = `${process.env.EXPO_PUBLIC_API_URL}/user/`
+    const res = await doFetch({ url: urlGetUser, method: METHODS.GET })
 
-    if (res.error) {
-      return
-    }
+    if (res.error) return router.replace('login')
 
-    const urlGetUser = `${process.env.EXPO_PUBLIC_API_URL}/user/${res.user.id}`
-    const { user } = await doFetch({ url: urlGetUser, method: METHODS.GET })
-
-    setUser(user)
+    setUser(res.user)
   }
 
   return (

@@ -1,18 +1,14 @@
-import {
-  ActivityIndicator,
-  StyleSheet,
-  Text,
-  TextInput,
-  View,
-  Pressable,
-  ScrollView,
-  RefreshControl,
-} from 'react-native'
+import { Text, View, Pressable, ScrollView, RefreshControl } from 'react-native'
 import { Screen } from '../../components/Screen'
-import { Picker } from '@react-native-picker/picker'
 import LogoSena from '../../icons/Logo'
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { doFetch, getItemStorage, METHODS, setItemStorage } from '../../lib/api'
+import {
+  doFetch,
+  getConfigs,
+  getItemStorage,
+  METHODS,
+  setItemStorage,
+} from '../../lib/api'
 import { Link, Stack } from 'expo-router'
 import { StatusBar } from 'expo-status-bar'
 import { useRouter } from 'expo-router'
@@ -20,56 +16,65 @@ import BouncyCheckbox from 'react-native-bouncy-checkbox'
 import { useConfig } from '../../context/config'
 import { findConfig } from '../../lib/config'
 import { scrollSmooth } from '../../lib/scrollSmooth'
-import { DropdownAlertType } from 'react-native-dropdownalert'
-import { DropDownAlert, showAlert } from '../../components/DropDownAlert'
-import { useNetInfo } from '@react-native-community/netinfo'
 import { isEnrolledAsync, authenticateAsync } from 'expo-local-authentication'
 import Finger from '../../icons/Finger'
+import { toast, ToastPosition } from '@backpackapp-io/react-native-toast'
+import { TOAST_STYLES } from '../../lib/toastConstants'
+import { Input, INPUT_TYPES, SELECT_MODES } from '../../components/Input'
+import { StyledPressable } from '../../components/StyledPressable'
 
 export default function Login() {
-  const [Color, setColor] = useState()
-  const [typesDocuments, setTypesDocuments] = useState(null)
+  const [typesDocuments, setTypesDocuments] = useState([])
   const [typeDocumentCode, setTypeDocumentCode] = useState('CedulaCiudadania')
   const [document, setDocument] = useState('')
   const [password, setPassword] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [errors, setErrors] = useState({})
   const router = useRouter()
-  const [isVisible, setIsVisible] = useState(false)
+  const [passwordIsVisible, setPasswordIsVisible] = useState(false)
   const [refreshing, setRefreshing] = useState(false)
   const [isBiometricsAvailable, setIsBiometricsAvailable] = useState(false)
   const { config } = useConfig()
-  const refPrueba = useRef()
-  const netInfo = useNetInfo()
   const [isBiometricsActive, setIsBiometricsActive] = useState(false)
+  const color = findConfig({ configs: config, code: 'Color' }).value
 
-  useEffect(() => {
-    async function getIsBiometricsActive() {
-      const isBiometricsActive = await getItemStorage({
-        name: 'isBiometricsActive',
-      })
-      setIsBiometricsActive(isBiometricsActive || false)
-    }
-
-    getIsBiometricsActive()
+  const getIsBiometricsActive = useCallback(async () => {
+    const { isBiometricsActive } = await getConfigs()
+    setIsBiometricsActive(isBiometricsActive || false)
   }, [])
 
+  const resetInputs = useCallback(() => {
+    setTypeDocumentCode('CedulaCiudadania')
+    setDocument('')
+    setPassword('')
+    setPasswordIsVisible(false)
+    setErrors({})
+  }, [])
+
+  useEffect(() => {
+    getIsBiometricsActive()
+  }, [getIsBiometricsActive])
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const refs = {
     document: useRef(null),
     password: useRef(null),
     scrollView: useRef(null),
+    typeDocument: useRef(null),
   }
 
   const onRefresh = useCallback(() => {
     setRefreshing(true)
+    setTypesDocuments([])
     // eslint-disable-next-line no-undef
     setTimeout(() => {
-      router.replace('login')
+      resetInputs()
+      getTypesDocuments()
       setRefreshing(false)
     }, 600)
-  }, [router])
+  }, [getTypesDocuments, resetInputs])
 
-  function handleClickLogin() {
+  const handleClickLogin = useCallback(async () => {
     const localyErrors = {}
 
     if (document.trim() === '') localyErrors.document = 'Campo requerido'
@@ -77,7 +82,8 @@ export default function Login() {
 
     setErrors(localyErrors)
 
-    if (localyErrors.document) return scrollSmooth(refPrueba, refs.scrollView)
+    if (localyErrors.document)
+      return scrollSmooth(refs.document, refs.scrollView)
     if (localyErrors.password)
       return scrollSmooth(refs.password, refs.scrollView)
 
@@ -97,15 +103,21 @@ export default function Login() {
       await new Promise(resolve => setTimeout(resolve, 500))
 
       if (res.error) {
-        showAlert({
-          message: res.error,
-          type: DropdownAlertType.Error,
-          title: 'Error',
+        toast.error(res.error, {
+          position: ToastPosition.TOP,
+          styles: {
+            ...TOAST_STYLES.ERROR,
+          },
         })
       }
 
       if (!res.ok) {
-        showAlert({ message: res.message, type: DropdownAlertType.Warn })
+        toast.error(res.message, {
+          position: ToastPosition.TOP,
+          styles: {
+            ...TOAST_STYLES.ERROR,
+          },
+        })
       }
 
       setIsLoading(false)
@@ -124,21 +136,21 @@ export default function Login() {
           value: res.token,
         })
       }
-      router.replace('apprentice/')
+      router.replace(res.urlRedirect || '404/')
     }
-  }
+  }, [document, password, router, typeDocumentCode, isBiometricsActive, refs])
 
-  async function handleClickLoginBiometrics() {
-    const isBiometricsActive = await getItemStorage({
-      name: 'isBiometricsActive',
-    })
+  const handleClickLoginBiometrics = useCallback(async () => {
+    const { isBiometricsActive } = await getConfigs()
 
     if (!isBiometricsActive) {
-      return showAlert({
-        message:
-          'Debes activar la autenticación de huella dactilar desde la aplicación.',
-        type: DropdownAlertType.Info,
-      })
+      return toast.error(
+        'Debes activar la autenticación de huella dactilar desde la aplicación.',
+        {
+          duration: 6000,
+          styles: TOAST_STYLES.INFO,
+        },
+      )
     }
 
     const biometricResult = await authenticateAsync({
@@ -158,17 +170,15 @@ export default function Login() {
       })
 
       if (res.error) {
-        showAlert({
-          message: res.error,
-          type: DropdownAlertType.Error,
-          title: 'Error',
+        return toast.error(res.error, {
+          styles: TOAST_STYLES.ERROR,
         })
-        return
       }
 
       if (!res.ok) {
-        showAlert({ message: res.message, type: DropdownAlertType.Warn })
-        return
+        return toast.error(res.message, {
+          styles: TOAST_STYLES.ERROR,
+        })
       }
 
       setItemStorage({
@@ -177,56 +187,52 @@ export default function Login() {
         expires: new Date(Date.now() + 1000 * 60 * 60 * 12),
       })
 
-      router.replace('apprentice/')
+      router.navigate(res.urlRedirect || '404/')
     }
-  }
+  }, [router])
 
-  useEffect(() => {
-    async function handleBiometrics() {
-      const biometricRecords = await isEnrolledAsync()
-      setIsBiometricsAvailable(biometricRecords)
+  const handleBiometrics = useCallback(async () => {
+    const biometricRecords = await isEnrolledAsync()
+    setIsBiometricsAvailable(biometricRecords)
+  }, [])
+
+  const getTypesDocuments = useCallback(async () => {
+    const toastIdTypesDocument = toast.loading(
+      'Cargando tipos de documentos...',
+    )
+
+    const url = `${process.env.EXPO_PUBLIC_API_URL}/typeDocument/`
+    const res = await doFetch({ url, method: METHODS.GET })
+
+    if (!res.ok || res.error) {
+      toast.error(res.error || res.message, {
+        styles: {
+          ...TOAST_STYLES.ERROR,
+        },
+      })
+      return
     }
 
-    handleBiometrics()
+    setTypesDocuments(res.typesDocuments)
+    toast.dismiss(toastIdTypesDocument)
+    toast.success('Tipos de documentos cargados', {
+      styles: {
+        ...TOAST_STYLES.SUCCESS,
+      },
+    })
   }, [])
 
   useEffect(() => {
-    async function getConfigs() {
-      const { value: color } = findConfig({ configs: config, code: 'Color' })
-      setColor(color)
-    }
-
-    async function getTypesDocuments() {
-      const url = `${process.env.EXPO_PUBLIC_API_URL}/typeDocument/`
-      const res = await doFetch({ url, method: METHODS.GET })
-      setTypesDocuments(res.typesDocuments)
-    }
-
-    getConfigs()
-    getTypesDocuments()
-  }, [config, netInfo])
+    handleBiometrics()
+  }, [handleBiometrics])
 
   useEffect(() => {
-    const { type } = netInfo
-
-    if (type !== 'wifi' && type == null) {
-      // eslint-disable-next-line no-undef
-      setTimeout(() => {
-        showAlert({
-          message: 'Estás accediendo a la aplicación con datos móviles',
-          type: DropdownAlertType.Info,
-        })
-      }, 200)
-    }
-  }, [netInfo])
+    getTypesDocuments()
+  }, [getTypesDocuments])
 
   return (
     <Screen>
-      <DropDownAlert dismissInterval={2000} />
-      <StatusBar
-        style="dark"
-        backgroundColor="#f2f2f2"
-      />
+      <StatusBar style="dark" />
       <Stack.Screen
         options={{
           headerShown: false,
@@ -234,11 +240,13 @@ export default function Login() {
       />
       <ScrollView
         ref={refs.scrollView}
-        className="p-5 flex-1"
+        className="flex-1 p-5"
+        contentContainerStyle={{ flexGrow: 1 }}
         refreshControl={
           <RefreshControl
             refreshing={refreshing}
             onRefresh={onRefresh}
+            colors={[color]}
           />
         }
       >
@@ -246,7 +254,7 @@ export default function Login() {
           <View className="flex-col items-center gap-4 mb-10">
             <View>
               <LogoSena
-                style={{ fill: Color }}
+                style={{ fill: color }}
                 width={170}
                 height={168}
               />
@@ -257,101 +265,61 @@ export default function Login() {
           </View>
 
           <View>
-            <View style={styles.inputContainer}>
-              <Text style={styles.label}>Tipo de documento</Text>
-              <View style={styles.input}>
-                <Picker
-                  selectedValue={typeDocumentCode}
-                  dropdownIconRippleColor={Color}
-                  mode="modal"
-                  prompt="Seleccione tipo de documento"
-                  onValueChange={(itemValue, itemIndex) =>
-                    setTypeDocumentCode(itemValue)
-                  }
-                >
-                  {!typesDocuments ? (
-                    <Picker.Item
-                      label={'Loading...'}
-                      value={0}
-                    />
-                  ) : (
-                    typesDocuments.map(typeDocument => {
-                      return (
-                        <Picker.Item
-                          key={typeDocument.id}
-                          label={typeDocument.name}
-                          value={typeDocument.code}
-                        />
-                      )
-                    })
-                  )}
-                </Picker>
-              </View>
-            </View>
+            <Input
+              type={INPUT_TYPES.SELECT}
+              selectedValue={typeDocumentCode}
+              items={typesDocuments}
+              errors={{ errors, setErrors }}
+              innerRef={refs.typeDocument}
+              inputRefName="typeDocument"
+              label="Tipo de documento"
+              dropdownIconRippleColor={color}
+              mode={SELECT_MODES.DROPDOWN}
+              required
+            />
 
-            <View
-              style={styles.inputContainer}
-              ref={refPrueba}
-            >
-              <Text style={styles.label}>
-                Documento
-                <Text className="text-red-500"> *</Text>
-              </Text>
-              <TextInput
-                style={[styles.input, styles.inputText]}
-                inputMode="numeric"
-                value={document}
-                onChangeText={t => {
-                  setDocument(t)
-                  setErrors({ ...errors, document: null })
-                }}
-                placeholder="123456789"
-              />
-              {!!errors.document && (
-                <Text style={styles.errorMessage}>{errors.document}</Text>
-              )}
-            </View>
-            <View
-              style={styles.inputContainer}
-              ref={refs.password}
-            >
-              <Text style={styles.label}>
-                Contraseña
-                <Text className="text-red-500"> *</Text>
-              </Text>
-              <TextInput
-                style={[styles.input, styles.inputText]}
-                secureTextEntry={!isVisible}
-                value={password}
-                onChangeText={t => {
-                  setPassword(t)
-                  setErrors({ ...errors, password: null })
-                }}
-                placeholder="*********"
-              />
-              {!!errors.password && (
-                <Text style={styles.errorMessage}>{errors.password}</Text>
-              )}
-            </View>
+            <Input
+              type={INPUT_TYPES.TEXT}
+              value={{ value: document, setValue: setDocument }}
+              placeholder={'123456789'}
+              errors={{ errors, setErrors }}
+              label="Documento"
+              innerRef={refs.document}
+              inputRefName="document"
+              keyboardType="number-pad"
+              required
+            />
+
+            <Input
+              type={INPUT_TYPES.TEXT}
+              value={{ value: password, setValue: setPassword }}
+              placeholder={'*********'}
+              errors={{ errors, setErrors }}
+              label="Contraseña"
+              innerRef={refs.password}
+              inputRefName="password"
+              secureTextEntry={!passwordIsVisible}
+              required
+            />
 
             <View className="flex flex-row justify-between items-center w-full">
               <View className="flex flex-row items-center justify-center gap-x-2 -mt-2">
                 <BouncyCheckbox
                   size={24}
-                  fillColor={Color}
+                  fillColor={color}
                   unFillColor="#FFFFFF"
-                  iconStyle={{ borderColor: Color }}
+                  iconStyle={{ borderColor: color }}
                   innerIconStyle={{ borderWidth: 2 }}
                   disableText
-                  isChecked={isVisible}
+                  isChecked={passwordIsVisible}
                   onPress={isChecked => {
-                    setIsVisible(isChecked)
+                    setPasswordIsVisible(isChecked)
                   }}
                 />
                 <Text
-                  className="text-sm"
+                  className="text-base"
                   onPress={() => {
-                    setIsVisible(!isVisible)
+                    setPasswordIsVisible(!passwordIsVisible)
                   }}
                 >
                   Mostrar contraseña
@@ -364,8 +332,8 @@ export default function Login() {
                       className="flex p-1 w-[42px] h-[42px] items-center justify-center rounded-full bg-white"
                       style={{
                         backgroundColor: isBiometricsActive
-                          ? Color
-                          : `${Color}80`,
+                          ? color
+                          : `${color}80`,
                       }}
                     >
                       <Finger
@@ -380,24 +348,14 @@ export default function Login() {
             </View>
 
             <View clasName="flex flex-row justify-between items-center w-full">
-              <Pressable
-                onPress={!isLoading ? handleClickLogin : null}
-                className={`rounded-lg px-4 py-2 mt-6 flex-row justify-center gap-x-3 relative items-center active:opacity-60`}
-                disabled={isLoading}
-                style={{
-                  backgroundColor: `${Color}${isLoading ? '80' : ''}`,
-                  color: `#000000${isLoading ? '80' : ''}`,
-                }}
-              >
-                <Text className="text-lg">Iniciar sesión</Text>
-                {isLoading && (
-                  <ActivityIndicator
-                    className="absolute right-0 mr-2"
-                    size={30}
-                    color="white"
-                  />
-                )}
-              </Pressable>
+              <StyledPressable
+                text="Iniciar Sesión"
+                backgroundColor={`${color}cc`}
+                pressableClass="mt-3"
+                isLoading={isLoading}
+                showLoadingIndicator={true}
+                onPress={handleClickLogin}
+              />
             </View>
           </View>
           <View className="flex-row items-center justify-between pt-1">
@@ -427,33 +385,3 @@ export default function Login() {
     </Screen>
   )
 }
-
-const styles = StyleSheet.create({
-  inputContainer: {
-    marginBottom: 16,
-    position: 'relative',
-  },
-  input: {
-    borderWidth: 1,
-    borderRadius: 8,
-    height: 55,
-    fontSize: 16,
-  },
-  inputText: {
-    paddingHorizontal: 20,
-  },
-  label: {
-    color: '#000',
-    marginBottom: 4,
-    fontSize: 16,
-  },
-  errorMessage: {
-    color: 'red',
-  },
-  eyeIcon: {
-    color: 'black',
-    position: 'absolute',
-    top: 0,
-    right: 0,
-  },
-})

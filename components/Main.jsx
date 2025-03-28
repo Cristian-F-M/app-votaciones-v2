@@ -1,13 +1,12 @@
-import { ActivityIndicator, BackHandler, Text, View } from 'react-native'
+import { ActivityIndicator, Text, View } from 'react-native'
 import LogoSena from '../icons/Logo'
-import { useEffect, useState } from 'react'
-import { getItemStorage, doFetch, METHODS } from '../lib/api.js'
+import { useCallback, useEffect, useState } from 'react'
+import { doFetch, METHODS } from '../lib/api.js'
 import { Stack, useRouter } from 'expo-router'
 import { Screen } from './Screen.jsx'
 import { StatusBar } from 'expo-status-bar'
 import { useConfig } from '../context/config.js'
 import { findConfig } from '../lib/config'
-import { ALERT_TYPE, Dialog } from 'react-native-alert-notification'
 import { useNetInfo } from '@react-native-community/netinfo'
 
 export function Main() {
@@ -16,48 +15,22 @@ export function Main() {
   const { config } = useConfig()
   const netInfo = useNetInfo()
 
-  function closeApp() {
-    BackHandler.exitApp()
-  }
+  // Verifica si hay conexión a internet
+  const hasConnection = useCallback(() => {
+    return netInfo.isConnected
+  }, [netInfo])
 
   useEffect(() => {
-    const { isConnected } = netInfo
-    if (isConnected !== null && !isConnected) {
-      return Dialog.show({
-        type: ALERT_TYPE.DANGER,
-        title: 'Error de conexión',
-        textBody:
-          'Necesitas estar conectado a intenet para acceder a la apliacción',
-        button: 'Aceptar',
-        onPressButton: () => closeApp(),
-        closeOnOverlayTap: false,
-      })
-    }
+    const configColor = findConfig({ configs: config, code: 'configColor' })
+    if (!configColor) return
+    setColor(configColor.value)
+  }, [config])
 
-    async function getConfigs() {
-      const colorStoraged = await getItemStorage({ name: 'color' })
-
-      if (!colorStoraged || new Date() > colorStoraged.expires) {
-        return setColor(findConfig({ configs: config, code: 'Color' }).value)
-      }
-      setColor(colorStoraged.value)
-    }
-
+  useEffect(() => {
     async function verifyToken() {
       const url = `${process.env.EXPO_PUBLIC_API_URL}/`
 
       const res = await doFetch({ url, method: METHODS.GET })
-
-      if (res.error) {
-        return Dialog.show({
-          type: ALERT_TYPE.DANGER,
-          // title: 'Error de conexión',
-          textBody: 'Un error ha ocurrido, por favor intenta mas tarde',
-          button: 'Aceptar',
-          onPressButton: () => closeApp(),
-          closeOnOverlayTap: false,
-        })
-      }
 
       if (res.ok) {
         router.replace('apprentice/')
@@ -68,14 +41,22 @@ export function Main() {
     }
 
     async function init() {
-      getConfigs()
       // eslint-disable-next-line no-undef
       await new Promise(resolve => setTimeout(resolve, 1000))
-      verifyToken()
+
+      const connection = hasConnection()
+      const connectionIsNull = connection == null
+
+      if (!connection && !connectionIsNull) {
+        router.replace('no-connection/')
+        return
+      }
+
+      if (connection && !connectionIsNull) verifyToken()
     }
 
     init()
-  }, [])
+  }, [router, hasConnection])
 
   return (
     <>
