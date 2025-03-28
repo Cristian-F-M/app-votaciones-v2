@@ -553,7 +553,7 @@ export default function ResetPassword() {
                 <StyledPressable
                   text={`Reenviar`}
                   backgroundColor="transparent"
-                  pressableClass="mt-2 w-[48%] border border-gray-400"
+                  pressableClass="mt-2 !w-[48%] border border-gray-400"
                   onPress={handleClickSendEmail}
                   isLoading={isLoading}
                   showLoadingIndicator={true}
@@ -563,7 +563,7 @@ export default function ResetPassword() {
                 <StyledPressable
                   text="Verificar"
                   backgroundColor={`${color}cc`}
-                  pressableClass="mt-2 px-2 py-3 rounded-lg w-full w-[48%]"
+                  pressableClass="mt-2 px-2 py-3 rounded-lg w-full !w-[48%]"
                   onPress={handleClickVerifyCode}
                   isLoading={isLoading}
                   showLoadingIndicator={true}
