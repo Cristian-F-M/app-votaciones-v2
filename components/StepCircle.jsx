@@ -11,11 +11,6 @@ export function StepCircle({ color, currentStep, step }) {
   const isThisStep = currentStep === step
 
   useEffect(() => {
-    console.log(currentStep, step)
-    console.log(currentStep >= step)
-  }, [currentStep, step])
-
-  useEffect(() => {
     const scaleValue = currentStep >= step ? 1 : 0.2
 
     const animation = Animated.timing(scaleAnimatedValue, {
