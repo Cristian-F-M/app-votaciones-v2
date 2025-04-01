@@ -1,12 +1,11 @@
 import { useEffect, useState } from 'react'
-import { doFetch } from '../lib/api'
 
-export function useRemainingTime(date, starDate = false) {
+export function useRemainingTime(date: string, starDate = false) {
   const [timeLeft, setTimeLeft] = useState({
-    days: 0,
-    hours: 0,
-    minutes: 0,
-    seconds: 0,
+    days: '0',
+    hours: '0',
+    minutes: '0',
+    seconds: '0',
   })
   const [isVotingClosed, setIsVotingClosed] = useState(false)
   const [isVotingStarted, setIsVotingStarted] = useState(false)
@@ -41,7 +40,7 @@ export function useRemainingTime(date, starDate = false) {
       }
 
       if (starDate) {
-        setIsVotingClosed(null)
+        setIsVotingClosed(false)
         setIsVotingStarted(true)
       }
     }, 1000)
@@ -53,7 +52,7 @@ export function useRemainingTime(date, starDate = false) {
   return { timeLeft, isVotingClosed, isVotingStarted }
 }
 
-function getRemainingTime(targetDate) {
+function getRemainingTime(targetDate: number) {
   const now = new Date().getTime()
   const difference = targetDate - now
 
