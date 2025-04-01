@@ -1,5 +1,5 @@
-import Svg, { Path } from "react-native-svg"
-const ChevronRight = (props) => (
+import Svg, { Path, SvgProps } from 'react-native-svg'
+const ChevronRight = (props: SvgProps) => (
   <Svg
     width={24}
     height={24}
@@ -12,7 +12,11 @@ const ChevronRight = (props) => (
     className="icon icon-tabler icons-tabler-outline icon-tabler-chevron-right"
     {...props}
   >
-    <Path stroke="none" d="M0 0h24v24H0z" fill="none" />
+    <Path
+      stroke="none"
+      d="M0 0h24v24H0z"
+      fill="none"
+    />
     <Path d="M9 6l6 6l-6 6" />
   </Svg>
 )

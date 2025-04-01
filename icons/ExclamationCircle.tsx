@@ -1,5 +1,5 @@
-import Svg, { Path } from 'react-native-svg'
-const ArrowLeft = props => (
+import Svg, { Path, SvgProps } from 'react-native-svg'
+const ExclamationCircle = (props: SvgProps) => (
   <Svg
     width={24}
     height={24}
@@ -7,8 +7,7 @@ const ArrowLeft = props => (
     stroke="currentColor"
     strokeLinecap="round"
     strokeLinejoin="round"
-    strokeWidth={2}
-    className="icon icon-tabler icons-tabler-outline icon-tabler-arrow-left"
+    strokeWidth={1.5}
     viewBox="0 0 24 24"
     {...props}
   >
@@ -16,7 +15,7 @@ const ArrowLeft = props => (
       stroke="none"
       d="M0 0h24v24H0z"
     />
-    <Path d="M5 12h14M5 12l6 6M5 12l6-6" />
+    <Path d="M3 12a9 9 0 1 0 18 0 9 9 0 1 0-18 0M12 9v4M12 16v.01" />
   </Svg>
 )
-export default ArrowLeft
+export default ExclamationCircle

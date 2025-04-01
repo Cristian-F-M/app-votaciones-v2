@@ -1,7 +1,6 @@
-import Svg, { Path } from 'react-native-svg'
-const OpenedMenu = props => (
+import Svg, { Path, SvgProps } from 'react-native-svg'
+const ArrowLeft = (props: SvgProps) => (
   <Svg
-    xmlns="http://www.w3.org/2000/svg"
     width={24}
     height={24}
     fill="none"
@@ -9,15 +8,15 @@ const OpenedMenu = props => (
     strokeLinecap="round"
     strokeLinejoin="round"
     strokeWidth={2}
+    className="icon icon-tabler icons-tabler-outline icon-tabler-arrow-left"
     viewBox="0 0 24 24"
-    className="icon icon-tabler icons-tabler-outline icon-tabler-menu-4"
     {...props}
   >
     <Path
       stroke="none"
       d="M0 0h24v24H0z"
     />
-    <Path d="M7 6h10M4 12h16M7 12h13M7 18h10" />
+    <Path d="M5 12h14M5 12l6 6M5 12l6-6" />
   </Svg>
 )
-export default OpenedMenu
+export default ArrowLeft

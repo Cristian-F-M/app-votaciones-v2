@@ -1,5 +1,5 @@
-import Svg, { Line } from 'react-native-svg'
-const BarChart = props => (
+import Svg, { Line, SvgProps } from 'react-native-svg'
+const BarChart = (props: SvgProps) => (
   <Svg
     width={24}
     height={24}

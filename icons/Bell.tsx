@@ -1,5 +1,5 @@
-import Svg, { Path } from 'react-native-svg'
-const Bell = props => (
+import Svg, { Path, SvgProps } from 'react-native-svg'
+const Bell = (props: SvgProps) => (
   <Svg
     width={24}
     height={24}

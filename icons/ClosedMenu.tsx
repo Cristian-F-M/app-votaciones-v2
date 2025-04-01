@@ -1,5 +1,5 @@
-import Svg, { Path } from 'react-native-svg'
-const ClosedMenu = props => (
+import Svg, { Path, SvgProps } from 'react-native-svg'
+const ClosedMenu = (props: SvgProps) => (
   <Svg
     width={100}
     height={98}
