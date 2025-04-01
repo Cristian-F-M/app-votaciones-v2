@@ -1,11 +1,17 @@
 import { createContext, useState, useContext, useEffect } from 'react'
 import { doFetch, METHODS } from '../lib/api'
 import { router } from 'expo-router'
+import type { User } from 'user'
 
-const UserContext = createContext()
+type UserContextType = {
+  user: User | null
+  setUser: React.Dispatch<React.SetStateAction<User | null>>
+} | null
 
-export const UserProvider = ({ children }) => {
-  const [user, setUser] = useState(null)
+const UserContext = createContext<UserContextType>(null)
+
+export const UserProvider = ({ children }: { children: React.ReactNode }) => {
+  const [user, setUser] = useState<User | null>(null)
 
   useEffect(() => {
     getUser()

@@ -1,10 +1,11 @@
 import { createContext, useState, useContext, useEffect } from 'react'
 import { doFetch, getItemStorage, METHODS, setItemStorage } from '../lib/api'
+import type { Config, ConfigContextType } from 'config'
 
-const ConfigContext = createContext()
+const ConfigContext = createContext<ConfigContextType>(null)
 
-export const ConfigProvider = ({ children }) => {
-  const [config, setConfig] = useState(null)
+export const ConfigProvider = ({ children }: { children: React.ReactNode }) => {
+  const [config, setConfig] = useState<Config[] | null>(null)
 
   useEffect(() => {
     getConfigs()
