@@ -1,9 +1,16 @@
 import * as Notifications from 'expo-notifications'
-import { doFetch, METHODS, saveConfig } from './api'
+import { doFetch, METHODS, saveConfig } from './api.js'
+import type { Config } from 'config'
 
 export const API_URL = process.env.EXPO_PUBLIC_API_URL
 
-export function findConfig({ configs, code }) {
+export function findConfig({
+  configs,
+  code,
+}: {
+  configs: Config[]
+  code: string
+}) {
   configs = configs || []
   return configs.find(c => {
     return c.code === code.trim()
