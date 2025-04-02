@@ -5,7 +5,7 @@ import type { Config, ConfigContextType } from 'config'
 const ConfigContext = createContext<ConfigContextType>(null)
 
 export const ConfigProvider = ({ children }: { children: React.ReactNode }) => {
-  const [config, setConfig] = useState<Config[] | null>(null)
+  const [config, setConfig] = useState<Config[] | []>([])
 
   useEffect(() => {
     getConfigs()
