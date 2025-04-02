@@ -7,6 +7,6 @@ export type Config = {
 }
 
 export type ConfigContextType = {
-  config: Config[] | null
-  setConfig: React.Dispatch<React.SetStateAction<Config[] | null>>
+  config: Config[] | []
+  setConfig: React.Dispatch<React.SetStateAction<Config[] | []>>
 } | null
