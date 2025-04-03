@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 
-export function useRemainingTime(date: string, starDate = false) {
+export function useRemainingTime(date: string | null, starDate = false) {
   const [timeLeft, setTimeLeft] = useState({
     days: '0',
     hours: '0',
@@ -12,6 +12,13 @@ export function useRemainingTime(date: string, starDate = false) {
 
   useEffect(() => {
     setIsVotingClosed(false)
+    if (!date)
+      return setTimeLeft({
+        days: '00',
+        hours: '00',
+        minutes: '00',
+        seconds: '00',
+      })
     const targetDate = new Date(date).getTime()
     const now = new Date().getTime()
 
