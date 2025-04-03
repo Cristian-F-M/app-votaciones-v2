@@ -4,8 +4,10 @@ import { useConfig } from '../context/config'
 import { findConfig } from '../lib/config'
 
 export function ApprenticeWinner() {
-  const { config } = useConfig()
-  const color = findConfig({ configs: config, code: 'Color' }).value
+  const configs = useConfig()
+  const config = configs?.config || []
+  const configColor = findConfig({ configs: config, code: 'Color' })
+  const color = configColor?.value || '#5b89d6'
 
   return (
     <>

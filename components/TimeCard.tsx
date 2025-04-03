@@ -2,9 +2,11 @@ import { View, Text } from 'react-native'
 import { useConfig } from '../context/config'
 import { findConfig } from '../lib/config'
 
-export function TimeCard({ text, time }) {
-  const { config } = useConfig()
-  const color = findConfig({ configs: config, code: 'Color' }).value
+export function TimeCard({ text, time }: { text: string; time: string }) {
+  const configs = useConfig()
+  const config = configs?.config || []
+  const colorConfig = findConfig({ configs: config, code: 'Color' })
+  const color = colorConfig?.value || '#5b89d6'
 
   return (
     <>

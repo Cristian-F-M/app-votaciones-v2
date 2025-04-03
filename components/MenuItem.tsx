@@ -1,6 +1,16 @@
 import { Pressable, Text } from 'react-native'
 
-export function MenuItem({ text, onPress, pressableClass = '', children }) {
+export function MenuItem({
+  text,
+  onPress,
+  pressableClass = '',
+  children,
+}: {
+  text: string
+  onPress: () => void
+  pressableClass?: string
+  children?: React.ReactNode
+}) {
   return (
     <>
       <Pressable

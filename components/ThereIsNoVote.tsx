@@ -11,9 +11,11 @@ import Bell from '../icons/Bell'
 
 export function ThereIsNoVote() {
   const [isNotificationsActive, setIsNotificationsActive] = useState(false)
-  const { config } = useConfig()
-  const color = findConfig({ configs: config, code: 'Color' }).value
-  const modalizeRef = useRef(null)
+  const configs = useConfig()
+  const config = configs?.config || []
+  const colorConfig = findConfig({ configs: config, code: 'Color' })
+  const color = colorConfig?.value || '#5b89d6'
+  const modalizeRef = useRef<Modalize>(null)
 
   const setConfigs = useCallback(async () => {
     const configs = await getConfigs()
@@ -24,7 +26,7 @@ export function ThereIsNoVote() {
     setConfigs()
   }, [setConfigs])
 
-  const checkPermissions = useCallback(async e => {
+  const checkPermissions = useCallback(async (e: any) => {
     const isActivated = await activateNotifications()
 
     if (isActivated) {
@@ -39,17 +41,17 @@ export function ThereIsNoVote() {
     if (!isActivated) openModalize(e)
   }, [])
 
-  const openModalize = e => {
+  const openModalize = (e: any) => {
     e.persist()
-    modalizeRef.current.open()
+    modalizeRef.current?.open()
   }
   const handleClickOpenSettings = useCallback(() => {
     Linking.openSettings()
-    modalizeRef.current.close()
+    modalizeRef.current?.close()
   }, [])
 
   const handleClickdDismissModalize = useCallback(() => {
-    modalizeRef.current.close()
+    modalizeRef.current?.close()
   }, [])
 
   return (
@@ -64,7 +66,7 @@ export function ThereIsNoVote() {
             <Bell
               width={50}
               height={50}
-              style={{ color }}
+              color={color}
             />
             <Text className="text-xl font-semibold mt-2">
               Activa las notificaciones
@@ -90,7 +92,7 @@ export function ThereIsNoVote() {
         <View className="w-[95%] flex flex-col items-center bg-white p-5 rounded-lg border border-gray-200">
           <View className="bg-[#ffedd5] p-3 rounded-full">
             <CalendarX
-              style={{ color }}
+              color={color}
               width={40}
               height={40}
               className=""
@@ -106,7 +108,7 @@ export function ThereIsNoVote() {
           <View className=" flex flex-row items-center justify-between mt-6 p-3 rounded-lg border border-[#fed7aa] bg-red-100/20">
             <View className="self-start">
               <ExclamationCircle
-                style={{ color: 'red' }}
+                color={'red'}
                 width={25}
                 height={25}
               />

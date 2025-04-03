@@ -1,5 +1,5 @@
-import { Picker } from '@react-native-picker/picker'
-import { Text, TextInput, View } from 'react-native'
+import { Picker, PickerProps } from '@react-native-picker/picker'
+import { Text, TextInput, TextInputProps, View } from 'react-native'
 
 export const INPUT_TYPES = {
   TEXT: 'text',
@@ -20,7 +20,7 @@ export function Input({
   type = INPUT_TYPES.TEXT,
   label = 'no-label',
   classNameInput = '',
-  errors = {},
+  errors = { errors: {}, setErrors: () => {} },
   inputRefName = '',
   innerRef = null,
   selectedValue = '',
@@ -29,8 +29,36 @@ export function Input({
   selectText = '',
   items = [],
   disabled = false,
-  mode = SELECT_MODES.MODAL,
+  mode = 'dialog',
   required = false,
+}: {
+  value: {
+    value: any
+    setValue: React.Dispatch<React.SetStateAction<any>>
+  }
+  placeholder: string
+  onChange: React.Dispatch<React.SetStateAction<any>>
+  keyboardType?: TextInputProps['keyboardType']
+  secureTextEntry?: boolean
+  type?: string
+  label?: string
+  classNameInput?: string
+  errors: {
+    errors: Record<string, string | null>
+    setErrors: React.Dispatch<
+      React.SetStateAction<Record<string, string | null>>
+    >
+  }
+  inputRefName?: string
+  innerRef?: React.RefObject<any> | null
+  selectedValue?: string
+  dropdownIconRippleColor?: string
+  onValueChange?: (itemValue: string, itemIndex: number) => void
+  selectText?: string
+  items?: any[]
+  disabled?: boolean
+  mode?: PickerProps['mode']
+  required?: boolean
 }) {
   return (
     <View

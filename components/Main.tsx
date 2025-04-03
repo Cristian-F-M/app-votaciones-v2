@@ -10,9 +10,9 @@ import { findConfig } from '../lib/config'
 import { useNetInfo } from '@react-native-community/netinfo'
 
 export function Main() {
-  const [Color, setColor] = useState('#ff6719')
+  const [color, setColor] = useState('#ff6719')
   const router = useRouter()
-  const { config } = useConfig()
+  const configs = useConfig()
   const netInfo = useNetInfo()
 
   // Verifica si hay conexión a internet
@@ -21,10 +21,11 @@ export function Main() {
   }, [netInfo])
 
   useEffect(() => {
+    const config = configs?.config || []
     const configColor = findConfig({ configs: config, code: 'configColor' })
     if (!configColor) return
     setColor(configColor.value)
-  }, [config])
+  }, [configs])
 
   useEffect(() => {
     async function verifyToken() {
@@ -70,12 +71,12 @@ export function Main() {
           <LogoSena
             width={190}
             height={188}
-            style={{ fill: Color }}
+            color={color}
           />
           <Text className={`text-5xl mt-5`}>Votaciones</Text>
           <Text
             className="text-4xl"
-            style={{ color: Color }}
+            style={{ color }}
           >
             CGAO
           </Text>
@@ -83,7 +84,7 @@ export function Main() {
         <View>
           <ActivityIndicator
             size={60}
-            color={Color}
+            color={color}
           />
         </View>
       </Screen>

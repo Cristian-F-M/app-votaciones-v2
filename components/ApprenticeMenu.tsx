@@ -5,11 +5,16 @@ import { Profile } from './Profile.jsx'
 import { doFetch, METHODS, removeItemStorage } from '../lib/api.js'
 import { ALERT_TYPE, Toast } from 'react-native-alert-notification'
 import { router } from 'expo-router'
-import { useUser } from '../context/user.js'
+import { useUser } from '../context/user'
 import { MenuItem } from './MenuItem.jsx'
 
-export function ApprenticeMenu({ setMenuIsVisible }) {
-  const { user } = useUser()
+export function ApprenticeMenu({
+  setMenuIsVisible,
+}: {
+  setMenuIsVisible: React.Dispatch<React.SetStateAction<boolean>>
+}) {
+  const userContext = useUser()
+  const user = userContext?.user
 
   async function handleClickLogout() {
     const url = `${process.env.EXPO_PUBLIC_API_URL}/Logout`
@@ -57,7 +62,7 @@ export function ApprenticeMenu({ setMenuIsVisible }) {
             pressableClass="!bg-[#A3D9A5]"
             onPress={handleClickApprenticeProfile}
           />
-          {user?.roleUser.code === 'Candidate' && (
+          {user && user.roleUser?.code === 'Candidate' && (
             <MenuItem
               pressableClass=" !bg-[#A3C9F1]"
               onPress={handleClickCandidateProfile}

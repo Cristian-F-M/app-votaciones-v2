@@ -9,13 +9,13 @@ import { activateNotifications } from '../lib/config'
 export function LoadingWinner() {
   const color = '#ff6719'
   const [isNotificationsActive, setIsNotificationsActive] = useState(false)
-  const modalizeRef = useRef(null)
+  const modalizeRef = useRef<Modalize>(null)
   const handleClickOpenSettings = useCallback(() => {
     Linking.openSettings()
-    modalizeRef.current.close()
+    modalizeRef.current?.close()
   }, [])
 
-  const checkPermissions = useCallback(async e => {
+  const checkPermissions = useCallback(async (e: any) => {
     const isActivated = await activateNotifications()
 
     if (isActivated) {
@@ -30,13 +30,13 @@ export function LoadingWinner() {
     if (!isActivated) openModalize(e)
   }, [])
 
-  const openModalize = e => {
+  const openModalize = (e: any) => {
     e.persist()
-    modalizeRef.current.open()
+    modalizeRef.current?.open()
   }
 
   const handleClickdDismissModalize = useCallback(() => {
-    modalizeRef.current.close()
+    modalizeRef.current?.close()
   }, [])
 
   return (
@@ -50,7 +50,7 @@ export function LoadingWinner() {
           <Bell
             width={50}
             height={50}
-            style={{ color }}
+            color={color}
           />
           <Text className="text-xl font-semibold mt-2">
             Activa las notificaciones

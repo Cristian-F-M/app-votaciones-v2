@@ -1,7 +1,15 @@
 import { useEffect, useRef } from 'react'
 import { View, Animated, useAnimatedValue } from 'react-native'
 
-export function StepCircle({ color, currentStep, step }) {
+export function StepCircle({
+  color,
+  currentStep,
+  step,
+}: {
+  color: string
+  currentStep: number
+  step: number
+}) {
   const scaleAnimatedValue = useAnimatedValue(0)
   const scaleAnimationValuePulse = useAnimatedValue(0.5)
   const opacityAnimationValuePulse = useAnimatedValue(0.8)

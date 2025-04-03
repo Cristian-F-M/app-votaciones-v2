@@ -5,17 +5,31 @@ import { findConfig } from '../lib/config'
 export function RowConfig({
   label,
   useSwitch,
-  switchValue = {},
+  switchValue = { value: false, setValue: () => {} },
   falseColor = '#767577',
   trueColor = '',
   onChange = () => {},
   children,
   configContent,
   disabled = false,
+}: {
+  label: string
+  useSwitch?: boolean
+  switchValue?: {
+    value: boolean
+    setValue: React.Dispatch<React.SetStateAction<boolean>>
+  }
+  falseColor?: string
+  trueColor?: string
+  onChange?: () => void
+  children?: React.ReactNode
+  configContent?: React.ReactNode
+  disabled?: boolean
 }) {
-  const { config } = useConfig()
-  const configColor = findConfig({ configs: config, code: 'Color' }).value
-  const color = trueColor || configColor
+  const configs = useConfig()
+  const config = configs?.config || []
+  const configColor = findConfig({ configs: config, code: 'Color' })
+  const color = trueColor || configColor?.value || '#5b89d6'
 
   return (
     <>

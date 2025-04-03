@@ -13,15 +13,23 @@ import { YourVote } from './YourVote.jsx'
 import { StyledPressable } from './StyledPressable.jsx'
 import { toast } from '@backpackapp-io/react-native-toast'
 import { TOAST_STYLES } from '../lib/toastConstants'
+import type { Candidate, CandidatePropToVote } from 'candidate'
 
 export function Vote() {
   const url = process.env.EXPO_PUBLIC_API_URL
-  const [candidates, setCandidates] = useState([])
+  const [candidates, setCandidates] = useState<Candidate[]>([])
   const [isVotingClosed, setIsVotingClosed] = useState(false)
   const [userAlreadyVoted, setUserAlreadyVoted] = useState(false)
   const [refreshing, setRefreshing] = useState(false)
-  const [voted, setVoted] = useState({})
-  const { user } = useUser()
+  const [voted, setVoted] = useState<{
+    userId: string | undefined
+    candidateId: string | undefined
+  }>({
+    userId: '',
+    candidateId: '',
+  })
+  const userContext = useUser()
+  const user = userContext?.user
 
   const getLastVote = useCallback(async () => {
     doFetch({ url: `vote/`, method: METHODS.GET }).then(data => {
@@ -39,8 +47,10 @@ export function Vote() {
     })
   }, [getLastVote])
 
-  const { config } = useConfig()
-  const color = findConfig({ configs: config, code: 'Color' }).value
+  const configs = useConfig()
+  const config = configs?.config || []
+  const colorConfig = findConfig({ configs: config, code: 'Color' })
+  const color = colorConfig?.value || '#5b89d6'
 
   useEffect(() => {
     setUserAlreadyVoted(user?.voted || false)
@@ -62,7 +72,7 @@ export function Vote() {
   }, [getCandidates])
 
   const handleClickVote = useCallback(
-    async candidate => {
+    async (candidate: CandidatePropToVote) => {
       setUserAlreadyVoted(true)
       const data = await doFetch({
         url: `candidate/${candidate.id}/vote`,
@@ -72,7 +82,7 @@ export function Vote() {
       if (!data.ok) return Alert.alert(data.message)
 
       const votedObj = {
-        userId: user.id,
+        userId: user?.id,
         candidateId: candidate.id,
       }
 
@@ -96,7 +106,7 @@ export function Vote() {
     setRefreshing(false)
   }, [getCandidates])
 
-  const isApprentice = user?.roleUser.code === 'Apprentice'
+  const isApprentice = user?.roleUser?.code === 'Apprentice'
 
   const buttonDisabled = isVotingClosed || userAlreadyVoted || !isApprentice
 
@@ -164,7 +174,6 @@ export function Vote() {
                 return (
                   <Shadow
                     key={candidate.id}
-                    className=" rounded-lg mb-4"
                     distance={20}
                   >
                     <View className="flex flex-col  justify-between max-w-[90%] min-w-[80%] p-6 px-5 rounded-lg bg-gray-100/70 items-center relative">

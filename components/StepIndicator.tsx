@@ -1,7 +1,15 @@
 import { Text, View } from 'react-native'
 import { StepCircle } from './StepCircle'
 
-export function StepIndicator({ color, currentStep, totalSteps }) {
+export function StepIndicator({
+  color,
+  currentStep,
+  totalSteps,
+}: {
+  color: string
+  currentStep: number
+  totalSteps: number
+}) {
   return (
     <View className="w-11/12 mt-6">
       <View className="items-center justify-center w-full">

@@ -11,15 +11,14 @@ export function CardApprenticeWinner() {
   const total = 1500
   const porcentaje = votos / total
 
-  const { config } = useConfig()
-  const color = findConfig({ configs: config, code: 'Color' }).value
+  const configs = useConfig()
+  const config = configs?.config || []
+  const configColor = findConfig({ configs: config, code: 'Color' })
+  const color = configColor?.value || '#5b89d6'
 
   return (
     <>
-      <Shadow
-        className="w-full rounded-lg"
-        distance={40}
-      >
+      <Shadow distance={40}>
         <View className="bg-gray-100/70 flex flex-col items-center py-2 rounded-lg">
           <View>
             <Text className="text-xl">Ganador de la votación</Text>

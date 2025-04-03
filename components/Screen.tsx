@@ -1,7 +1,15 @@
 import { View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
-export function Screen({ children, safeArea = true, className = '' }) {
+export function Screen({
+  children,
+  safeArea = true,
+  className = '',
+}: {
+  children: React.ReactNode
+  safeArea?: boolean
+  className?: string
+}) {
   const insets = useSafeAreaInsets()
 
   return (

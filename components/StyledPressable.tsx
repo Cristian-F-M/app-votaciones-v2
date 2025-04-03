@@ -5,7 +5,7 @@ export function StyledPressable({
   text = 'no-text',
   pressableClass = '',
   textClassName = '',
-  onPress = () => {},
+  onPress = (e?: any) => {},
   showLoadingIndicator = false,
   isLoading = false,
   disabled = false,

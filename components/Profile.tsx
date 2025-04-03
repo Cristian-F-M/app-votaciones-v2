@@ -9,10 +9,13 @@ import { CandidateImage } from './CandidateImage'
 
 export function Profile() {
   const url = process.env.EXPO_PUBLIC_API_URL
-  const [imageUrl, setImageUrl] = useState(null)
-  const { user } = useUser()
-  const { config } = useConfig()
-  const color = findConfig({ configs: config, code: 'Color' }).value
+  const [imageUrl, setImageUrl] = useState<string | null>(null)
+  const userContext = useUser()
+  const user = userContext?.user
+  const configs = useConfig()
+  const config = configs?.config || []
+  const configColor = findConfig({ configs: config, code: 'Color' })
+  const color = configColor?.value || '#5b89d6'
 
   const userLetter = user?.name.split(' ')[0].charAt(0)
 
@@ -28,14 +31,14 @@ export function Profile() {
   }, [user, url])
 
   return (
-    <Shadow className="flex-1 w-full">
+    <Shadow>
       <View
         className="bg-gray-300/40 py-3 px-3 flex-row items-center max-h-[110px] overflow-hidden w-full h-full"
         style={{ backgroundColor: `${color}55` }}
       >
         <View className="w-[22%] h-full flex items-center justify-center">
           <View className="rounded-full overflow-hidden w-full h-auto aspect-square items-center justify-center bg-[#ffe6d9] bg-opacity-80">
-            {!imageUrl && <UserBaseLogo letter={userLetter} />}
+            {!imageUrl && <UserBaseLogo letter={userLetter || ''} />}
             {imageUrl && (
               <CandidateImage
                 imageUrl={imageUrl}
@@ -71,7 +74,7 @@ export function Profile() {
           </View>
           <View style={styles.containerLabelText}>
             <Text style={styles.labelTextInformation}>
-              Rol : {user?.roleUser.code}
+              Rol : {user?.roleUser?.code || '------'}
             </Text>
           </View>
         </ScrollView>
@@ -85,8 +88,6 @@ const styles = StyleSheet.create({
     display: 'flex',
     flexWrap: 'wrap',
     overflow: 'hidden',
-    textOverflow: 'ellipsis',
-    whiteSpace: 'nowrap',
     width: '100%',
   },
   containerLabelText: {
