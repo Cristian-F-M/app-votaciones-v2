@@ -37,7 +37,7 @@ export function Input({
     setValue: React.Dispatch<React.SetStateAction<any>>
   }
   placeholder: string
-  onChange: React.Dispatch<React.SetStateAction<any>>
+  onChange?: () => void
   keyboardType?: TextInputProps['keyboardType']
   secureTextEntry?: boolean
   type?: string
