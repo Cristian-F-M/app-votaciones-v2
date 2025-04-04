@@ -52,36 +52,37 @@ export default function ApprenticeLayout() {
         menu={<ApprenticeMenu setMenuIsVisible={setMenuIsVisible} />}
         onChange={isOpen => setMenuIsVisible(isOpen)}
         openMenuOffset={sideMenuPorcentage}
-      />
-      <Stack
-        screenOptions={{
-          headerShown: true,
-          headerTitle: '',
-          headerLeft: () => (
-            <LogoSena
-              onPress={handleClickHome}
-              width={45}
-              height={45}
-              color={color}
-            />
-          ),
-          headerRight: () =>
-            menuIsVisible ? (
-              <OpenedMenu
-                width={35}
-                height={35}
-                color={'#000'}
-              />
-            ) : (
-              <ClosedMenu
-                width={35}
-                height={35}
-                color={'#000'}
-                onPress={() => setMenuIsVisible(true)}
+      >
+        <Stack
+          screenOptions={{
+            headerShown: true,
+            headerTitle: '',
+            headerLeft: () => (
+              <LogoSena
+                onPress={handleClickHome}
+                width={45}
+                height={45}
+                color={color}
               />
             ),
-        }}
-      />
+            headerRight: () =>
+              menuIsVisible ? (
+                <OpenedMenu
+                  width={35}
+                  height={35}
+                  color={'#000'}
+                />
+              ) : (
+                <ClosedMenu
+                  width={35}
+                  height={35}
+                  color={'#000'}
+                  onPress={() => setMenuIsVisible(true)}
+                />
+              ),
+          }}
+        />
+      </SideMenu>
     </UserProvider>
   )
 }
