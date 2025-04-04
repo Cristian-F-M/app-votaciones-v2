@@ -1,5 +1,5 @@
 import * as Notifications from 'expo-notifications'
-import { doFetch, METHODS, saveConfig } from './api.js'
+import { doFetch, METHODS, saveConfig } from './api'
 import type { Config } from 'config'
 
 export const API_URL = process.env.EXPO_PUBLIC_API_URL

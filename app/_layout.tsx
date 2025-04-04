@@ -1,7 +1,7 @@
 import { Stack } from 'expo-router'
 import { View } from 'react-native'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
-import { ConfigProvider } from '../context/config.js'
+import { ConfigProvider } from '../context/config'
 import { AlertNotificationRoot } from 'react-native-alert-notification'
 import * as Notifications from 'expo-notifications'
 import { GestureHandlerRootView } from 'react-native-gesture-handler'

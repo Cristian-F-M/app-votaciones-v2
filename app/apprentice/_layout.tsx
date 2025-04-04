@@ -1,18 +1,13 @@
 import { Stack } from 'expo-router'
 import SideMenu from '@chakrahq/react-native-side-menu'
-import { ApprenticeMenu } from '../../components/ApprenticeMenu.js'
+import { ApprenticeMenu } from '../../components/ApprenticeMenu'
 import { useEffect, useState } from 'react'
-import LogoSena from '../../icons/Logo.js'
-import ClosedMenu from '../../icons/ClosedMenu.js'
-import {
-  doFetch,
-  getItemStorage,
-  METHODS,
-  setItemStorage,
-} from '../../lib/api.js'
-import OpenedMenu from '../../icons/OpenedMenu.js'
+import LogoSena from '../../icons/Logo'
+import ClosedMenu from '../../icons/ClosedMenu'
+import { doFetch, getItemStorage, METHODS, setItemStorage } from '../../lib/api'
+import OpenedMenu from '../../icons/OpenedMenu'
 import { Dimensions } from 'react-native'
-import { UserProvider } from '../../context/user.js'
+import { UserProvider } from '../../context/user'
 import { router, usePathname } from 'expo-router'
 
 export default function ApprenticeLayout() {

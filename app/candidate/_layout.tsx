@@ -1,5 +1,5 @@
 import { Stack } from 'expo-router'
-import { UserProvider } from '../../context/user.js'
+import { UserProvider } from '../../context/user'
 
 export default function CandidateLayout() {
   return (

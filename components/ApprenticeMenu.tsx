@@ -1,12 +1,12 @@
 import { ScrollView, View } from 'react-native'
-import { Screen } from './Screen.jsx'
+import { Screen } from './Screen'
 import { StatusBar } from 'expo-status-bar'
-import { Profile } from './Profile.jsx'
-import { doFetch, METHODS, removeItemStorage } from '../lib/api.js'
+import { Profile } from './Profile'
+import { doFetch, METHODS, removeItemStorage } from '../lib/api'
 import { ALERT_TYPE, Toast } from 'react-native-alert-notification'
 import { router } from 'expo-router'
 import { useUser } from '../context/user'
-import { MenuItem } from './MenuItem.jsx'
+import { MenuItem } from './MenuItem'
 
 export function ApprenticeMenu({
   setMenuIsVisible,
