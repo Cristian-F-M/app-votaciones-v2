@@ -20,6 +20,7 @@ import { StepIndicator } from '../../components/StepIndicator'
 import { scrollSmooth } from '../../lib/scrollSmooth'
 import ExclamationCircle from '../../icons/ExclamationCircle'
 import { StyledPressable } from '../../components/StyledPressable'
+import type { User } from 'types/user'
 
 export default function ResetPassword() {
   const [typesDocuments, setTypesDocuments] = useState([])
@@ -30,17 +31,19 @@ export default function ResetPassword() {
   const [isLoading, setIsLoading] = useState(false)
   const [verificationCode, setVerificationCode] = useState('')
   const [password, setPassword] = useState('')
-  const [user, setUser] = useState({})
+  const [user, setUser] = useState<User | undefined>(undefined)
   const [passwordConfirmation, setPasswordConfirmation] = useState('')
   const [currentStep, setCurrentStep] = useState(1)
   const [secondsNewCode, setSecondsNewCode] = useState(0)
   const [dateNewCode, setDateNewCode] = useState('')
 
-  const { config } = useConfig()
-  const color = findConfig({ configs: config, code: 'Color' }).value
+  const configs = useConfig()
+  const config = configs?.config || []
+  const color =
+    findConfig({ configs: config, code: 'Color' })?.value || '#5b89d6'
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  const refs = {
+  const refs: Record<string, React.RefObject<any>> = {
     typeDocument: useRef(null),
     verificationCode: useRef(null),
     password: useRef(null),
@@ -69,6 +72,12 @@ export default function ResetPassword() {
     })
   }, [])
 
+  const resetInputs = useCallback(() => {
+    setTypeDocumentCode('CedulaCiudadania')
+    setDocument('')
+    setErrors({})
+  }, [])
+
   const onRefresh = useCallback(async () => {
     setIsRefreshing(true)
     setTypesDocuments([])
@@ -81,10 +90,20 @@ export default function ResetPassword() {
     }, 600)
   }, [getTypesDocuments, resetInputs])
 
-  const resetInputs = useCallback(() => {
-    setTypeDocumentCode('CedulaCiudadania')
-    setDocument('')
-    setErrors({})
+  const getRemainingTime = useCallback((targetDateString: string) => {
+    const targetDate = new Date(targetDateString).getTime()
+    const now = new Date().getTime()
+    const difference = targetDate - now
+
+    if (difference <= 0)
+      return { hours: null, minutes: null, seconds: null, secondsTotal: 0 }
+
+    const secondsTotal = Math.floor(difference / 1000)
+    const hours = Math.floor(secondsTotal / 3600) || null
+    const minutes = Math.floor((secondsTotal % 3600) / 60) || null
+    const seconds = secondsTotal % 60 || null
+
+    return { hours, minutes, seconds, secondsTotal }
   }, [])
 
   useEffect(() => {
@@ -115,26 +134,10 @@ export default function ResetPassword() {
     return () => clearInterval(interval)
   }, [dateNewCode, getRemainingTime])
 
-  const getRemainingTime = useCallback(targetDateString => {
-    const targetDate = new Date(targetDateString).getTime()
-    const now = new Date().getTime()
-    const difference = targetDate - now
-
-    if (difference <= 0)
-      return { hours: null, minutes: null, seconds: null, secondsTotal: 0 }
-
-    const secondsTotal = Math.floor(difference / 1000)
-    const hours = Math.floor(secondsTotal / 3600) || null
-    const minutes = Math.floor((secondsTotal % 3600) / 60) || null
-    const seconds = secondsTotal % 60 || null
-
-    return { hours, minutes, seconds, secondsTotal }
-  }, [])
-
   const handleClickFindUser = useCallback(async () => {
     if (isLoading) ToastAndroid.show('Espera un momento...', ToastAndroid.SHORT)
 
-    let localyErrors = {}
+    let localyErrors: Record<string, string | null> = {}
 
     if (typeDocumentCode === '')
       localyErrors.typeDocumentCode = 'Campo requerido'
@@ -199,7 +202,7 @@ export default function ResetPassword() {
     if (isLoading)
       return ToastAndroid.show('Espera un momento...', ToastAndroid.SHORT)
     setCurrentStep(1)
-    setUser('')
+    setUser(undefined)
     setDocument('')
     setTypeDocumentCode('CedulaCiudadania')
   }, [isLoading])
@@ -224,7 +227,7 @@ export default function ResetPassword() {
 
     if (!res.ok) {
       return toast.error(res.message, {
-        style: TOAST_STYLES.ERROR,
+        styles: TOAST_STYLES.ERROR,
       })
     }
 
@@ -236,7 +239,7 @@ export default function ResetPassword() {
     if (isLoading)
       return ToastAndroid.show('Espera un momento...', ToastAndroid.SHORT)
 
-    let localyErrors = {}
+    let localyErrors: Record<string, string | null> = {}
 
     if (verificationCode.trim() === '')
       localyErrors.verificationCode = 'Campo requerido'
@@ -294,7 +297,7 @@ export default function ResetPassword() {
   const handleClickChangePassword = useCallback(async () => {
     if (isLoading)
       return ToastAndroid.show('Espera un momento...', ToastAndroid.SHORT)
-    let localyErrors = {}
+    let localyErrors: Record<string, string | null> = {}
 
     if (password.trim() === '') localyErrors.password = 'Campo requerido'
     if (passwordConfirmation.trim() === '')
@@ -319,7 +322,7 @@ export default function ResetPassword() {
       url: 'user/updatePassword',
       method: METHODS.PUT,
       body: {
-        userId: user.id,
+        userId: user?.id,
         password: password,
         passwordConfirmation: passwordConfirmation,
         code: verificationCode,
@@ -336,13 +339,13 @@ export default function ResetPassword() {
 
     if (res.error) {
       return toast.error(res.error, {
-        style: TOAST_STYLES.ERROR,
+        styles: TOAST_STYLES.ERROR,
       })
     }
 
     if (!res.ok) {
       toast.error(res.message, {
-        style: TOAST_STYLES.ERROR,
+        styles: TOAST_STYLES.ERROR,
       })
       setCurrentStep(1)
       setDocument('')
@@ -359,7 +362,7 @@ export default function ResetPassword() {
     setVerificationCode('')
 
     toast.success(res.message, {
-      style: TOAST_STYLES.SUCCESS,
+      styles: TOAST_STYLES.SUCCESS,
     })
 
     // eslint-disable-next-line no-undef
@@ -377,14 +380,25 @@ export default function ResetPassword() {
     isLoading,
   ])
 
-  const getTimeString = useCallback(({ seconds, hours, minutes }) => {
-    let text = ''
-    if (hours) text += `${hours}h `
-    if (minutes) text += `${minutes}m `
-    text += `${seconds}s`
+  const getTimeString = useCallback(
+    ({
+      seconds,
+      hours,
+      minutes,
+    }: {
+      seconds: number | null
+      hours: number | null
+      minutes: number | null
+    }) => {
+      let text = ''
+      if (hours) text += `${hours}h `
+      if (minutes) text += `${minutes}m `
+      text += `${seconds}s`
 
-    return text
-  }, [])
+      return text
+    },
+    [],
+  )
 
   return (
     <Screen>
@@ -413,7 +427,7 @@ export default function ResetPassword() {
         <LogoSena
           width={160}
           height={160}
-          style={{ fill: color }}
+          color={color}
         />
         <Text className="text-3xl font-medium text-center mt-6">
           Restablecer contraseña
@@ -443,7 +457,7 @@ export default function ResetPassword() {
                 innerRef={refs.typeDocument}
                 inputRefName="typeDocument"
                 dropdownIconRippleColor={color}
-                mode={SELECT_MODES.DROPDOWN}
+                mode={'dropdown'}
                 required
               />
 
@@ -459,7 +473,7 @@ export default function ResetPassword() {
                 required
               />
 
-              <View clasName="flex flex-row justify-between items-center w-full overflow-hidden">
+              <View className="flex flex-row justify-between items-center w-full overflow-hidden">
                 <StyledPressable
                   text="Buscar usuario"
                   backgroundColor={`${color}cc`}
@@ -480,7 +494,10 @@ export default function ResetPassword() {
               <Text className="text-center text-gray-700 flex">
                 Se enviará un correo electrónico con instrucciones para
                 restablecer su contraseña al correo{' '}
-                <Text className="text-black font-semibold">{user.email}</Text>.
+                <Text className="text-black font-semibold">
+                  {user?.email || '-----'}
+                </Text>
+                .
               </Text>
               <Text
                 className={`text-center mt-1 text-gray-500 ${secondsNewCode > 0 ? '' : 'opacity-0'}`}
@@ -516,7 +533,7 @@ export default function ResetPassword() {
               <View className="flex flex-row border border-red-300 rounded px-4 py-2 bg-red-100/20 items-center justify-between mb-5">
                 <View className="self-start mr-2 w-[10%]">
                   <ExclamationCircle
-                    style={{ color: 'red' }}
+                    color={'red'}
                     width={25}
                     height={25}
                   />

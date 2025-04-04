@@ -1,23 +1,23 @@
 import { Stack } from 'expo-router'
 import SideMenu from '@chakrahq/react-native-side-menu'
-import { ApprenticeMenu } from '../../components/ApprenticeMenu.jsx'
+import { ApprenticeMenu } from '../../components/ApprenticeMenu.js'
 import { useEffect, useState } from 'react'
-import LogoSena from '../../icons/Logo.jsx'
-import ClosedMenu from '../../icons/ClosedMenu.jsx'
+import LogoSena from '../../icons/Logo.js'
+import ClosedMenu from '../../icons/ClosedMenu.js'
 import {
   doFetch,
   getItemStorage,
   METHODS,
   setItemStorage,
 } from '../../lib/api.js'
-import OpenedMenu from '../../icons/OpenedMenu.jsx'
+import OpenedMenu from '../../icons/OpenedMenu.js'
 import { Dimensions } from 'react-native'
 import { UserProvider } from '../../context/user.js'
-import { Link, router, usePathname } from 'expo-router'
+import { router, usePathname } from 'expo-router'
 
 export default function ApprenticeLayout() {
   const [menuIsVisible, setMenuIsVisible] = useState(false)
-  const [Color, setColor] = useState()
+  const [color, setColor] = useState()
   const windowWidth = Dimensions.get('window').width
   const sideMenuPorcentage = (windowWidth * 80) / 100
   const path = usePathname()
@@ -57,37 +57,36 @@ export default function ApprenticeLayout() {
         menu={<ApprenticeMenu setMenuIsVisible={setMenuIsVisible} />}
         onChange={isOpen => setMenuIsVisible(isOpen)}
         openMenuOffset={sideMenuPorcentage}
-      >
-        <Stack
-          screenOptions={{
-            headerShown: true,
-            headerTitle: '',
-            headerLeft: () => (
-              <LogoSena
-                onPress={handleClickHome}
-                width={45}
-                height={45}
-                style={{ fill: Color }}
+      />
+      <Stack
+        screenOptions={{
+          headerShown: true,
+          headerTitle: '',
+          headerLeft: () => (
+            <LogoSena
+              onPress={handleClickHome}
+              width={45}
+              height={45}
+              color={color}
+            />
+          ),
+          headerRight: () =>
+            menuIsVisible ? (
+              <OpenedMenu
+                width={35}
+                height={35}
+                color={'#000'}
+              />
+            ) : (
+              <ClosedMenu
+                width={35}
+                height={35}
+                color={'#000'}
+                onPress={() => setMenuIsVisible(true)}
               />
             ),
-            headerRight: () =>
-              menuIsVisible ? (
-                <OpenedMenu
-                  width={35}
-                  height={35}
-                  style={{ color: '#000' }}
-                />
-              ) : (
-                <ClosedMenu
-                  width={35}
-                  height={35}
-                  style={{ color: '#000' }}
-                  onPress={() => setMenuIsVisible(true)}
-                />
-              ),
-          }}
-        />
-      </SideMenu>
+        }}
+      />
     </UserProvider>
   )
 }

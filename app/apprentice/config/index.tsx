@@ -85,7 +85,7 @@ export default function Config() {
     if (isNotificationsActive) {
       await saveConfig('isNotificationsActive', false)
 
-      const res = await saveNotificationToken(null)
+      const res = await saveNotificationToken(undefined)
 
       if (!res.ok) {
         toast.error(res.message, {
@@ -133,7 +133,7 @@ export default function Config() {
                 onPress={handleCliclHome}
                 width={30}
                 height={30}
-                style={{ color: 'black' }}
+                color={'black'}
               />
             ),
           }}

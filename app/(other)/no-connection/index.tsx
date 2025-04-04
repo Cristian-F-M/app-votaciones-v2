@@ -1,16 +1,16 @@
-import { View, Text, Pressable, Image } from 'react-native'
+import { View, Text } from 'react-native'
 import { Screen } from '../../../components/Screen'
 import { Link, Stack } from 'expo-router'
-import { useEffect } from 'react'
 import { StatusBar } from 'expo-status-bar'
 import WifiOff from '../../../icons/WifiOff'
 import { useConfig } from '../../../context/config'
 import { findConfig } from '../../../lib/config'
-import { Shadow } from 'react-native-shadow-2'
 
 export default function NoWifiPage() {
-  const { config } = useConfig()
-  const color = findConfig({ configs: config, code: 'Color' }).value
+  const configs = useConfig()
+  const config = configs?.config || []
+  const color =
+    findConfig({ configs: config, code: 'Color' })?.value || '#5b89d6'
 
   return (
     <Screen>
@@ -21,7 +21,7 @@ export default function NoWifiPage() {
           <WifiOff
             width={154}
             height={154}
-            style={{ color }}
+            color={color}
           />
           <Text className="text-2xl font-bold mb-4 text-center">
             Sin conexión a internet

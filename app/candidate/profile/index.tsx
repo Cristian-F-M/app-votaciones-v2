@@ -21,24 +21,26 @@ import BouncyCheckbox from 'react-native-bouncy-checkbox'
 import { useUser } from '../../../context/user'
 import { StyledPressable } from '../../../components/StyledPressable'
 import { scrollSmooth } from '../../../lib/scrollSmooth'
+import { Candidate } from 'types/candidate'
 
 export default function CandidateProfile() {
   const url = process.env.EXPO_PUBLIC_API_URL
-  const { user } = useUser()
+  const userContext = useUser()
+  const user = userContext?.user
 
-  const [candidate, setCandidate] = useState({})
-  const [imageUrl, setImageUrl] = useState(null)
+  const [candidate, setCandidate] = useState<Candidate | undefined>(undefined)
+  const [imageUrl, setImageUrl] = useState<string>('')
   const [isProfileImage, setIsProfileImage] = useState(false)
   const [useForProfileImage, setUseForProfileImage] = useState(false)
   const [useSameUserImage, setUseSameUserImage] = useState(false)
   const [description, setDescription] = useState('')
-  const [errors, setErrors] = useState({})
+  const [errors, setErrors] = useState<Record<string, string | null>>({})
   const [refreshing, setRefreshing] = useState(false)
   const [isLoadingProfileImage, setIsLoadingProfileImage] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  const refs = {
+  const refs: Record<string, React.RefObject<any>> = {
     image: useRef(null),
     scrollView: useRef(null),
     description: useRef(null),
@@ -111,8 +113,7 @@ export default function CandidateProfile() {
   }, [isProfileImage, getUser])
 
   const saveCandidateInfo = useCallback(async () => {
-    // TODO Hacer el fetch
-    const localyErrors = {}
+    const localyErrors: Record<string, string | null> = {}
 
     if (!imageUrl || imageUrl.trim() === '')
       localyErrors.image = 'Debes seleccionar una imagen'
@@ -134,20 +135,14 @@ export default function CandidateProfile() {
     const fileType = urlSplited[urlSplited.length - 1]
 
     const formData = new FormData()
+    const blobImage = new Blob([imageUrl], { type: `image/${fileType}` })
 
-    formData.set(
-      'image',
-      {
-        uri: imageUrl,
-        name: `image.${fileType}`,
-        type: `image/${fileType}`,
-      },
-      `image.${fileType}`,
-    )
+    // TODO Check if the image is sending to the server
+    formData.set('image', blobImage, `image.${fileType}`)
 
-    formData.set('useSameUserImage', useSameUserImage)
-    formData.set('description', description)
-    formData.set('useForProfileImage', useForProfileImage)
+    formData.set('useSameUserImage', JSON.stringify(useSameUserImage))
+    formData.set('description', JSON.stringify(description))
+    formData.set('useForProfileImage', JSON.stringify(useForProfileImage))
 
     setIsLoading(true)
     const data = await doFetch({
@@ -200,8 +195,10 @@ export default function CandidateProfile() {
     getCandidate()
   }, [getCandidate])
 
-  const { config } = useConfig()
-  const color = findConfig({ configs: config, code: 'Color' }).value
+  const configs = useConfig()
+  const config = configs?.config || []
+  const color =
+    findConfig({ configs: config, code: 'Color' })?.value || '#5b89d6'
 
   return (
     <Screen safeArea={false}>

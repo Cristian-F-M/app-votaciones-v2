@@ -4,6 +4,7 @@ import LogoSena from '../../icons/Logo'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import {
   doFetch,
+  getApiErrorsEntries,
   getConfigs,
   getItemStorage,
   METHODS,
@@ -34,9 +35,11 @@ export default function Login() {
   const [passwordIsVisible, setPasswordIsVisible] = useState(false)
   const [refreshing, setRefreshing] = useState(false)
   const [isBiometricsAvailable, setIsBiometricsAvailable] = useState(false)
-  const { config } = useConfig()
+  const configs = useConfig()
+  const config = configs?.config || []
+  const colorConfig = findConfig({ configs: config, code: 'Color' })
+  const color = colorConfig?.value || '#5b89d6'
   const [isBiometricsActive, setIsBiometricsActive] = useState(false)
-  const color = findConfig({ configs: config, code: 'Color' }).value
 
   const getIsBiometricsActive = useCallback(async () => {
     const { isBiometricsActive } = await getConfigs()
@@ -49,6 +52,37 @@ export default function Login() {
     setPassword('')
     setPasswordIsVisible(false)
     setErrors({})
+  }, [])
+
+  const handleBiometrics = useCallback(async () => {
+    const biometricRecords = await isEnrolledAsync()
+    setIsBiometricsAvailable(biometricRecords)
+  }, [])
+
+  const getTypesDocuments = useCallback(async () => {
+    const toastIdTypesDocument = toast.loading(
+      'Cargando tipos de documentos...',
+    )
+
+    const url = `${process.env.EXPO_PUBLIC_API_URL}/typeDocument/`
+    const res = await doFetch({ url, method: METHODS.GET })
+
+    if (!res.ok || res.error) {
+      toast.error(res.error || res.message, {
+        styles: {
+          ...TOAST_STYLES.ERROR,
+        },
+      })
+      return
+    }
+
+    setTypesDocuments(res.typesDocuments)
+    toast.dismiss(toastIdTypesDocument)
+    toast.success('Tipos de documentos cargados', {
+      styles: {
+        ...TOAST_STYLES.SUCCESS,
+      },
+    })
   }, [])
 
   useEffect(() => {
@@ -75,7 +109,7 @@ export default function Login() {
   }, [getTypesDocuments, resetInputs])
 
   const handleClickLogin = useCallback(async () => {
-    const localyErrors = {}
+    const localyErrors: Record<string, string | null> = {}
 
     if (document.trim() === '') localyErrors.document = 'Campo requerido'
     if (password.trim() === '') localyErrors.password = 'Campo requerido'
@@ -87,7 +121,9 @@ export default function Login() {
     if (localyErrors.password)
       return scrollSmooth(refs.password, refs.scrollView)
 
-    if (localyErrors.length > 0) return
+    const localyErrorsEntries = getApiErrorsEntries(localyErrors)
+
+    if (localyErrorsEntries.length > 0) return
     Login()
 
     async function Login() {
@@ -191,37 +227,6 @@ export default function Login() {
     }
   }, [router])
 
-  const handleBiometrics = useCallback(async () => {
-    const biometricRecords = await isEnrolledAsync()
-    setIsBiometricsAvailable(biometricRecords)
-  }, [])
-
-  const getTypesDocuments = useCallback(async () => {
-    const toastIdTypesDocument = toast.loading(
-      'Cargando tipos de documentos...',
-    )
-
-    const url = `${process.env.EXPO_PUBLIC_API_URL}/typeDocument/`
-    const res = await doFetch({ url, method: METHODS.GET })
-
-    if (!res.ok || res.error) {
-      toast.error(res.error || res.message, {
-        styles: {
-          ...TOAST_STYLES.ERROR,
-        },
-      })
-      return
-    }
-
-    setTypesDocuments(res.typesDocuments)
-    toast.dismiss(toastIdTypesDocument)
-    toast.success('Tipos de documentos cargados', {
-      styles: {
-        ...TOAST_STYLES.SUCCESS,
-      },
-    })
-  }, [])
-
   useEffect(() => {
     handleBiometrics()
   }, [handleBiometrics])
@@ -254,7 +259,7 @@ export default function Login() {
           <View className="flex-col items-center gap-4 mb-10">
             <View>
               <LogoSena
-                style={{ fill: color }}
+                color={color}
                 width={170}
                 height={168}
               />
@@ -265,6 +270,7 @@ export default function Login() {
           </View>
 
           <View>
+            {/* //TODO Do the overload to the Input component */}
             <Input
               type={INPUT_TYPES.SELECT}
               selectedValue={typeDocumentCode}
@@ -274,7 +280,7 @@ export default function Login() {
               inputRefName="typeDocument"
               label="Tipo de documento"
               dropdownIconRippleColor={color}
-              mode={SELECT_MODES.DROPDOWN}
+              mode={'dropdown'}
               required
             />
 
@@ -337,7 +343,7 @@ export default function Login() {
                       }}
                     >
                       <Finger
-                        style={{ color: '#fff' }}
+                        color={'#fff'}
                         width={32}
                         height={32}
                       />
@@ -347,7 +353,7 @@ export default function Login() {
               </View>
             </View>
 
-            <View clasName="flex flex-row justify-between items-center w-full">
+            <View className="flex flex-row justify-between items-center w-full">
               <StyledPressable
                 text="Iniciar Sesión"
                 backgroundColor={`${color}cc`}

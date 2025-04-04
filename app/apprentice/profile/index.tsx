@@ -5,13 +5,13 @@ import {
   ToastAndroid,
   View,
 } from 'react-native'
-import { Screen } from '../../../components/Screen.jsx'
+import { Screen } from '../../../components/Screen.js'
 import { Stack } from 'expo-router'
-import { Input, INPUT_TYPES } from '../../../components/Input.jsx'
+import { Input, INPUT_TYPES } from '../../../components/Input.js'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { router } from 'expo-router'
-import { UpLoadImage } from '../../../components/UpLoadImage.jsx'
-import { CandidateImage } from '../../../components/CandidateImage.jsx'
+import { UpLoadImage } from '../../../components/UpLoadImage.js'
+import { CandidateImage } from '../../../components/CandidateImage.js'
 import * as ImagePicker from 'expo-image-picker'
 import { useConfig } from '../../../context/config.js'
 import { findConfig } from '../../../lib/config.js'
@@ -19,7 +19,9 @@ import { useUser } from '../../../context/user.js'
 import { doFetch, METHODS } from '../../../lib/api.js'
 import { getApiErrors } from '../../../lib/api.js'
 import { scrollSmooth } from '../../../lib/scrollSmooth.js'
-import { StyledPressable } from '../../../components/StyledPressable'
+import { StyledPressable } from '../../../components/StyledPressable.js'
+import { TypeDocument } from 'types/typeDocument.js'
+import { Role } from 'types/role'
 
 export default function ApprenticeProfilePage() {
   const [name, setName] = useState('')
@@ -30,13 +32,14 @@ export default function ApprenticeProfilePage() {
   const [email, setEmail] = useState('')
   const [roleCode, setRoleCode] = useState('')
   const [errors, setErrors] = useState({})
-  const [typesDocuments, setTypesDocuments] = useState(null)
-  const [roles, setRoles] = useState(null)
-  const [imageUrl, setImageUrl] = useState(null)
-  const { user } = useUser()
+  const [typesDocuments, setTypesDocuments] = useState<TypeDocument[]>([])
+  const [roles, setRoles] = useState<Role[]>([])
+  const [imageUrl, setImageUrl] = useState<string>('')
   const [refreshing, setRefreshing] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const url = process.env.EXPO_PUBLIC_API_URL
+  const userContext = useUser()
+  const user = userContext?.user
 
   const getTypeDocuments = useCallback(async () => {
     const data = await doFetch({
@@ -57,23 +60,23 @@ export default function ApprenticeProfilePage() {
 
     setName(user.name)
     setLastname(user.lastname)
-    setTypeDocumentCode(user.typeDocumentUser.code)
+    setTypeDocumentCode(user?.typeDocumentUser?.code || '')
     setDocument(user.document)
     setPhone(user.phone)
     setEmail(user.email)
-    setRoleCode(user.roleUser.code)
+    setRoleCode(user?.roleUser?.code || '')
     setImageUrl(imageUrl)
   }, [url, user])
 
   const getRoles = useCallback(async () => {
     const data = await doFetch({
-      url: `${url}/role?code=${user.roleUser.code}`,
+      url: `${url}/role?code=${user?.roleUser?.code}`,
       method: METHODS.GET,
     })
 
     if (data.error) return
     setRoles(data.roles)
-  }, [url, user.roleUser.code])
+  }, [url, user])
 
   useEffect(() => {
     getUser()
@@ -82,7 +85,7 @@ export default function ApprenticeProfilePage() {
   }, [getTypeDocuments, getRoles, getUser])
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  const refs = {
+  const refs: Record<string, React.RefObject<any>> = {
     name: useRef(null),
     lastname: useRef(null),
     typeDocument: useRef(null),
@@ -139,21 +142,14 @@ export default function ApprenticeProfilePage() {
     const formData = new FormData()
     const urlSplited = imageUrl.split('.')
     const fileType = urlSplited[urlSplited?.length - 1]
+    const blobImage = new Blob([imageUrl], { type: `image/${fileType}` })
 
     formData.set('name', name)
     formData.set('lastname', lastname)
     formData.set('phone', phone)
     formData.set('email', email)
 
-    formData.set(
-      'image',
-      {
-        uri: imageUrl,
-        name: `image.${fileType}`,
-        type: `image/${fileType}`,
-      },
-      `image.${fileType}`,
-    )
+    formData.set('image', blobImage, `image.${fileType}`)
 
     setIsLoading(true)
 
@@ -178,8 +174,10 @@ export default function ApprenticeProfilePage() {
     router.replace('apprentice/')
   }, [name, lastname, phone, email, imageUrl, url, refs, errors])
 
-  const { config } = useConfig()
-  const color = findConfig({ configs: config, code: 'Color' }).value
+  const configs = useConfig()
+  const config = configs?.config || []
+  const color =
+    findConfig({ configs: config, code: 'Color' })?.value || '#5b89d6'
 
   return (
     <Screen
@@ -191,7 +189,7 @@ export default function ApprenticeProfilePage() {
           headerTitle: 'Perfil',
           headerTitleAlign: 'center',
           headerShown: true,
-          headerLeft: null,
+          headerLeft: () => null,
         }}
       />
       <ScrollView

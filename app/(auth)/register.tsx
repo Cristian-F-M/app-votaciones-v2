@@ -12,7 +12,7 @@ import { Stack, useRouter } from 'expo-router'
 import { scrollSmooth } from '../../lib/scrollSmooth'
 import BouncyCheckbox from 'react-native-bouncy-checkbox'
 import { StatusBar } from 'expo-status-bar'
-import { Input, INPUT_TYPES, SELECT_MODES } from '../../components/Input'
+import { Input, INPUT_TYPES } from '../../components/Input'
 import { findConfig } from '../../lib/config'
 import { useConfig } from '../../context/config'
 import { toast } from '@backpackapp-io/react-native-toast'
@@ -26,10 +26,11 @@ export default function Register() {
   const [isVisible, setIsVisible] = useState(false)
   const [refreshing, setRefreshing] = useState(false)
   const router = useRouter()
-  const { config } = useConfig()
+  const configs = useConfig()
+  const config = configs?.config || []
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  const refs = {
+  const refs: Record<string, React.RefObject<any>> = {
     name: useRef(null),
     lastname: useRef(null),
     typeDocument: useRef(null),
@@ -50,7 +51,21 @@ export default function Register() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [passwordConfirm, setPasswordConfirm] = useState('')
-  const color = findConfig({ configs: config, code: 'Color' }).value
+  const configColor = findConfig({ configs: config, code: 'Color' })
+  const color = configColor?.value || '#5b89d6'
+
+  const clearInputs = useCallback(() => {
+    setName('')
+    setLastname('')
+    setDocument('')
+    setPhone('')
+    setEmail('')
+    setPassword('')
+    setPasswordConfirm('')
+    setErrors({})
+    setTypeDocumentCode('CedulaCiudadania')
+    setIsVisible(false)
+  }, [])
 
   const handleClickRegister = useCallback(() => {
     let localyErrors = {}
@@ -80,8 +95,6 @@ export default function Register() {
 
     const localyErrorsEntries = getApiErrorsEntries(localyErrors)
     const errorsEntries = getApiErrorsEntries(errors)
-
-    console.log({ localyErrorsEntries, errorsEntries })
 
     if (localyErrorsEntries.length > 0 || errorsEntries.length > 0) {
       const [key] = localyErrorsEntries[0] || errorsEntries[0]
@@ -161,19 +174,6 @@ export default function Register() {
     clearInputs,
   ])
 
-  const clearInputs = useCallback(() => {
-    setName('')
-    setLastname('')
-    setDocument('')
-    setPhone('')
-    setEmail('')
-    setPassword('')
-    setPasswordConfirm('')
-    setErrors({})
-    setTypeDocumentCode('CedulaCiudadania')
-    setIsVisible(false)
-  }, [])
-
   const getTypesDocuments = useCallback(async () => {
     const toastIdTypesDocument = toast.loading(
       'Cargando tipos de documentos...',
@@ -222,7 +222,7 @@ export default function Register() {
             <LogoSena
               width={40}
               height={40}
-              style={{ fill: color }}
+              color={color}
             />
           ),
         }}
@@ -270,7 +270,7 @@ export default function Register() {
               inputRefName="typeDocument"
               label="Tipo de documento"
               dropdownIconRippleColor={color}
-              mode={SELECT_MODES.DROPDOWN}
+              mode={'dropdown'}
               required
             />
 

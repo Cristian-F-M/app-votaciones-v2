@@ -13,8 +13,10 @@ import { toast } from '@backpackapp-io/react-native-toast'
 import { TOAST_STYLES } from '../../lib/toastConstants'
 
 export default function AdministratorPage() {
-  const { config } = useConfig()
-  const color = findConfig({ configs: config, code: 'Color' }).value
+  const configs = useConfig()
+  const config = configs?.config || []
+  const color =
+    findConfig({ configs: config, code: 'Color' })?.value || '#5b89d6'
 
   async function handleClickLogout() {
     const res = await doFetch({ url: 'Logout', method: METHODS.POST })
@@ -47,7 +49,7 @@ export default function AdministratorPage() {
             <LogoSena
               width={40}
               height={40}
-              style={{ fill: color }}
+              color={color}
             />
           ),
         }}
@@ -57,7 +59,7 @@ export default function AdministratorPage() {
           <View className="w-[95%] items-center justify-center px-4 py-10">
             <View className="bg-red-200/80 w-fit h-fit items-center justify-center rounded-full p-3">
               <ShieldAlert
-                style={{ color: color }}
+                color={color}
                 width={54}
                 height={54}
               />
