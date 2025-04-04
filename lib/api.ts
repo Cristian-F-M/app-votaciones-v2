@@ -54,6 +54,13 @@ export async function doFetch({
     const text = await res?.text()
     if (text) console.log({ text })
     if (e instanceof Error) console.log({ err: e.message })
+    if (e instanceof TypeError && e.message.includes('Network')) {
+      return {
+        ok: false,
+        error: 'An error has ocurred',
+        returnUrl: '/no-server-connection',
+      }
+    }
     return { ok: false, error: 'An error has ocurred' }
   }
 }
