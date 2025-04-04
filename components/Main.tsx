@@ -38,6 +38,7 @@ export function Main() {
         return
       }
 
+      if (res.returnUrl) return router.replace(res.returnUrl)
       router.replace('login')
     }
 
