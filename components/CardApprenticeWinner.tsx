@@ -1,82 +1,67 @@
-import { Image, Pressable, Text, View } from 'react-native'
+import { Image, Text, View } from 'react-native'
 import * as Progress from 'react-native-progress'
 import { useConfig } from '../context/config'
 import { findConfig } from '../lib/config'
-import { Link } from 'expo-router'
-import ChevronRight from '../icons/ChevronRight'
-import { Shadow } from 'react-native-shadow-2'
+import { useWindowDimensions } from 'react-native'
+import { StyledPressable } from './StyledPressable'
+import { Vote } from 'types/vote'
 
-export function CardApprenticeWinner() {
-  const votos = 1224
-  const total = 1500
-  const porcentaje = votos / total
+export function CardApprenticeWinner({ vote }: { vote: Vote }) {
+  const { width } = useWindowDimensions()
+
+  const porcentaje =
+    vote.finishVoteInfo.cantVotesWinner === 0
+      ? 0
+      : vote.finishVoteInfo.cantVotesWinner / vote.finishVoteInfo.totalVotes
 
   const configs = useConfig()
   const config = configs?.config || []
   const configColor = findConfig({ configs: config, code: 'Color' })
   const color = configColor?.value || '#5b89d6'
+  const defaultImage = `${process.env.EXPO_PUBLIC_API_URL}/assets/base_user`
 
   return (
-    <Shadow distance={40}>
-      <View className="bg-gray-100/70 flex flex-col items-center py-2 rounded-lg w-full">
-        <View>
-          <Text className="text-xl">Ganador de la votación</Text>
-        </View>
-        <View className="mt-2">
-          {/* Foto del ganador */}
-          <Image
-            className="rounded-full overflow-hidden w-full h-full"
-            style={{ width: 150, height: 150 }}
-            width={150}
-            height={150}
-            resizeMode="cover"
-            source={{
-              uri: 'https://codigoesports.com/wp-content/uploads/2022/08/Steve.webp',
-            }}
-          />
-        </View>
-        <View className="mt-2 flex flex-col">
-          <Text className="text-xl text-center">Steve de Minecraft</Text>
-          <Text className="text-sm text-center text-gray-600 -mt-1">
-            Representande de la jornada
-          </Text>
-        </View>
-        <View className="flex flex-row items-baseline gap-x-1 mt-3">
-          <Text className="text-center text-2xl font-semibold">
-            {votos.toLocaleString('es-CO')}
-          </Text>
-          <Text className="text-sm text-gray-600">Votos</Text>
-        </View>
-        <View className="mt-1">
-          <Progress.Bar
-            progress={porcentaje}
-            width={200}
-            color={color}
-          />
-        </View>
-        <Text className="text-center text-sm text-gray-600/90">
+    <View className="items-center justify-center">
+      <View className="justify-center items-center">
+        <Image
+          className="rounded-full overflow-hidden w-3/4 h-auto aspect-square border border-gray-300"
+          resizeMode="cover"
+          source={{
+            uri:
+              vote.finishVoteInfo.candidates[0].imageUrl ||
+              vote.finishVoteInfo.candidates[0].user.imageUrl ||
+              defaultImage,
+          }}
+          defaultSource={{
+            uri: `${process.env.EXPO_PUBLIC_API_URL}/assets/base_user`,
+          }}
+          alt={`Imagen del ganador ${vote.finishVoteInfo.candidates[0].user.name}`}
+        />
+        <Text className="text-2xl text-center font-medium mt-3">
+          {vote.finishVoteInfo.candidates[0].user.name}{' '}
+          {vote.finishVoteInfo.candidates[0].user.lastname}
+        </Text>
+      </View>
+
+      <View className="items-center justify-center mt-2">
+        <Progress.Bar
+          progress={porcentaje}
+          color={color}
+          height={14}
+          width={width * 0.8}
+        />
+        <Text className="text-gray-600 mt-1">
           {(porcentaje * 100).toFixed(1)}% de los votos totales
         </Text>
-
-        <View className="mt-4 w-[85%] mb-2">
-          <Link
-            href={'/voteDetails'}
-            asChild={true}
-          >
-            <Pressable
-              className="px-4 py-2 rounded-lg flex flex-row justify-center items-center gap-x-2"
-              style={{ backgroundColor: '#2e2e31' }}
-            >
-              <Text className="text-white">Ver detalles</Text>
-              <ChevronRight
-                className="text-white"
-                width={20}
-                height={20}
-              />
-            </Pressable>
-          </Link>
-        </View>
       </View>
-    </Shadow>
+
+      <View className="mt-5 items-center justify-center w-10/12">
+        <StyledPressable
+          backgroundColor={color}
+          text="Ver detalles"
+          textClassName="text-white"
+        />
+      </View>
+    </View>
   )
 }
