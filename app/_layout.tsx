@@ -1,6 +1,5 @@
 import { Stack } from 'expo-router'
-import { View } from 'react-native'
-import { SafeAreaProvider } from 'react-native-safe-area-context'
+import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context'
 import { ConfigProvider } from '../context/config'
 import { AlertNotificationRoot } from 'react-native-alert-notification'
 import * as Notifications from 'expo-notifications'
@@ -22,10 +21,10 @@ export default function Layout() {
       <SafeAreaProvider>
         <AlertNotificationRoot>
           <GestureHandlerRootView>
-            <View className="flex-1">
+            <SafeAreaView className="flex-1">
               <Toasts globalAnimationType="spring" />
               <Stack screenOptions={{ headerShown: false }} />
-            </View>
+            </SafeAreaView>
           </GestureHandlerRootView>
         </AlertNotificationRoot>
       </SafeAreaProvider>
