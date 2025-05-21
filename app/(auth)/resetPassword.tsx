@@ -405,7 +405,7 @@ export default function ResetPassword() {
       <StatusBar style="dark" />
       <Stack.Screen
         options={{
-          headerShown: true,
+          headerShown: false,
           title: '',
         }}
       />
